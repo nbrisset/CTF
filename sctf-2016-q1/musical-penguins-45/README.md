@@ -1,6 +1,6 @@
 # Musical Penguins (Forensics, 45 points)
 
->This file is a complete mystery to me, I've never seen notes like these!
+>[This file](https://github.com/nbrisset/CTF/blob/master/sctf-2016-q1/musical-penguins-45/mystery.tg) is a complete mystery to me, I've never seen notes like these!
 
 Maybe another stegano?
 
@@ -21,7 +21,7 @@ E is a dot, C is a dash and vice versa. As nothing conclusive had turned up with
 I listened to the whole piece, "di di da da da di di da da da", and wrote down some dots and dashes.
 
 By the way, I learned that the European musical scale,
-"ut/do–re–mi–fa–so–la-si", comes from the first verse of a Latin hymn, "Ut queant laxis".
+"ut/do–re–mi–fa–so–la-si", comes from the first verse of a Latin hymn, "[Ut queant laxis](https://en.wikipedia.org/wiki/Ut_queant_laxis)".
 Steganography is everywhere, even in the eleventh century! Well this was a bit off topic, the morse code is given below.
 
 ```
@@ -64,7 +64,7 @@ There is the morse code:
 102 164 224 100 214 102 236 
 ```
 
-49 numbers, seven squared numbers. The hint "Morgan Freeman and Kevin Spacey would have fun with this one"
+49 numbers, seven squared numbers. The hint "[Morgan Freeman and Kevin Spacey](https://en.wikipedia.org/wiki/Seven_(1995_film)) would have fun with this one"
 brought me, firstly, to consider these numbers as a 7x7 square. I spent some hours doing a lot of weird and
 outlandish operations with the lines/columns/diagonals/numbers/digits: summing, subtracting, fractioning,
 finding a path in an assumed maze of digits, or coloring the prime numbers, in order to reveal a hidden message.
