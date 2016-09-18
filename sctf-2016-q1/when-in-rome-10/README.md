@@ -6,7 +6,7 @@ Yviv zj pfli wzijk fw (yfgvwlccp) drep wcrxj! jtkw{ny3e_1e_tkw_u0_r5_tkw3i5_u0}`
 
 Well, as the title says, this message has been encrypted with Caesar's code, a famous substitution cipher.
 Actually, each letter in the original message has been replaced by a letter further in the alphabet:
-for example, "with a left shift of 3, D would be replaced by A, E would become B, and so on".
+for example, "[with a left shift of 3](https://en.wikipedia.org/wiki/Caesar_cipher), D would be replaced by A, E would become B, and so on".
 
 For this competition, each "flag" (or answer) has the following format: sctf{some_random_words},
 then it's easy to find the "key" (or shift parameter). With a left shift of 17, jTKW would be sCTF.
