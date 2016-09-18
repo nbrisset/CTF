@@ -4,7 +4,7 @@ Team: Blinils, Nuggets
 
 ### Table of contents
 * [When in Rome (Cryptography, 10 points)](when-in-rome-10)
-* Banana Boy (Forensics, 20 points)
+* [Banana Boy (Forensics, 20 points)](banana-boy-20)
 * rev1 (Reversing, 20 points)
 * Ducks (Web, 30 points)
 * [Lengthy Lingo (Cryptography, 35 points)](lengthy-lingo-35)
