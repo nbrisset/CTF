@@ -1,6 +1,6 @@
 # Lengthy Lingo (Cryptography, 35 points)
 
-_Can you crack the code? We intercepted this flag but can't seem to figure out how it was encrypted._
+>Can you crack the code? We intercepted [this flag](https://github.com/nbrisset/CTF/blob/master/sctf-2016-q1/lengthy-lingo-35/encrypted.dat) but can't seem to figure out how it was encrypted.
 
 "The numbers don't seem to follow a specific pattern" says the hint, but we can still calculate a lot of numbers: there are 39 commas then 40 numbers, 382 times zero, 399 times one, 404 times two, 391 times three, 383 times four, 392 times five, 408 times six, 400 times seven, 406 times eight... but no nine. 3823994043913833924084004060 is the concatenated result, then we apply the same method.
 
