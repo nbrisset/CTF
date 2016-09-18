@@ -1,5 +1,5 @@
 # Banana Boy (Forensics, 20 points)
->Carter loves bananas, but I heard a rumor that he's hiding something! Can you find it?
+>Carter loves bananas, but I heard a rumor that he's hiding something! [Can you find it?](carter.jpg)
 
 Yeah, I love steganography. Let's see who really is Carter with the "file" command.
 
@@ -45,4 +45,4 @@ segment length 16, Exif Standard: [TIFF image data, big-endian, direntries=1, or
 baseline, precision 8, 610x337, frames 3
 ```
 
-Gotcha! Banana! This file embedded in carter.jpg gives us the flag.
+Gotcha! Banana! [This file embedded in carter.jpg](carter1.jpg) gives us the flag.
