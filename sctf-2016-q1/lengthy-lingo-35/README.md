@@ -1,12 +1,12 @@
 # Lengthy Lingo (Cryptography, 35 points)
 
->Can you crack the code? We intercepted [this flag](https://github.com/nbrisset/CTF/blob/master/sctf-2016-q1/lengthy-lingo-35/encrypted.dat) but can't seem to figure out how it was encrypted.
+>Can you crack the code? We intercepted [this flag](encrypted.dat) but can't seem to figure out how it was encrypted.
 
 "The numbers don't seem to follow a specific pattern" says the hint, but we can still calculate a lot of numbers: there are 39 commas then 40 numbers, 382 times zero, 399 times one, 404 times two, 391 times three, 383 times four, 392 times five, 408 times six, 400 times seven, 406 times eight... but no nine. 3823994043913833924084004060 is the concatenated result, then we apply the same method.
 
 In this number, there are 6 times zero, 1 times one, 2 times two, 6 times three, 5 times four, 0 times five, 1 times six, 0 times seven, 2 times eight and 4 times nine, so we got 6126501024, then 2220112000, 4240000000, 7010200000, 7110000100, 6300000100, 7101001000, 6300000100, 7101001000, 6300000100, 7101001000, 6300000100, 7101001000, 6300000100, 7101001000, 6300000100, 7101001000, 6300000100... that's an infinite loop!
 
-Well, in fact, we needed to find the number of digits in each integer, corresponding to ASCII values.
+Well, in fact, [we needed to find the number of digits in each integer](encrypted1.py), corresponding to ASCII values.
 
 ```
 #Opening the file
@@ -27,8 +27,6 @@ print numbers
 #Displaying characters from their ASCII code
 numbers = "".join(map(chr, numbers))
 print numbers
-
-#sctf{101_th3_numb3r5_d1dn'7_3v3n_m4tt3r}
 ```
 
 Solution: sctf{101_th3_numb3r5_d1dn'7_3v3n_m4tt3r}
