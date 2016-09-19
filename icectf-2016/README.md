@@ -1,5 +1,7 @@
 # IceCTF 2016 tasks and writeups
 
+Website: https://play.icec.tf/scoreboard/
+
 Team: Blinils, Chti-tophe, hackster, nuggets, pdm
 
 ### Table of contents
