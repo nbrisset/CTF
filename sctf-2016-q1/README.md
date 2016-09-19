@@ -1,5 +1,7 @@
 # sCTF 2016 Q1 tasks and writeups
 
+Website: https://compete.sctf.io/2016q1/scoreboard.php
+
 Team: Blinils, Nuggets
 
 ### Table of contents
