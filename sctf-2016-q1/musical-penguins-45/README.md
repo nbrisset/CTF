@@ -13,6 +13,8 @@ root@kali-nils:~/SCTF2016# head -c 80 mystery.tg
 
 TuxGuitar is an opensource music editor. Once downloaded, we load this mysterious file in it, and... taadaaam!
 
+![mystery.tg once loaded in TuxGuitar](mystery.png)
+
 Well, the output is truncated, there are actually 194 bars of five notes/pulses each.
 But something jumped out at me: there are only two different notes, E (mi) and C (do).
 At first sight, it could be either binary numbers: E equals 0, C equals 1 and vice versa --- or morse code: 
