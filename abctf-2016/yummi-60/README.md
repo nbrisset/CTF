@@ -134,7 +134,7 @@ ci-dessus sur trois lignes, en remplaçant les 1 par un point et les 0 par un es
 1 1    1 0    0 0    1 0    0 1    0 1    0 1    1 0    1 0    1 0    0 1    1 1    1 0    0 0    0 1
 ```
 
-Malheureusement, nous obtenons des signes de ponctuation, et aucune trace de la chaîne de caractères icectf.
+Malheureusement, nous obtenons des signes de ponctuation, et aucune trace de la chaîne de caractères abctf.
 
 De toute façon, il n'y avait pas assez de caractères pour obtenir un flag suffisamment long, mais il fallait essayer.
 
