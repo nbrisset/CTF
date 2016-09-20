@@ -1,0 +1,80 @@
+# Corrupt Transmission (Forensics, 50 points)
+>We intercepted
+[this image](https://play.icec.tf/problem-static/corrupt_92cee405924ad39fb513e3ef910699b79bb6d45cc5046c051eb9aab3546e22c3.png),
+but it must have gotten corrupted during the transmission. Can you try and fix it?
+
+We are given a link to a file which is supposed to be an image and which name is "corrupt_92cee405924-cut-.png".
+
+If it is really a PNG file, it really seems corrupted because it doesn't let us upload and display it on this "post".
+
+First of all, and as usual, let's see what kind of stegano we have to deal with here.
+
+```
+root@blinils:~/ICECTF# file corrupt.png
+corrupt.png: data
+
+root@blinils:~/ICECTF# head -n2 corrupt.png
+�PNG
+IHDR �  �� � bKGD�������    pHYs
+                                    
+                                       �� tIME�   ��et IDATx�T�َlYz��[� b��LU]
+                                       ]�ͦ� M ��aZ�u�'1�+��Ed?��a 2
+                        � T� H�`�k��3d�̌�aOk���>�$ �ر� ��?l���U)��s��D)QQ_Hr���1Ҡ��\
+                        �#�f�g��h-�%�� Y � � 9G�� k� RH�(
+                                     R�(�0B��$�H
+                                                �  ��)!�DJI)�R
+```
+
+Assuming that is a real PNG file — due to the presence
+of [keywords such as IHDR, IDAT or tIME](http://www.libpng.org/pub/png/spec/1.2/PNG-Chunks.html) — something went wrong.
+
+While [pngcheck](http://www.libpng.org/pub/png/apps/pngcheck.html) verifies the integrity of PNG files,
+[exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool/) checks the meta information: we've already used
+it for the MoonWalk challenge. But once more, no further information is given, except that it is
+CORRUPTED ERRORS DETECTED FILE FORMAT ERROR FBI GET ON THE GROUND!
+
+```
+root@blinils:~/ICECTF# pngcheck -f -v corrupt.png
+File: corrupt.png (469363 bytes)
+  File is CORRUPTED.  It seems to have suffered EOL conversion.
+  It was probably transmitted in text mode.
+ERRORS DETECTED in corrupt.png
+
+
+root@blinils:~/ICECTF# exiftool corrupt.png
+ExifTool Version Number         : 10.23
+File Name                       : corrupt.png
+Directory                       : .
+File Size                       : 458 kB
+File Modification Date/Time     : 2016:08:18 18:18:18+02:00
+File Access Date/Time           : 2016:08:18 18:18:18+02:00
+File Inode Change Date/Time     : 2016:08:18 18:18:18+02:00
+File Permissions                : rwxrwx---
+Error                           : File format error
+```
+
+The file command does not recognize the file as a picture,
+maybe because [the PNG file signature](http://www.libpng.org/pub/png/spec/1.2/PNG-Rationale.html#R.PNG-file-signature)
+has been distorted.
+
+```
+The first eight bytes of a PNG file always contain the following values:
+
+   (decimal)              137  80  78  71  13  10  26  10
+   
+   (hexadecimal)           89  50  4e  47  0d  0a  1a  0a
+   
+   (ASCII C notation)    \211   P   N   G  \r  \n \032 \n
+```
+
+Let's check this with the xxd command, which creates an hex dump of a given file or standard input.
+
+```
+root@blinils:~/ICECTF# xxd -l8 corrupt.png
+
+00000000: 9050 4e47 0e1a 0a1b                      .PNG....
+```
+
+That's it! The first eight bytes of the file do not meet the PNG specifications, hence the file is corrupted.
+
+Wikipedia brings a lot of technical details too, about the PNG signature... (to be continued)
