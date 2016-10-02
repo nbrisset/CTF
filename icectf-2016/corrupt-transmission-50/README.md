@@ -77,4 +77,35 @@ root@blinils:~/ICECTF# xxd -l8 corrupt.png
 
 That's it! The first eight bytes of the file do not meet the PNG specifications, hence the file is corrupted.
 
-Wikipedia brings a lot of technical details too, about the PNG signature... (to be continued)
+Wikipedia brings a lot of technical details too, about the PNG signature...
+![Capture d'écran de l'article Portable Network Graphics (Wikipedia)](PNG_header.png)
+[Contenu soumis à la licence CC-BY-SA](http://creativecommons.org/licenses/by-sa/3.0/deed.fr). Source : Article [Portable Network Graphics](https://en.wikipedia.org/wiki/Portable_Network_Graphics#File_header) de [Wikipédia en anglais](http://en.wikipedia.org) - [auteurs](http://fr.wikipedia.org/w/index.php?title=Portable_Network_Graphics&amp;action=history)
+
+What we have to do is modify the first eight bytes of the PNG file.
+
+It's easier to make it with an hex editor, but really much funnier to do it with a line command!
+
+```
+# xxd -l8 corrupt.png
+00000000: 9050 4e47 0e1a 0a1b                      .PNG....
+
+# printf '\x89\x50\x4e\x47\x0d\x0a\x1a\x0a' | dd of=corrupt.png bs=1 seek=0 conv=notrunc
+8+0 records in
+8+0 records out
+8 bytes copied, 0,000368607 s, 21,7 kB/s
+
+# xxd -l8 corrupt.png
+00000000: 8950 4e47 0d0a 1a0a                      .PNG....
+```
+
+The "new" file is repaired......... almost repaired!
+
+```
+root@blinils:~/ICECTF# pngcheck corrupt.png
+corrupt.png  additional data after IEND chunk
+ERROR: corrupt.png
+```
+
+But who cares? We can display the PNG and retrieve the flag!
+
+![THE FLAG!](corrupt.png)
