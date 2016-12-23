@@ -15,7 +15,9 @@ root@blinils:~/ABCTF# file just-open-it.jpg
 JFIF standard 1.01, aspect ratio, density 1x1, segment length 16, baseline, precision 8, 1024x768, frames 3
 ```
  
-Well, it's really a JPG file. As for the previous challenge, Elemental, it seems that we have to dive deeper... in the code.
+Well, it's really a JPG file. As for the previous challenge,
+[Elemental](https://github.com/nbrisset/CTF/tree/master/abctf-2016/elemental-10),
+it seems that we have to dive deeper... in the code.
 
 Either with a text editor (at line 88 with Notepad++), or with a "strings / grep" command, the flag appears!
 
