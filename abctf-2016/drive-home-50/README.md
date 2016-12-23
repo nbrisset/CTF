@@ -19,4 +19,6 @@ https://docs.google.com/document/d/1_TxYCrk5vIMlUjiB1OioXmR7b-Uq_a9aPIh9JyYlPNs/
 
 Solution : abctf{g00gle_driv3_1s_my_f4v0r1t3}
 
-PS : épreuve résolue en écoutant [la magnifique chanson éponyme](http://nilsbrisset.info/shaarli/?cdpvpg) de Steven Wilson.
+PS : épreuve résolue en écoutant
+[la magnifique chanson éponyme](https://www.youtube.com/watch?v=ycYewhiaVBk&list=PLZoGSO9LdNPXRgH95hNDkIij1zzmu6Dez)
+de Steven Wilson.
