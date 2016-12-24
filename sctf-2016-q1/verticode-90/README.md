@@ -15,13 +15,13 @@ for the color codes is: 0 = Red, 1 = Purple, 2 = Blue, 3 = Green, 4 = Yellow, 5 
 that a red color shift for the letter A, which is 65 + 0 = 65, would translate into 1000001 in binary;
 however, a green color shift for the letter A, which is 65 + 3 = 68, would translate into 1000100 in binary.
 
->Given this verticode, read the verticode into text and find the flag.
+>Given [this verticode](code1.png), read the verticode into text and find the flag.
 
 Each square is 12x12 pixels, and each line is made up 14 squares.
 
 For each line, the first seven ones are the "color", the remaining seven are the binary-ASCII code.
 
-This (ugly but working) Python code does the job.
+[This (ugly but working) Python code does the job.](verticode.py)
 
 ```
 Output : JoeLopowasamanofmildtemperamentshortstatureandhadthegoalto
