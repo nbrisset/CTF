@@ -5,9 +5,9 @@
 Maybe another stegano?
 
 ```
-root@kali-nils:~/SCTF2016# file mystery.tg
+root@blinils:~/SCTF2016# file mystery.tg
 mystery.tg: data
-root@kali-nils:~/SCTF2016# head -c 80 mystery.tg
+root@blinils:~/SCTF2016# head -c 80 mystery.tg
 TuxGuitar File Format - 1.2�x
 ```
 
@@ -77,7 +77,7 @@ said Gaétan, my teammate, in the other room.
 Dammit.
 
 ```
-root@blinils:~# python
+root@blinils:~/SCTF2016# python
 Python 2.7.12+ (default, Aug  4 2016, 04:04:04)
 [GCC 6.1.1 20160724] on linux2
 Type "help", "copyright", "credits" or "license" for more information.
