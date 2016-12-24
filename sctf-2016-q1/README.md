@@ -18,6 +18,6 @@ Team: Blinils, Nuggets
 * Secure Text Saver (Reversing, 60 points)
 * Cookies (Reversing, 75 points)
 * Tracking (Algorithmic, 85 points)
-* Verticode (Cryptography, 90 points)
+* [Verticode (Cryptography, 90 points)](verticode-90)
 * Schensted (Algorithmic, 110 points)
-* Vertinet (Cryptography, 140 points)
+* [Vertinet (Cryptography, 140 points)](vertinet-140)
