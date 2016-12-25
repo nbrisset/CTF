@@ -3,17 +3,17 @@
 [this image](https://play.icec.tf/problem-static/corrupt_92cee405924ad39fb513e3ef910699b79bb6d45cc5046c051eb9aab3546e22c3.png),
 but it must have gotten corrupted during the transmission. Can you try and fix it?
 
-We are given a link to a file which is supposed to be an image and which name is "corrupt_92cee405924-cut-.png".
+We are given a link to a file which is supposed to be an image and which name is "[corrupted.png](corrupted.png)".
 
 If it is really a PNG file, it really seems corrupted because it doesn't let us upload and display it on this "post".
 
 First of all, and as usual, let's see what kind of stegano we have to deal with here.
 
 ```
-root@blinils:~/ICECTF# file corrupt.png
-corrupt.png: data
+root@blinils:~/ICECTF# file corrupted.png
+corrupted.png: data
 
-root@blinils:~/ICECTF# head -n2 corrupt.png
+root@blinils:~/ICECTF# head -n2 corrupted.png
 �PNG
 IHDR �  �� � bKGD�������    pHYs
                                     
@@ -34,16 +34,16 @@ it for the MoonWalk challenge. But once more, no further information is given, e
 CORRUPTED ERRORS DETECTED FILE FORMAT ERROR FBI GET ON THE GROUND!
 
 ```
-root@blinils:~/ICECTF# pngcheck -f -v corrupt.png
-File: corrupt.png (469363 bytes)
+root@blinils:~/ICECTF# pngcheck -f -v corrupted.png
+File: corrupted.png (469363 bytes)
   File is CORRUPTED.  It seems to have suffered EOL conversion.
   It was probably transmitted in text mode.
-ERRORS DETECTED in corrupt.png
+ERRORS DETECTED in corrupted.png
 
 
-root@blinils:~/ICECTF# exiftool corrupt.png
+root@blinils:~/ICECTF# exiftool corrupted.png
 ExifTool Version Number         : 10.23
-File Name                       : corrupt.png
+File Name                       : corrupted.png
 Directory                       : .
 File Size                       : 458 kB
 File Modification Date/Time     : 2016:08:18 18:18:18+02:00
@@ -70,7 +70,7 @@ The first eight bytes of a PNG file always contain the following values:
 Let's check this with the xxd command, which creates an hex dump of a given file or standard input.
 
 ```
-root@blinils:~/ICECTF# xxd -l8 corrupt.png
+root@blinils:~/ICECTF# xxd -l8 corrupted.png
 
 00000000: 9050 4e47 0e1a 0a1b                      .PNG....
 ```
@@ -86,24 +86,24 @@ What we have to do is modify the first eight bytes of the PNG file.
 It's easier to make it with an hex editor, but really much funnier to do it with a line command!
 
 ```
-# xxd -l8 corrupt.png
+# xxd -l8 corrupted.png
 00000000: 9050 4e47 0e1a 0a1b                      .PNG....
 
-# printf '\x89\x50\x4e\x47\x0d\x0a\x1a\x0a' | dd of=corrupt.png bs=1 seek=0 conv=notrunc
+# printf '\x89\x50\x4e\x47\x0d\x0a\x1a\x0a' | dd of=corrupted.png bs=1 seek=0 conv=notrunc
 8+0 records in
 8+0 records out
 8 bytes copied, 0,000368607 s, 21,7 kB/s
 
-# xxd -l8 corrupt.png
+# xxd -l8 corrupted.png
 00000000: 8950 4e47 0d0a 1a0a                      .PNG....
 ```
 
 The "new" file is repaired......... almost repaired!
 
 ```
-root@blinils:~/ICECTF# pngcheck corrupt.png
-corrupt.png  additional data after IEND chunk
-ERROR: corrupt.png
+root@blinils:~/ICECTF# pngcheck corrupted.png
+corrupted.png  additional data after IEND chunk
+ERROR: corrupted.png
 ```
 
 But who cares? We can display the PNG and retrieve the flag!
