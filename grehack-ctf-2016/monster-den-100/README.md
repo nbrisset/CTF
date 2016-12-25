@@ -2,7 +2,7 @@
 
 >sha1sum : 57af654d7e46947938f13a9344d0f1ac933ac173
 
-This was the third of five steganography challenges:
+This was the third out of five steganography challenges:
 we had to find a flag in [this picture](monster_den.png).
 
 ![FIND THE FLAG!](monster_den.png)
@@ -78,7 +78,7 @@ Zilch!
 That's better! There is some noise in the red, green and blue
 "0 bit" planes, which probably means that there is hidden data in the LSB
 ([Least Significant Bit](http://ijact.org/volume3issue4/IJ0340004.pdf), a famous steganography technique).
-The data can eventually be dumped (thanks to StegSolve)
+The data can eventually be dumped — thanks again to StegSolve —
 and stored in a new file, called... monster_hidden.png! 
 
 ![FIND THAT FLAG!](monster_hidden.png)
@@ -137,12 +137,12 @@ ERROR: Wrong password : flag.txt
 ```
 
 A [dictionary attack](https://en.wikipedia.org/wiki/Password_cracking)
-with [fcrackzip](http://allanfeid.com/content/cracking-zip-files-fcrackzip) gave us nothing,
+with [fcrackzip](http://allanfeid.com/content/cracking-zip-files-fcrackzip) gives us nothing,
 so the password may be elsewhere... again in the LSB?
 
 ![Screenshot #3 of StegSolve.jar](MH_SSjar_extract.png)
 
-Great! The ZIP file can be opened, we could retrieve the flag and the points!
+Great! The ZIP file can be opened, so we can retrieve the flag and the points!
 
 ```
 root@blinils:~/GH16/_monster_hidden.png.extracted# 7z e 83D2.zip -pEvi1isGood
