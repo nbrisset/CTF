@@ -162,3 +162,20 @@ Everything is Ok
 root@blinils:~/GH16/_monster_hidden.png.extracted# cat flag.txt
 GH16{W3ll_D0ne_Over1ord}
 ```
+
+As a bonus, a short write-up for this challenge with zsteg.
+
+```
+root@blinils:~/GH16# zsteg --extract "b1,rgb,lsb,xy" monster_den.png > monster_hidden.png
+
+root@blinils:~/GH16# zsteg monster_hidden.png | grep b1,rgb,lsb,xy
+b1,rgb,lsb,xy       .. text: "Evi1isGood"
+
+root@blinils:~/GH16# zsteg monster_hidden.png | head -n2
+[?] 58653 bytes of extra data after image end (IEND), offset = 0x83d2
+extradata:0         .. file: Zip archive data
+
+root@blinils:~/GH16# tail -c +33747 monster_hidden.png > monster_hidden.zip
+
+root@blinils:~/GH16# 7z e monster_hidden.zip -pEvi1isGood &>/dev/null
+```
