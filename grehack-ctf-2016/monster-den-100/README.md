@@ -75,8 +75,8 @@ Zilch!
 
 ![Screenshot #2 of StegSolve.jar](MD_SSjar_extract.png)
 
-That's better! There is some noise in the red, green and blue
-"0 bit" planes: this probably means that there is hidden data in the LSB
+That's better! As for the [Logo challenge](https://github.com/nbrisset/CTF/tree/master/grehack-ctf-2016/logo-50), 
+there is some noise in the red, green and blue "0 bit" planes: this probably means that there is hidden data in the LSB
 ([Least Significant Bit](http://ijact.org/volume3issue4/IJ0340004.pdf), a famous steganography technique).
 The data can eventually be dumped — thanks again to StegSolve —
 and stored in a new file, called... monster_hidden.png! 
