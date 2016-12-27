@@ -6,8 +6,8 @@ Team: OMECA
 
 ### Table of contents
 
-* Ryu vs Chun Li (Stego, 50 points)
-* Did you take a look at our logo? (Stego, 50 points)
+* [Ryu vs Chun Li (Stego, 50 points)](ryu-vs-chun-li-50)
+* [Did you take a look at our logo? (Stego, 50 points)](logo-50)
 * [Monster Den (Stego, 100 points)](monster-den-100)
 * *Daytonaaaaaaaaaa!!!!! (Stego, 200 points)*
 * *ekauQ (Stego, 300 points)*
