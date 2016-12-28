@@ -12,7 +12,7 @@ kindly made available by the organizers.
 
 ![FIND THE FLAG!](index.html.png)
 
-As the title says, the file robots.txt is a wrong track. Let's find somewhere else.
+As the title says, the file robots.txt is a wrong track. Let's try somewhere else.
 
 ![SORRY FLAG NOT FOUND!](robots.txt.png)
 
