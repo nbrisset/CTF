@@ -1,4 +1,4 @@
-# CTF write-ups and snippets from Blinils
+# CTF write-ups and snippets by Blinils
 
 * [2016/11 - **GreHack CTF 2016** (16th place / 33 teams) on site](grehack-ctf-2016)
 * [2016/08 - **IceCTF 2016** (98th place / 1695 teams)](icectf-2016)
