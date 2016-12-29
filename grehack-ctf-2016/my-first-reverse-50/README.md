@@ -3,7 +3,7 @@ _[<<< Return to GreHack CTF 2016 tasks and writeups](https://github.com/nbrisset
 
 > Find the flag!
 
-This was the first out of four reverse challenges: we had to find a flag in this program.
+This was the first out of four reverse challenges: we had to find a flag in [this program](my_first_reverse.exe).
 
 My first reflex as a reverse newbie: let's use "strings", maybe the flag will magically appear.
 
