@@ -39,7 +39,7 @@ WriteFile
 ExitProcess
 ```
 
-We are given the end of a phrase: rs1ng_1s_c00l!
+We are given the end of a sentence: rs1ng_1s_c00l!
 
 It is definitely a program which asks for a password (Password?), and indicates if the password is (Correct!) or not.
 
@@ -50,7 +50,7 @@ root@blinils:~/GH16# tr -dc '[:print:]' < reverse.exe | sed 's/F<//g'
 MZPEL@0~   }.text .imp  Uj @Ej @EjEPjh[@u @jEPj2hz@u @Ez@<GH16{r3v3ru{sut1umnufgu__uX1uQsuJ_uCcu<0u50u.lu'!u }uFjEPjhq@u @jEPjhf@u @j @Password? Try again!Correct!U d o { H  KERNEL32.dllGetStdHandleReadFileWriteFileExitProcess
 ```
 
-We have now the beginning of the flag: GH16{r3v3r, but also the end of the flag,
+We now have the beginning of the flag: GH16{r3v3r, but also the end of the flag,
 truncated with extra characters... which gives GH16{r3v3rs1ng_1s_c00l!} ... Correct!
 My teammates solved this challenge in other ways,
 by working with [radare2](https://github.com/radare/radare2) or [using an online decompiler](DECOMPILE.md).
