@@ -15,7 +15,7 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 * [Monster Den (Stego, 100 points)](monster-den-100)
 * Daytonaaaaaaaaaa!!!!! (Stego, 200 points)
 * ekauQ (Stego, 300 points)
-* Windows 98 (Forensic, 100 points)
+* [Windows 98 (Forensic, 100 points)](windows-98-100)
 * Who owns the C&C (Forensic, 300 points)
 * F2FS fun (Forensic, 400 points)
 * [My first reverse (Reverse, 50 points)](my-first-reverse-50)
