@@ -86,7 +86,9 @@ root@blinils:~/GH16# dd skip=83895 if=./win98.jpg of=./jpgwin98.jpg bs=1
 5549 bytes (5,5 kB, 5,4 KiB) copied, 0,0179559 s, 309 kB/s
 
 root@blinils:~/GH16# file j* p*
-jpgwin98.jpg: JPEG image data, JFIF standard 1.01, resolution (DPCM), density 28x28, segment length 16, baseline, precision 8, 128x128, frames 3
+jpgwin98.jpg: JPEG image data, JFIF standard 1.01, resolution (DPCM),
+density 28x28, segment length 16, baseline, precision 8, 128x128, frames 3
+
 pdfwin98.pdf: PDF document, version 1.4
 
 root@blinils:~/GH16# feh jpgwin98.jpg
