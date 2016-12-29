@@ -5,7 +5,7 @@ _[<<< Return to GreHack CTF 2016 tasks and writeups](https://github.com/nbrisset
 
 > Remarks: "there are some guessing..."
 
-I guess I'm fond of pizza. Especially the Margherita.. yeah the cheese one... maybe.. with ham in it.. I guess...
+I guess I'm fond of pizza. Especially the Margherita.. yeah the cheesy one... maybe.. with ham in it.. I guess...
 
 100 points. Easy one.
 
@@ -89,4 +89,4 @@ hint or mistake?
 
 tu16{fncv01i5uhatel} is quite a weird ~~pizza name~~ flag but we retrieved the good format GH16{...} with ROT13.
 
-P.S. big up to the organization team, and thanks for the pizzas which strengthen us during the CTF! :)
+P.S. big up to the organization team, and thanks for the pizzas which strengthened us during the CTF! :)
