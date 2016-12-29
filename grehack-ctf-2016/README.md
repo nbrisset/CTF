@@ -31,7 +31,7 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 * Server status (Web, 150 points)
 * Ain't Nobody Got Time for That (Web, 250 points)
 * Put your own music (Web, 400 points)
-* Sam Sepiol's pizzas (Crypto, 100 points)
+* [Sam Sepiol's pizzas (Crypto, 100 points)](sam-sepiol-pizzas-100)
 * *Unknown title (Crypto, 100 points)*
 * *Unknown title (Crypto, 250 points)*
 * *Unknown title (Exploit, 150 points)*
