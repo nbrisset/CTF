@@ -1,8 +1,12 @@
+_[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
+
 # sCTF 2016 Q1 tasks and writeups
 
-Website: https://compete.sctf.io/2016q1/scoreboard.php
+> Team: OMECA (Blinils, nuggets)
 
-Team: Blinils, Nuggets
+> Website: https://compete.sctf.io/2016q1/scoreboard.php
+
+> Other write-ups: https://ctftime.org/event/309
 
 ### Table of contents
 * [When in Rome (Cryptography, 10 points)](when-in-rome-10)
