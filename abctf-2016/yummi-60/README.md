@@ -1,4 +1,6 @@
-# Yummi (Cryptography, 60 points)
+_[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
+# Yummi
+
 >Well [this image](baconian.bmp) means something and we need you to figure it out!
 
 Il s'agit de l'une de mes épreuves préférées de ce Capture The Flag.
@@ -31,7 +33,7 @@ Essayons de trouver de quoi il s'agit.
 
 Oui.
 
-```
+```console
 root@blinils:~/ABCTF# file baconian.bmp
 baconian.bmp: PC bitmap, Windows 3.x format, 9 x -10 x 24
 
@@ -205,3 +207,4 @@ AAAAA AAAAB AAABA BAABB AABAB ABABB ABBBA BABAB AABAA BAABA AAAAB AAAAA AAABA AB
 ```
  
 Solution : abctf{lovesbaconian}
+

@@ -1,4 +1,6 @@
-# PasswordPDF (Forensics, 80 points)
+_[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
+# PasswordPDF
+
 >Oh no. We locked [this](https://mega.nz/#!ER8wEBDD!kdjQxaoBX2qWky1dKvlAZq-ToC_kGJbpiV-hOfxXdks)
 PDF and forgot the password. Can you help us?
 
@@ -29,7 +31,7 @@ and opted for a dictionary attack.
 I used the pdfcrack tool with a big dictionary of Dirbuster,
 a tool designed to search for directories and files on web servers.
 
-```
+```console
 root@blinils:~/ABCTF# time pdfcrack -f mypassword.pdf -w /usr/share/wordlists/dirb/big.txt
 
 PDF version 1.5
@@ -60,3 +62,4 @@ This is not over, but the flag is necessarily hidden in the document.
 Actually, if we select all the text, copy and paste it into a text editor, we have the flag.
 
 Solution: ABCTF{Damn_h4x0rz_always_bypassing_my_PDFs}
+
