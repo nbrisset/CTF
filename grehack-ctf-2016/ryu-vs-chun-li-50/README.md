@@ -1,4 +1,4 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](https://github.com/nbrisset/CTF/tree/master/grehack-ctf-2016)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/grehack-ctf-2016)_
 # Ryu vs Chun Li
 
 >Stegano ! round one !
@@ -12,7 +12,7 @@ we had to find a flag in [this audio file](sf2.wav).
 
 ## Analysis of sf2.wav with Audacity
 
-```
+```console
 root@blinils:~/GH16# file sf2.wav
 sf2.wav: RIFF (little-endian) data, WAVE audio, Microsoft PCM, 16 bit, mono 44100 Hz
 ```
@@ -31,7 +31,7 @@ It just took two right clicks on the vertical bar, in order to modify the audibl
 
 This seems to be a real WAV sound. But is there hidden data in it?
 
-```
+```console
 root@blinils:~/GH16# binwalk -e sf2.wav
 
 DECIMAL   HEXADECIMAL  DESCRIPTION
@@ -44,7 +44,7 @@ DECIMAL   HEXADECIMAL  DESCRIPTION
 16494164  0xFBAE54     End of Zip archive
 ```
 
-```
+```console
 root@blinils:~/GH16# ls _sf2.wav.extracted
 F3C02C.zip  sf2.png
 ```
@@ -58,18 +58,19 @@ with a googled Street Fighter picture which would fit.
 
 With the password, it was really much easier!
 
-```
+```console
 root@blinils:~/GH16# echo "<<< %s(un='%s') = %u" > pass.txt
 ```
 
-```
+```console
 root@blinils:~/GH16# unzip -P "$(< pass.txt)"  F3C02C.zip
 Archive:  F3C02C.zip
   inflating: sf2.png
 ```
 
-```
+```console
 root@blinils:~/GH16# feh sf2.png
 ```
 
 ![PASSWORD JUST FOUND!](sf2.png)
+

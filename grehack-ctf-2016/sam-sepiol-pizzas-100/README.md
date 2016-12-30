@@ -1,4 +1,4 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](https://github.com/nbrisset/CTF/tree/master/grehack-ctf-2016)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/grehack-ctf-2016)_
 # Sam Sepiol's pizzas
 
 > How much do you love pizza?

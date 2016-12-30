@@ -1,4 +1,4 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](https://github.com/nbrisset/CTF/tree/master/grehack-ctf-2016)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/grehack-ctf-2016)_
 # Windows 98
 
 > Windows 98 could hide many things :)
@@ -8,9 +8,9 @@ _[<<< Return to GreHack CTF 2016 tasks and writeups](https://github.com/nbrisset
 This was the first out of three forensic challenges:
 we had to find a flag in a [tarball file](1479483212.99_win98.tar.gz).
 
-First of all, we checked the file's type and its SHA-1 digest, then we extracted the files and checked their type too.
+First of all, we checked the file's type and its SHA-1 digest, then we extracted the files and checked their types too.
 
-```
+```console
 root@blinils:~/GH16# sha1sum 1479483212.99_win98.tar.gz
 6f924b4fb2500ffaf41b7fcc5f4ed86718987de5  1479483212.99_win98.tar.gz
 
@@ -44,7 +44,7 @@ this event became a popular Internet phenomenon.
 
 Is there any hidden data? Let's use "binwalk", a tool designed to analyze and extract data contained in a file.
 
-```
+```console
 root@blinils:~/GH16# binwalk win98.jpg
 
 DECIMAL       HEXADECIMAL     DESCRIPTION
@@ -74,7 +74,7 @@ a [JPEG image](jpgwin98.jpg) and a [PDF document](pdfwin98.pdf) are in the origi
 
 Let's extract these new files from the offsets 55519 and 83895, with the "dd" command.
 
-```
+```console
 root@blinils:~/GH16# dd skip=55519 if=./win98.jpg of=./pdfwin98.pdf bs=1
 33925+0 records in
 33925+0 records out
@@ -118,3 +118,4 @@ Once TrueCrypt is downloaded and ready for use, we tried to open win98.mp4 as a 
 ![WOW AN ENCRYPTED DISK IN A MP4!](truecrypt.png)
 
 Gotcha! We got a flag.txt file in it: GH16{Polyglotte_and_Windows98_Is_Fun}
+

@@ -1,6 +1,5 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](https://github.com/nbrisset/CTF/tree/master/grehack-ctf-2016)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/grehack-ctf-2016)_
 # robots.txt is not the only one
-
 
 > Get information
 
@@ -39,10 +38,11 @@ du RFC 5785 et le suffixe webfinger (désormais enregistré dans les noms bien c
 
 Quoting the CTF team: ["Cheers!"](https://www.chartreuse.fr/)
 
-```
+```console
 root@blinils:~/GH16# curl "http://localhost:2050/.well-known/webfinger"
 Some endpoints can be discovered through Well-Known URIs.
 https://www.iana.org/assignments/well-known-uris/well-known-uris.xhtml
 
 GH16{keep_data_hidden}
 ```
+

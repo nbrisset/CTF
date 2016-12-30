@@ -1,4 +1,4 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](https://github.com/nbrisset/CTF/tree/master/grehack-ctf-2016)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/grehack-ctf-2016)_
 # My first reverse
 
 > Find the flag!
@@ -7,7 +7,7 @@ This was the first out of four reverse challenges: we had to find a flag in [thi
 
 My first reflex as a reverse newbie: let's use "strings", maybe the flag will magically appear.
 
-```
+```console
 root@blinils:~/GH16# file reverse.exe
 reverse.exe: MS-DOS executable
 
@@ -45,7 +45,7 @@ It is definitely a program which asks for a password (Password?), and indicates 
 
 Now if we only want the printable characters from the file:
 
-```
+```console
 root@blinils:~/GH16# tr -dc '[:print:]' < reverse.exe | sed 's/F<//g'
 MZPEL@0~   }.text .imp  Uj @Ej @EjEPjh[@u @jEPj2hz@u @Ez@<GH16{r3v3ru{sut1umnufgu__uX1uQsuJ_uCcu<0u50u.lu'!u }uFjEPjhq@u @jEPjhf@u @j @Password? Try again!Correct!U d o { H  KERNEL32.dllGetStdHandleReadFileWriteFileExitProcess
 ```
@@ -54,3 +54,4 @@ We now have the beginning of the flag: GH16{r3v3r, but also the end of the flag,
 truncated with extra characters... which gives GH16{r3v3rs1ng_1s_c00l!} ... Correct!
 My teammates solved this challenge in other ways,
 by working with [radare2](https://github.com/radare/radare2) or [using an online decompiler](DECOMPILE.md).
+
