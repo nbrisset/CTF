@@ -1,8 +1,12 @@
+_[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
+
 # IceCTF 2016 tasks and writeups
 
-Website: https://play.icec.tf/scoreboard/
+> Team: OMECA (Blinils, Chti-tophe, hackster, nuggets, pdm)
 
-Team: Blinils, Chti-tophe, hackster, nuggets, pdm
+> Website: https://play.icec.tf/scoreboard/
+
+> Other write-ups: https://ctftime.org/event/319
 
 ### Table of contents
 

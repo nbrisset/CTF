@@ -1,8 +1,12 @@
+_[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
+
 # ABCTF 2016 tasks and writeups
 
-Website: http://abctf.xyz/scoreboard
+> Team: OMECA (Blinils, hackster, maubry, nethunt, nuggets)
 
-Team: Blinils, hackster, maubry, nethunt, Nuggets
+> Website: http://abctf.xyz/scoreboard
+
+> Other write-ups: https://ctftime.org/event/333
 
 ### Table of contents
 * Caesar Salad (Cryptography, 10 points)
