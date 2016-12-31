@@ -1,10 +1,11 @@
-# Musical Penguins (Forensics, 45 points)
+_[<<< Return to sCTF 2016 Q1 tasks and writeups](/sctf-2016-q1)_
+# Musical Penguins
 
 >[This file](https://github.com/nbrisset/CTF/blob/master/sctf-2016-q1/musical-penguins-45/mystery.tg) is a complete mystery to me, I've never seen notes like these!
 
 Maybe another stegano?
 
-```
+```console
 root@blinils:~/SCTF2016# file mystery.tg
 mystery.tg: data
 root@blinils:~/SCTF2016# head -c 80 mystery.tg
@@ -76,12 +77,14 @@ said Gaétan, my teammate, in the other room.
 
 Dammit.
 
-```
+```console
 root@blinils:~/SCTF2016# python
 Python 2.7.12+ (default, Aug  4 2016, 04:04:04)
 [GCC 6.1.1 20160724] on linux2
 Type "help", "copyright", "credits" or "license" for more information.
+```
 
+```python
 >>> numbers = ["223","201","224","204","234","100","164","225","104","102",\
 "202","164","224","66","164","214","103","212","102","164","214","225","104",\
 "100","201","164","230","100","224","206","164","224","206","100","104","164",\
@@ -95,3 +98,4 @@ Type "help", "copyright", "credits" or "license" for more information.
 ```
 
 This challenge was pretty cool and very entertaining!
+

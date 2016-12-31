@@ -1,4 +1,5 @@
-# Lengthy Lingo (Cryptography, 35 points)
+_[<<< Return to sCTF 2016 Q1 tasks and writeups](/sctf-2016-q1)_
+# Lengthy Lingo
 
 >Can you crack the code? We intercepted [this flag](encrypted.dat) but can't seem to figure out how it was encrypted.
 
@@ -8,7 +9,7 @@ In this number, there are 6 times zero, 1 times one, 2 times two, 6 times three,
 
 Well, in fact, [we needed to find the number of digits in each integer](encrypted1.py), corresponding to ASCII values.
 
-```
+```python
 #Opening the file
 file = open("encrypted.dat")
 numbers = file.read()
@@ -30,3 +31,4 @@ print numbers
 ```
 
 Solution: sctf{101_th3_numb3r5_d1dn'7_3v3n_m4tt3r}
+

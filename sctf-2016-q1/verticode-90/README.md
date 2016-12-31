@@ -1,4 +1,5 @@
-# Verticode (Cryptography, 90 points)
+_[<<< Return to sCTF 2016 Q1 tasks and writeups](/sctf-2016-q1)_
+# Verticode
 
 >Welcome to Verticode, the new method of translating text into vertical codes.
 
@@ -41,3 +42,4 @@ ImundroclamaticolomphasisciousytheeccentrictapewormIlikepizzasohowareyadoinIhave
 ```
 
 Solution: sctf{iamtheflagalllowercasenojoke}
+

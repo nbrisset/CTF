@@ -1,4 +1,6 @@
-# Vertinet (Cryptography, 140 points)
+_[<<< Return to sCTF 2016 Q1 tasks and writeups](/sctf-2016-q1)_
+# Vertinet
+
 >Welcome to Vertinet.
 
 >This problem follows the same specifications as the previous Verticode problem, except that you have to solve
@@ -10,7 +12,7 @@ Il s'agit du même principe que le challenge
 
 En se connectant au serveur via la commande `nc problems1.2016q1.sctf.io 50000` voici ce que l'on obtient.
 
-```
+```html
 <html>
  <img src='data:image/png;base64,blablablablablablablablablablablabla=='></img>
 <br><br>
@@ -20,4 +22,5 @@ Voici les étapes à suivre pour récupérer le flag. #1 Se connecter au serveur
 
 Voici [le snippet en Python](vertinet.py) qui, une fois exécuté, récupère le flag après 30 secondes de résolution intense de codes !
 
-Solution: sctf{y0ub34tth3v3rt1c0d3}.
+Solution: sctf{y0ub34tth3v3rt1c0d3}
+

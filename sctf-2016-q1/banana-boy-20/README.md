@@ -1,9 +1,11 @@
-# Banana Boy (Forensics, 20 points)
+_[<<< Return to sCTF 2016 Q1 tasks and writeups](/sctf-2016-q1)_
+# Banana Boy
+
 >Carter loves bananas, but I heard a rumor that he's hiding something! [Can you find it?](carter.jpg)
 
 Yeah, I love steganography. Let's see who really is Carter with the "file" command.
 
-```
+```console
 root@blinils:~/SCTF2016# file carter.jpg
 
 carter.jpg: JPEG image data, JFIF standard 1.01, resolution (DPI), density 72x72, segment length 16,
@@ -13,9 +15,10 @@ yresolution=82, resolutionunit=2], baseline, precision 8, 600x450, frames 3
 
 This is a real JPG image. But is there hidden data in it?
 
-Let's use "binwalk", a tool designed to analyze and extract data contained in a file.
+Let's use [binwalk](https://github.com/devttys0/binwalk/wiki/Quick-Start-Guide),
+a tool designed to analyze and extract data contained in a file.
 
-```
+```console
 root@blinils:~/SCTF2016# binwalk carter.jpg
 
 DECIMAL     HEXADECIMAL     DESCRIPTION
@@ -29,9 +32,10 @@ DECIMAL     HEXADECIMAL     DESCRIPTION
  
 Wow! There is another JPEG image in the original JPEG!
 
-Let's extract this new file from the offset 140147, with the "dd" command.
+Let's extract this new file from the offset 140147,
+with the [dd](https://en.wikipedia.org/wiki/Dd_%28Unix%29) command.
 
-```
+```console
 root@blinils:~/SCTF2016# dd skip=140147 if=./carter.jpg of=./carter1.jpg bs=1
 
 54041+0 records in
@@ -46,3 +50,4 @@ baseline, precision 8, 610x337, frames 3
 ```
 
 Gotcha! Banana! [This file embedded in carter.jpg](carter1.jpg) gives us the flag.
+
