@@ -1,5 +1,5 @@
 _[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
-# Just open it
+# Just open it (Forensics, 15 points)
 
 >I'm almost positive we put a flag in [this](https://mega.nz/#!q8FBHAqD!D2-GX_5pi5rb1cfjNGTV-NDWTahZiJlFfDl5PlUY8z8) file.
 Can you find it for me?

@@ -1,4 +1,6 @@
+_[<<< Return to IceCTF 2016 tasks and writeups](/icectf-2016)_
 # Vape Nation (Stego, 50 points)
+
 >Go Green! [vape_nation.png](https://play.icec.tf/problem-static/vape_nation_7d550b3069428e39775f31e7299cd354c721459043cf1a077bb388f4f531d459.png)
 
 We are given a link to a file which name is "vape_nation.png".

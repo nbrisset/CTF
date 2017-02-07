@@ -1,5 +1,5 @@
 _[<<< Return to sCTF 2016 Q1 tasks and writeups](/sctf-2016-q1)_
-# Banana Boy
+# Banana Boy (Forensics, 20 points)
 
 >Carter loves bananas, but I heard a rumor that he's hiding something! [Can you find it?](carter.jpg)
 

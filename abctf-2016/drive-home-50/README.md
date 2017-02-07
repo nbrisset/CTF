@@ -1,5 +1,5 @@
 _[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
-# Drive Home
+# Drive Home (Reconaissance, 50 points)
 
 >We found this link scribbled on a piece of paper:
 

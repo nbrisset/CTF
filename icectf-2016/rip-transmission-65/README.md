@@ -1,4 +1,6 @@
+_[<<< Return to IceCTF 2016 tasks and writeups](/icectf-2016)_
 # R.I.P Transmission (Forensics, 65 points)
+
 >[This](https://play.icec.tf/problem-static/rip_2067f9686b4d07eea2cac19b9c6588b2abac16500135901ce8781e4ccc262446)
 seems to be receiving some sort of transmission. Our experts have been working around the clock trying and figure out
 what the hell it means with no hope of getting to the bottom of it. You're our only hope.

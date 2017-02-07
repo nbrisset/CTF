@@ -1,4 +1,6 @@
+_[<<< Return to IceCTF 2016 tasks and writeups](/icectf-2016)_
 # IRC I (Misc, 35 points)
+
 >There is someone sharing flags on our IRC server, can you find him and stop him? glitch.is:6667
 
 Sharing flags or giving major hints to other teams is not

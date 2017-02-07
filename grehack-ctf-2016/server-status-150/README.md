@@ -1,5 +1,5 @@
 _[<<< Return to GreHack CTF 2016 tasks and writeups](/grehack-ctf-2016)_
-# Server status
+# Server status (Web, 150 points)
 
 > Sometimes data that should be kept private can become public
 

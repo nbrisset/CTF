@@ -1,5 +1,5 @@
 _[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
-# Elemental
+# Elemental (Web Exploitation, 10 points)
 
 >Just put in the password for the flag! [Link](http://yrmyzscnvh.abctf.xyz/web1/)
 

@@ -1,4 +1,6 @@
+_[<<< Return to IceCTF 2016 tasks and writeups](/icectf-2016)_
 # IRC II (Misc, 60 points)
+
 >Can you trick our IRC bot into giving you his flag? Talk to IceBot on glitch.is:6667.
 >Please only send him private messages, you do this by writing /msg IceBot !command.
 >The "help" command has been removed so here is the output from !help.

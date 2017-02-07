@@ -1,5 +1,5 @@
 _[<<< Return to GreHack CTF 2016 tasks and writeups](/grehack-ctf-2016)_
-# Ryu vs Chun Li
+# Ryu vs Chun Li (Stego, 50 points)
 
 >Stegano ! round one !
 

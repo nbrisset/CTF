@@ -1,5 +1,5 @@
 _[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
-# Caesar Salad
+# Caesar Salad (Cryptography, 10 points)
 
 >Most definitely the best salad around. Can you decrypt this for us? xyzqc{t3_qelrdeq_t3_k33a3a_lk3_lc_qe3p3}
 

@@ -1,5 +1,5 @@
 _[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
-# PasswordPDF
+# PasswordPDF (Forensics, 80 points)
 
 >Oh no. We locked [this](https://mega.nz/#!ER8wEBDD!kdjQxaoBX2qWky1dKvlAZq-ToC_kGJbpiV-hOfxXdks)
 PDF and forgot the password. Can you help us?

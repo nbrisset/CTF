@@ -1,4 +1,6 @@
+_[<<< Return to IceCTF 2016 tasks and writeups](/icectf-2016)_
 # Corrupt Transmission (Forensics, 50 points)
+
 >We intercepted
 [this image](https://play.icec.tf/problem-static/corrupt_92cee405924ad39fb513e3ef910699b79bb6d45cc5046c051eb9aab3546e22c3.png),
 but it must have gotten corrupted during the transmission. Can you try and fix it?

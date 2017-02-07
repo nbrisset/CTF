@@ -1,5 +1,5 @@
 _[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
-# The Flash
+# The Flash (Web Exploitation, 35 points)
 
 >Can you somehow get the flag from this website? [Link](http://yrmyzscnvh.abctf.xyz/web2/)
 

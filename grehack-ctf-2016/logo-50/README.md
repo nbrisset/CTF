@@ -1,5 +1,5 @@
 _[<<< Return to GreHack CTF 2016 tasks and writeups](/grehack-ctf-2016)_
-# Did you take a look at our logo?
+# Did you take a look at our logo? (Stego, 50 points)
 
 This was the second out of five steganography challenges:
 the GreHack organization team hid a flag in [their logo](GH16_logo_txt_black.png).

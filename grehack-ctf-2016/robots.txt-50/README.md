@@ -1,5 +1,5 @@
 _[<<< Return to GreHack CTF 2016 tasks and writeups](/grehack-ctf-2016)_
-# robots.txt is not the only one
+# robots.txt is not the only one (Web, 50 points)
 
 > Get information
 

@@ -1,5 +1,5 @@
 _[<<< Return to sCTF 2016 Q1 tasks and writeups](/sctf-2016-q1)_
-# Lengthy Lingo
+# Lengthy Lingo (Cryptography, 35 points)
 
 >Can you crack the code? We intercepted [this flag](encrypted.dat) but can't seem to figure out how it was encrypted.
 

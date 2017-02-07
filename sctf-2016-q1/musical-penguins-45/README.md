@@ -1,5 +1,5 @@
 _[<<< Return to sCTF 2016 Q1 tasks and writeups](/sctf-2016-q1)_
-# Musical Penguins
+# Musical Penguins (Forensics, 45 points)
 
 >[This file](https://github.com/nbrisset/CTF/blob/master/sctf-2016-q1/musical-penguins-45/mystery.tg) is a complete mystery to me, I've never seen notes like these!
 

@@ -1,5 +1,5 @@
 _[<<< Return to GreHack CTF 2016 tasks and writeups](/grehack-ctf-2016)_
-# My first reverse
+# My first reverse (Reverse, 50 points)
 
 > Find the flag!
 
