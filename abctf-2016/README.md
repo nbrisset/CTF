@@ -26,7 +26,7 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 * [Yummi (Cryptography, 60 points)](yummi-60)
 * [MoonWalk (Forensics, 60 points)](moonwalk-60)
 * Slime Season 3 (Programming, 60 points)
-* Old RSA (Cryptography, 70 points)
+* [Old RSA (Cryptography, 70 points)](old-rsa-70)
 * L33t H4xx0r (Web Exploitation, 70 points)
 * Virtual Box 5 (Virtual Series, 75 points)
 * Virtual Box 6 (Virtual Series, 75 points)
