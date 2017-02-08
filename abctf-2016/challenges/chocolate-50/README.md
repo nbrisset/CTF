@@ -1,7 +1,7 @@
 _[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
 # Chocolate (Web Exploitation, 50 points)
 
->If you could become admin you would get a flag. [Link](http://yrmyzscnvh.abctf.xyz/web2/)
+>If you could become admin you would get a flag. [Link](http://yrmyzscnvh.abctf.xyz/web3/)
 
 The website says that we are not admin, let's see why.
 

@@ -34,7 +34,7 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 * Virtual Box 6 (Virtual Series, 75 points)
 * AES Mess (Cryptography, 75 points)
 * [PasswordPDF (Forensics, 80 points)](challenges/passwordpdf-80)
-* Get 'Em All (Web Exploitation, 80 points)
+* [Get 'Em All (Web Exploitation, 80 points)](challenges/get-em-all-80)
 * JS Pls (Reverse Engineering, 80 points)
 * Safety First (Web Exploitation, 95 points)
 * Always So Itchy (Reconaissance, 100 points)
