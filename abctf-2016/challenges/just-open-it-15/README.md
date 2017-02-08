@@ -17,7 +17,7 @@ density 1x1, segment length 16, baseline, precision 8, 1024x768, frames 3
 ```
  
 Well, it's really a JPG file. As for the previous challenge,
-[Elemental](/abctf-2016/elemental-10), it seems that we have to dive deeper... in the code.
+[Elemental](/abctf-2016/challenges/elemental-10), it seems that we have to dive deeper... in the code.
 
 Either with a text editor (at line 88 with Notepad++), or with a "strings / grep" command, the flag appears!
 

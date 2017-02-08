@@ -3,7 +3,7 @@ _[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
 
 >Can you somehow get the flag from this website? [Link](http://yrmyzscnvh.abctf.xyz/web2/)
 
-Like the [Elemental](/abctf-2016/elemental-10) challenge, we are given
+Like the [Elemental](/abctf-2016/challenges/elemental-10) challenge, we are given
 a link to a website, which only contains a password field and a "submit" button.
 
 ![Screenshot from the website yrmyzscnvh.abctf.xyz/web2](the-flash.png)

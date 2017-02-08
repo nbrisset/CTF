@@ -15,7 +15,7 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 * [Just open it (Forensics, 15 points)](challenges/just-open-it-15)
 * Virtual Box 2 (Virtual Series, 15 points)
 * TGIF (Programming, 30 points)
-* [GZ (Forensics, 30 points)](GZ-30)
+* [GZ (Forensics, 30 points)](challenges/GZ-30)
 * Virtual Box 3 (Virtual Series, 35 points)
 * [The Flash (Web Exploitation, 35 points)](challenges/the-flash-35)
 * [Drive Home (Reconaissance, 50 points)](challenges/drive-home-50)
