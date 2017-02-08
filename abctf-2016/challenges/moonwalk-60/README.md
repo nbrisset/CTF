@@ -14,7 +14,7 @@ root@blinils:~/ABCTF# file PurpleThing.png
 PurpleThing.png: PNG image data, 3200 x 2953, 8-bit/color RGBA, non-interlaced
 ```
 
-Then, I am used of launching ExifTool, in order to check the metadata of the picture.
+Then, I am used to launching ExifTool, in order to check the metadata of the picture.
 
 Sometimes, the flag is hidden in metadata fields, such as "Author", "Profile Copyright", "Camera Model"...
 

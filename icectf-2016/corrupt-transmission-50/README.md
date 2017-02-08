@@ -11,7 +11,7 @@ If it is really a PNG file, it really seems corrupted because it doesn't let us 
 
 First of all, and as usual, let's see what kind of stegano we have to deal with here.
 
-```
+```console
 root@blinils:~/ICECTF# file corrupted.png
 corrupted.png: data
 
@@ -35,7 +35,7 @@ While [pngcheck](http://www.libpng.org/pub/png/apps/pngcheck.html) verifies the 
 it for the MoonWalk challenge. But once more, no further information is given, except that it is
 CORRUPTED ERRORS DETECTED FILE FORMAT ERROR FBI GET ON THE GROUND!
 
-```
+```console
 root@blinils:~/ICECTF# pngcheck -f -v corrupted.png
 File: corrupted.png (469363 bytes)
   File is CORRUPTED.  It seems to have suffered EOL conversion.
@@ -71,7 +71,7 @@ The first eight bytes of a PNG file always contain the following values:
 
 Let's check this with the xxd command, which creates an hex dump of a given file or standard input.
 
-```
+```console
 root@blinils:~/ICECTF# xxd -l8 corrupted.png
 
 00000000: 9050 4e47 0e1a 0a1b                      .PNG....
@@ -87,7 +87,7 @@ What we have to do is modify the first eight bytes of the PNG file.
 
 It's easier to make it with an hex editor, but really much funnier to do it with a line command!
 
-```
+```console
 # xxd -l8 corrupted.png
 00000000: 9050 4e47 0e1a 0a1b                      .PNG....
 
@@ -102,7 +102,7 @@ It's easier to make it with an hex editor, but really much funnier to do it with
 
 The "new" file is repaired......... almost repaired!
 
-```
+```console
 root@blinils:~/ICECTF# pngcheck corrupted.png
 corrupted.png  additional data after IEND chunk
 ERROR: corrupted.png

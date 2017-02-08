@@ -21,7 +21,7 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 * [Drive Home (Reconaissance, 50 points)](challenges/drive-home-50)
 * [Archive Me (Reconaissance, 50 points)](challenges/archive-me-50)
 * [Chocolate (Web Exploitation, 50 points)](challenges/chocolate-50)
-* Best Ganondorf (Forensics, 50 points)
+* [Best Ganondorf (Forensics, 50 points)](challenges/best-ganondorf-50)
 * Java Madness (Reverse Engineering, 50 points)
 * Hide And Seek (Binary Exploitation, 50 points)
 * [Yummi (Cryptography, 60 points)](challenges/yummi-60)
