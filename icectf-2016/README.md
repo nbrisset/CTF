@@ -11,13 +11,13 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 ### Table of contents
 
 #### Stage 1
-* Hello World! (Misc, 1 point)
-* Spotlight (Web, 10 points)
+* [Hello World! (Misc, 1 point)](challenges/hello-world-1)
+* [Spotlight (Web, 10 points)](challenges/spotlight-10)
 * All your Base are belong to us (Misc, 15 points)
 * Rotated! (Cryptography, 20 points)
 * Move Along (Web, 30 points)
 * Substituted (Cryptography, 30 points)
-* [IRC I (Misc, 35 points)](irc-i-35)
+* [IRC I (Misc, 35 points)](challenges/irc-i-35)
 * Alien Message (Cryptography, 40 points)
 * Time Traveler (Forensics, 45 points)
 * Scavenger Hunt (Misc, 50 points)
@@ -33,7 +33,7 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 * Thor's a hacker now (Misc, 55 points)
 * Dear diary (Pwn, 60 points)
 * Exposed! (Web, 60 points)
-* [IRC II (Misc, 60 points)](irc-ii-60)
+* [IRC II (Misc, 60 points)](challenges/irc-ii-60)
 * RSA (Cryptography, 60 points)
 * Smashing Profit! (Pwn, 60 points)
 * Miners! (Web, 65 points)
@@ -42,10 +42,10 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 
 #### Stage 3
 * Audio Problems (Forensics, 50 points)
-* [Corrupt Transmission (Forensics, 50 points)](corrupt-transmission-50)
-* [Vape Nation (Stego, 50 points)](vape-nation-50)
+* [Corrupt Transmission (Forensics, 50 points)](challenges/corrupt-transmission-50)
+* [Vape Nation (Stego, 50 points)](challenges/vape-nation-50)
 * Blue Monday (Misc, 60 points)
-* [R.I.P Transmission (Forensics, 65 points)](rip-transmission-65)
+* [R.I.P Transmission (Forensics, 65 points)](challenges/rip-transmission-65)
 * ChainedIn (Web, 75 points)
 * Matrix (Misc, 85 points)
 * l33tcrypt (Cryptography, 90 points)

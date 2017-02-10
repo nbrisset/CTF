@@ -25,5 +25,5 @@ Let's [join it](https://tools.ietf.org/html/rfc1459#section-4.2.1) and see what 
 
 ```
 10:10 Blinils (~Blinils@-censored IP-.bc.googleusercontent.com) has joined the channel 
-10:10 The topic is:  Want flags? We got 'em! IceCTF{pL3AsE_D0n7_5h4re_fL495_JUsT_doNT}  
+10:10 The topic is:  Want flags? We got 'em! IceCTF{pL3AsE_D0n7_5h4re_fL495_JUsT_doNT}
 ```
