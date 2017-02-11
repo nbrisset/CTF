@@ -13,8 +13,8 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 #### Stage 1
 * [Hello World! (Misc, 1 point)](challenges/hello-world-1)
 * [Spotlight (Web, 10 points)](challenges/spotlight-10)
-* All your Base are belong to us (Misc, 15 points)
-* Rotated! (Cryptography, 20 points)
+* [All your Base are belong to us (Misc, 15 points)](challenges/all-your-base-are-belong-to-us-15)
+* [Rotated! (Cryptography, 20 points)](rotated-20)
 * Move Along (Web, 30 points)
 * Substituted (Cryptography, 30 points)
 * [IRC I (Misc, 35 points)](challenges/irc-i-35)
