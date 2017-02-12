@@ -2,7 +2,9 @@ _[<<< Return to BitsCTF 2017 tasks and writeups](/bitsctf-2017)_
 # flagception (Forensics, 30 points)
 
 >Yo dawg, I heard you like flags
+
 >So I put a flag in your flag
+
 >Flag format: BITSCTF{a1phanum3r1c_w0rds}
 
 Unlike the other challenges, there is no other clue: neither a website nor a file to deal with.
