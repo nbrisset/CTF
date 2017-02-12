@@ -3,7 +3,7 @@ _[<<< Return to BitsCTF 2017 tasks and writeups](/bitsctf-2017)_
 
 >Sherlock has a mystery in front of him. Help him to find the flag.
 
-This challenge is [an extract](final.txt) from the adventures of Sherlock Holmes. While I was reading the first paragraph, a thing really jumped out at me: there were some capital letters randomly put in the text, such as "i was seiZEd with a keen desiRe tO see holmes again".
+This challenge is [an excerpt](final.txt) of the adventures of Sherlock Holmes. While I was reading the first paragraph, a thing really jumped out at me: there were some capital letters randomly put in the text, such as "i was seiZEd with a keen desiRe tO see holmes again".
 
 Then I extracted all the capital letters, which eventually gave "binary words" (ZERO and ONE).
 

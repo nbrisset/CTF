@@ -13,7 +13,7 @@ So we have to find a flag.. in a flag... wait... does the CTF platform have a fl
 
 ![Logo of BitsCTF](logo.png)
 
-Pretty nice [ambigram](https://en.wikipedia.org/wiki/Ambigram), by the way. If we zoom in the logo, in order to look more closely the flag, we can see in its top-left corner some darker blue pixels. It is more obvious if we change the colours. The BITSCTF{} flag may be concealed in these pixels.
+Pretty nice [ambigram](https://en.wikipedia.org/wiki/Ambigram), by the way. If we zoom in the logo, in order to look more closely to the flag, we can see some darker blue pixels in its top-left corner. It is more obvious if we change the colours. The BITSCTF{} flag may be concealed in these pixels.
 
 ![Zoom in the logo](zoomed_flag.png)
 

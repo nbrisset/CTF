@@ -5,13 +5,13 @@ _[<<< Return to BitsCTF 2017 tasks and writeups](/bitsctf-2017)_
 
 This challenge consists in [a pcapng file](ws1_2.pcapng) (a network traffic capture).
 
-First way to solve the challenge: using strings.
+The first way to solve the challenge: using strings.
 
 ```console
 root@blinils:~/bitsctf-2017# strings ws1_2.pcapng | grep BITSCTF
 $MyPass BITSCTF{such_s3cure_much_w0w}|
 ```
 
-Second way to solve the challenge: using Wireshark.
+The second way to solve the challenge: using Wireshark.
 
 ![Wireshark on Woodstock](wireshark-woodstock.png)

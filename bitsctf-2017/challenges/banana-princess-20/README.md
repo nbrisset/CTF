@@ -3,7 +3,7 @@ _[<<< Return to BitsCTF 2017 tasks and writeups](/bitsctf-2017)_
 
 >The princess has been kidnapped! It is up to you to rescue her now, with the help of the minions. [They have provided you with a letter](MinionQuest.pdf) (which may or may not have touched the kidnappers hands on its way to you).
 
-We are given a link to a file which is supposed to be a PDF file and which name is "MinionQuest.pdf".
+We are given a link to a file which is supposed to be a PDF file and which is named "MinionQuest.pdf".
 
 If it is really a PDF file, it really seems corrupted because it can't be loaded into a viewer or a browser.
 

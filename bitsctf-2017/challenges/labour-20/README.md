@@ -3,7 +3,7 @@ _[<<< Return to BitsCTF 2017 tasks and writeups](/bitsctf-2017)_
 
 >Follow your heart, for it leads you straight to the answer.
 
-This challenge consists in [a list of GPS coordinates](DoSomethingWithThis), which name is "DoSomethingWithThis".
+This challenge consists in [a list of GPS coordinates](DoSomethingWithThis), which is named "DoSomethingWithThis".
 
 ```console
 root@blinils:~/bitsctf-2017# file DoSomethingWithThis
