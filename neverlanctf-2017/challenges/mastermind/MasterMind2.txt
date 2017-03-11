@@ -1,0 +1,22 @@
++-----------------------+
+|       |       |       |
+|   7   |   3   |   6   | One number is correct but wrongly placed
+|       |       |       |
+|_______|_______|_______|
+|       |       |       |
+|   0   |   6   |   5   | One number is correct and correctly placed
+|       |       |       |
+|_______|_______|_______|
+|       |       |       |
+|   3   |   7   |   2   | Two numbers are correct but wrongly placed
+|       |       |       |
+|_______|_______|_______|
+|       |       |       |
+|   6   |   4   |   7   | No numbers are correct
+|       |       |       |
+|_______|_______|_______|
+|       |       |       |
+|   5   |   2   |   4   | One number is correct and correctly placed
+|       |       |       |
+|       |       |       |
++-----------------------+
