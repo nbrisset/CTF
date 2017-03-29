@@ -1,7 +1,8 @@
 # CTF write-ups and snippets by Blinils
 
+* [2017/03 - **EasyCTF 2017** (44th place / 1938 teams)](easyctf-2017)
 * [2017/02 - **NeverLAN CTF** (1st place / 210 teams)](neverlanctf-2017)
-* [2017/02 - **BITSCTF 2017** (71th place / 275 teams)](bitsctf-2017)
+* [2017/02 - **BITSCTF 2017** (71st place / 275 teams)](bitsctf-2017)
 * [2017/02 - **AlexCTF** (305th place / 1029 teams)](alexctf-2017)
 * [2016/11 - **GreHack CTF 2016** (16th place / 33 teams) on site](grehack-ctf-2016)
 * [2016/08 - **IceCTF 2016** (98th place / 1695 teams)](icectf-2016)
