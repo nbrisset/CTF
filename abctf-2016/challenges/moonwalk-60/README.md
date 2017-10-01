@@ -49,7 +49,7 @@ Megapixels                     : 9.4
 ```
 
 This file is quite heavy, it might have hidden data in it,
-as for the [Banana Boy challenge](/sctf-2016-q1/banana-boy-20) from the [sCTF event](/sctf-2016-q1).
+as for the [Banana Boy challenge](/sctf-2016-q1/challenges/banana-boy-20) from the [sCTF event](/sctf-2016-q1).
 
 Let's use [binwalk](http://tools.kali.org/forensics/binwalk) and
 [hachoir-subfile](https://pypi.python.org/pypi/hachoir-subfile/0.5.3),

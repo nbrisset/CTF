@@ -7,7 +7,7 @@ _[<<< Return to IceCTF 2016 tasks and writeups](/icectf-2016)_
 >Please consider that he may be slow to respond or the command you're trying may not work.
 
 Here it is, the last challenge of the CTF about IRC.
-The first write-up is here: [IRC I (Misc)](/icectf-2016/irc-i-35)
+The first write-up is here: [IRC I (Misc)](/icectf-2016/challenges/irc-i-35)
 
 Once again, we have to return to their IRC server, in order to ~~trick~~ politely ask the bot to give us the flag.
 
