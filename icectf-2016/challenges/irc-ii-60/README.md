@@ -6,8 +6,8 @@ _[<<< Return to IceCTF 2016 tasks and writeups](/icectf-2016)_
 >The "help" command has been removed so here is the output from !help.
 >Please consider that he may be slow to respond or the command you're trying may not work.
 
-Here it is, the last challenge of the CTF about IRC. The first write-up is here:
-[IRC I (Misc)](https://github.com/nbrisset/CTF/tree/master/icectf-2016/irc-i-35)
+Here it is, the last challenge of the CTF about IRC.
+The first write-up is here: [IRC I (Misc)](/icectf-2016/irc-i-35)
 
 Once again, we have to return to their IRC server, in order to ~~trick~~ politely ask the bot to give us the flag.
 

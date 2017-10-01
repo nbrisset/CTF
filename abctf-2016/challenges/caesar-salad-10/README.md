@@ -4,7 +4,7 @@ _[<<< Return to ABCTF 2016 tasks and writeups](/abctf-2016)_
 >Most definitely the best salad around. Can you decrypt this for us? xyzqc{t3_qelrdeq_t3_k33a3a_lk3_lc_qe3p3}
 
 Many CTFs begin with a [Caesar code](https://en.wikipedia.org/wiki/Caesar_cipher) challenge,
-as a welcome gift, such as [When in Rome](/sctf-2016-q1/when-in-rome-10) ([sCTF 2016 Q1](/sctf-2016-q1)).
+as a welcome gift, such as [When in Rome](/sctf-2016-q1/challenges/when-in-rome-10) ([sCTF 2016 Q1](/sctf-2016-q1)).
 
 This time, I used the [Caesar cipher in Bash](http://www.shell-fu.org/lister.php?id=195) with a right shift of 3,
 and [a tip](https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps)

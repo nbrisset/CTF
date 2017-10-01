@@ -36,8 +36,8 @@ Phew! We will not have to disassemble executable files... for this time.
 
 Instead, let's extract the hidden ZIP archive from the offset 1323949, with the "dd" comma-.....
 
-...... Wait a minute... this write-up is barely the same as the [Banana Boy]
-(https://github.com/nbrisset/CTF/tree/master/sctf-2016-q1/banana-boy-20) one... except if we use another tool.
+...... Wait a minute... this write-up is barely the same as the
+[Banana Boy](/sctf-2016-q1/challenges/banana-boy-20) one... except if we use another tool.
 
 ```
 root@blinils:~/ICECTF# foremost rip
