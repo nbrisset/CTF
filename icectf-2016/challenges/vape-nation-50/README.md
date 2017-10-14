@@ -5,7 +5,7 @@ _[<<< Return to IceCTF 2016 tasks and writeups](/icectf-2016)_
 
 We are given a link to a file which name is "vape_nation.png".
 
-```
+```console
 root@blinils:~/ICECTF# file vape_nation.png
 vape_nation.png: PNG image data, 640 x 640, 8-bit/color RGB, non-interlaced
 ```

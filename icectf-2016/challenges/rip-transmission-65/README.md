@@ -9,7 +9,7 @@ We are given a link to a file which name is "rip_2067f9686b4d07eea-cut-4ccc26244
 
 First of all, and as usual, let's see what kind of stegano we have to deal with here.
 
-```
+```console
 root@blinils:~/ICECTF# mv rip_2067f9686b4d07eea2cac19b9c6588b2abac16500135901ce8781e4ccc262446 rip
 
 root@blinils:~/ICECTF# file rip
@@ -21,7 +21,7 @@ This is obviously a real executable file. But is there hidden data in it?
 
 Let's use "hachoir-subfile", a tool designed to analyze and extract data contained in a file.
 
-```
+```console
 root@blinils:~/ICECTF# hachoir-subfile rip
 [+] Start search on 1698648 bytes (1.6 MB)
 [+] File at 0: ELF Unix/BSD program/library: 32 bits
@@ -39,7 +39,7 @@ Instead, let's extract the hidden ZIP archive from the offset 1323949, with the 
 ...... Wait a minute... this write-up is barely the same as the
 [Banana Boy](/sctf-2016-q1/challenges/banana-boy-20) one... except if we use another tool.
 
-```
+```console
 root@blinils:~/ICECTF# foremost rip
 Processing: rip
 |foundat=rip.jpgUT
@@ -48,7 +48,7 @@ Processing: rip
 
 The result has been stored in the "output" folder, let's have a look.
 
-```
+```console
 root@blinils:~/ICECTF# ls -al ./output/zip/
 total 120
 drwxr-xr-- 2 root root   4096 août  25 19:17 .
@@ -58,7 +58,7 @@ drwxr-xr-- 3 root root   4096 août  25 19:17 ..
 
 Once extracted from the ZIP archive, the file "rip.jpg" will give us the flag and 65 more points!
 
-```
+```console
 root@blinils:~/ICECTF# unzip 00002585.zip
 Archive:  00002585.zip
 [00002585.zip] rip.jpg password:
@@ -75,7 +75,7 @@ But this time, we are going to use fcrackzip, a tool dedicated to archive files 
 Yet I am using the same dictionary as PasswordPDF, the big one from Dirbuster, a tool designed to search for
 directories and files names on web servers.
 
-```
+```console
 root@blinils:~/ICECTF# time fcrackzip -u -D -p '/usr/share/wordlists/dirb/big.txt' 00002585.zip
 PASSWORD FOUND!!!!: pw == bunny
  
@@ -86,7 +86,7 @@ sys        0m0.000s
 
 The password was found at lightning speed (kind of). We open the ZIP archive and... taadaaam!
 
-```
+```console
 root@blinils:~/ICECTF# unzip 00002585.zip
 Archive:  00002585.zip
 [00002585.zip] rip.jpg password:            (bunny)

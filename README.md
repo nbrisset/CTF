@@ -1,5 +1,6 @@
 # CTF write-ups and snippets by Blinils
 
+* 2017/10 - **Dev Test Days 2017** (team organizers)
 * [2017/03 - **EasyCTF 2017** (44th place / 1938 teams)](easyctf-2017)
 * [2017/02 - **NeverLAN CTF** (1st place / 210 teams)](neverlanctf-2017)
 * [2017/02 - **BITSCTF 2017** (71st place / 275 teams)](bitsctf-2017)
