@@ -16,7 +16,7 @@ root@blinils:~/bitsctf-2017# head -n4 DoSomethingWithThis
 <!--Use appropriate brackets and underscores to separate words if you succeed-->
 ```
 
-It is a [GPX file](https://en.wikipedia.org/wiki/GPS_Exchange_Format) which can be handled online, [with a few tools](https://www.qwant.com/?q=gpx online) such as GPS Visualizer or VisuGPX.
+It is a [GPX file](https://en.wikipedia.org/wiki/GPS_Exchange_Format) which can be handled online, [with a few tools](https://www.qwant.com/?q=gpx) online such as GPS Visualizer or VisuGPX.
 
 ![Our GPS data has been processed by GPS Visualizer](GPSVisualizer-map.png)
 
