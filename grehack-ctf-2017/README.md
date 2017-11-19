@@ -47,3 +47,4 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 * Earn your beer 1 (Hardware, 150 points)
 * Earn your beer 2 (Hardware, 300 points)
 * Earn your beer 3 (Hardware, 500 points)
+

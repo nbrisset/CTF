@@ -10,7 +10,7 @@ _[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF)_
 
 ### Table of contents
 
-* [Bienvenue (Misc, 100 points)](challenges/bienvenue-100 points)
+* [Bienvenue (Misc, 100 points)](challenges/bienvenue-100)
 * [Crack the Pass #1 (Misc, 200 points)](challenges/crack-the-pass1-200)
 * Crack the Pass #2 (Misc, 250 points)
 * RIORIM (Misc, 300 points)
