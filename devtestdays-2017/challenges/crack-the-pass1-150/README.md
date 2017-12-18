@@ -5,7 +5,7 @@ _[<<< Return to Dev Test Days 2017 tasks and writeups](/devtestdays-2017)_
 
 >Pouvez-vous nous aider et récupérer le flag ?
 
-Indeed, a password is required to open the archive FIND_THE_PASS1.zip, whereas the flag seems to be in a PNG file.
+Voyons voir à quoi ressemble ce document. Que se passe-t-il si nous tentons de le décompresser sans fournir de mot de passe ?
 
 ```console
 root@blinils:/DTD2017# unzip FIND_THE_PASS1.zip
@@ -16,6 +16,10 @@ password incorrect--reenter:
    skipping: such_a_dog.png          incorrect password
 ```
 
+Cela n'a pas fonctionné, mais nous apprenons que le flag réside très certainement dans un fichier PNG.
+
+Nous allons devoir trouver ce fameux mot de passe à cinq chiffres. Le faire à la main serait très fastidieux, c'est pourquoi nous allons faire appel à un outil permettant d'automatiser la recherche. Pour rappel, voici les différentes techniques pour crack^^W tester la robustesse d'un mot de passe (en anglais).
+
 Passwords are generally cracked using one of the following methods : guessing, dictionary attacks or bruteforce attacks.
 
 * Guessing: for example, a list of the most commonly used passwords (azerty, 123456, password, orange...) 
@@ -25,14 +29,14 @@ remember, but an easy password to guess or to find on the social networks.
 * [Dictionary attacks](https://en.wikipedia.org/wiki/Password_cracking): this attack is
 "based on trying all the strings in a [...] list of words such as in a dictionary".
 
-* [Brute-force attacks](https://en.wikipedia.org/wiki/Brute-force_attack): every possible combination is tested, which may take
-a very VERY long time but the password will be eventually found. Assuming that the password is five characters long and only
-consists in digits, there are 100 000 possible combinations (00000 to 99999), thus this method will be used for this challenge.
+* [Brute-force attacks](https://en.wikipedia.org/wiki/Brute-force_attack): every possible combination is tested, which may take 
+a very VERY long time but the password will be eventually found. Actually, desktop computers can test over a hundred million 
+passwords per second using password cracking tools.
 
-Actually, desktop computers can test over a hundred million passwords per second using password cracking tools.
+Étant donné que le sésame est constitué d'uniquement cinq chiffres, cela nous donne 100 000 (00000 to 99999) combinaisons à tester.
 
-We are going to use [fcrackzip](https://korben.info/cracker-des-zip-rar-7z-et-pdf-sous-linux.html),
-a tool dedicated to crack passwords put on archive files (like pdfcrack for PDF files).
+Nous allons donc effectuer une attaque de type bruteforce, à l'aide d'un outil spécialisé 
+nommé [fcrackzip](https://korben.info/cracker-des-zip-rar-7z-et-pdf-sous-linux.html).
 
 ```console
 root@blinils:/DTD2017# man fcrackzip
@@ -54,7 +58,7 @@ root@blinils:/DTD2017# man fcrackzip
    Use an initial password of length min, and check all passwords up to passwords of length max.
 ```
 
-Let's begin the attack!
+Avec toutes ces informations, nous allons pouvoir lancer l'attaque !
 
 ```console
 root@blinils:/DTD2017# time fcrackzip -b -c 1 -v -u -l5 FIND_THE_PASS1.zip
@@ -68,7 +72,7 @@ user	0m0,720s
 sys	0m0,149s
 ```
 
-The 5-digit password was found at lightning speed (kind of). We open the ZIP archive and...
+Et hop ! Le mot de passe est trouvé en moins d'une demi-seconde, nous pouvons désormais décompresser le fichier ZIP.
 
 ```console
 root@blinils:/DTD2017# ls
@@ -82,4 +86,4 @@ root@blinils:/DTD2017# ls
 FIND_THE_PASS1.zip  such_a_dog.png
 ```
 
-... taadaaam! We can now [read the flag](such_a_dog.png) and score 150 points!
+Le flag est bel et bien situé dans [le fichier PNG](such_a_dog.png), ce qui nous donne 15O points supplémentaires !
