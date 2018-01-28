@@ -1,4 +1,4 @@
-_[<<< Return to Dev Test Days 2017 tasks and writeups](/2017-devtestdays)_
+_[<<< Return to Dev Test Days 2017 tasks and writeups](/CTF-Jeopardy/2017-devtestdays)_
 # Crack the Pass #2 (Misc, 250 points)
 
 >L'enquête s'accélère : [un document sensible](FIND_THE_PASS2.zip) a été intercepté, toujours protégé par un mot de passe. Une écoute téléphonique ultérieure révèle que le propriétaire de ce fichier utilise désormais des mots français de six lettres, choisis au hasard dans le dictionnaire.

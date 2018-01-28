@@ -1,4 +1,4 @@
-_[<<< Return to AlexCTF 2017 tasks and writeups](/2017-alexctf)_
+_[<<< Return to AlexCTF 2017 tasks and writeups](/CTF-Jeopardy/2017-alexctf)_
 # Poor RSA (Cryptography, 200 points)
 
 >This time Fady decided to go for modern cryptography implementations.

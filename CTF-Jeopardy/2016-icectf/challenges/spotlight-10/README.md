@@ -1,4 +1,4 @@
-_[<<< Return to IceCTF 2016 tasks and writeups](/2016-icectf)_
+_[<<< Return to IceCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-icectf)_
 # Spotlight (Web, 10 points)
 
 >Someone turned out the lights and now we can't find anything.

@@ -1,4 +1,4 @@
-_[<<< Return to NeverLAN CTF 2017 tasks and writeups](/2017-neverlanctf)_
+_[<<< Return to NeverLAN CTF 2017 tasks and writeups](/CTF-Jeopardy/2017-neverlanctf)_
 
 # Master Mind 1 (Other, 50 points)
 >Can you break my three digit lock? [MasterMind1.txt](MasterMind1.txt)

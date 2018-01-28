@@ -1,4 +1,4 @@
-_[<<< Return to Dev Test Days 2017 tasks and writeups](/2017-devtestdays)_
+_[<<< Return to Dev Test Days 2017 tasks and writeups](/CTF-Jeopardy/2017-devtestdays)_
 # Bienvenue (Misc, 50 points)
 
 >Bienvenue dans ce Capture The Flag, le but est de résoudre le plus de challenges possible (les solutions sont appelées « flags »). Plus une épreuve est compliquée, plus sa résolution rapporte de points. Cryptographie, stéganographie, logique, programmation, hacking... il y en a pour tous les goûts et pour tous les niveaux !

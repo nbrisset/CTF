@@ -1,4 +1,4 @@
-_[<<< Return to IceCTF 2016 tasks and writeups](/2016-icectf)_
+_[<<< Return to IceCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-icectf)_
 # R.I.P Transmission (Forensics, 65 points)
 
 >[This](https://play.icec.tf/problem-static/rip_2067f9686b4d07eea2cac19b9c6588b2abac16500135901ce8781e4ccc262446)
@@ -37,7 +37,7 @@ Phew! We will not have to disassemble executable files... for this time.
 Instead, let's extract the hidden ZIP archive from the offset 1323949, with the "dd" comma-.....
 
 ...... Wait a minute... this write-up is barely the same as the
-[Banana Boy](/2016-sctf-q1/challenges/banana-boy-20) one... except if we use another tool.
+[Banana Boy](/CTF-Jeopardy/2016-sctf-q1/challenges/banana-boy-20) one... except if we use another tool.
 
 ```console
 root@blinils:~/ICECTF# foremost rip

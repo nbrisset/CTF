@@ -1,4 +1,4 @@
-_[<<< Return to BitsCTF 2017 tasks and writeups](/2017-bitsctf)_
+_[<<< Return to BitsCTF 2017 tasks and writeups](/CTF-Jeopardy/2017-bitsctf)_
 # Batman vs Joker (Web, 30 points)
 
 >Joker has left a message for you.

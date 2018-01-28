@@ -1,4 +1,4 @@
-_[<<< Return to ABCTF 2016 tasks and writeups](/2016-abctf)_
+_[<<< Return to ABCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-abctf)_
 # Archive Me (Reconaissance, 50 points)
 
 >If you could look at our website from a while ago im sure the flag would be there...

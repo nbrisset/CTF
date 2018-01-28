@@ -1,4 +1,4 @@
-_[<<< Return to ABCTF 2016 tasks and writeups](/2016-abctf)_
+_[<<< Return to ABCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-abctf)_
 # Chocolate (Web Exploitation, 50 points)
 
 >If you could become admin you would get a flag. [Link](http://yrmyzscnvh.abctf.xyz/web3/)

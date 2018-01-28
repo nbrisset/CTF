@@ -1,4 +1,4 @@
-_[<<< Return to BitsCTF 2017 tasks and writeups](/2017-bitsctf)_
+_[<<< Return to BitsCTF 2017 tasks and writeups](/CTF-Jeopardy/2017-bitsctf)_
 # Banana Princess (Crypto, 20 points)
 
 >The princess has been kidnapped! It is up to you to rescue her now, with the help of the minions. [They have provided you with a letter](MinionQuest.pdf) (which may or may not have touched the kidnappers hands on its way to you).

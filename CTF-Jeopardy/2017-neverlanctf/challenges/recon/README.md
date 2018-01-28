@@ -1,4 +1,4 @@
-_[<<< Return to NeverLAN CTF 2017 tasks and writeups](/2017-neverlanctf)_
+_[<<< Return to NeverLAN CTF 2017 tasks and writeups](/CTF-Jeopardy/2017-neverlanctf)_
 
 # NeverLAN (Recon, 50 points)
 >...

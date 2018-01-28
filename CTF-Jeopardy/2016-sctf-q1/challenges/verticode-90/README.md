@@ -1,4 +1,4 @@
-_[<<< Return to sCTF 2016 Q1 tasks and writeups](/2016-sctf-q1)_
+_[<<< Return to sCTF 2016 Q1 tasks and writeups](/CTF-Jeopardy/2016-sctf-q1)_
 # Verticode (Cryptography, 90 points)
 
 >Welcome to Verticode, the new method of translating text into vertical codes.

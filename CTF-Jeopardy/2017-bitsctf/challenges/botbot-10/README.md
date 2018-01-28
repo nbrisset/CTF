@@ -1,4 +1,4 @@
-_[<<< Return to BitsCTF 2017 tasks and writeups](/2017-bitsctf)_
+_[<<< Return to BitsCTF 2017 tasks and writeups](/CTF-Jeopardy/2017-bitsctf)_
 # BotBot (Web, 10 points)
 
 >Should not ask for the description of a 5 marker. botbot.bitsctf.bits-quark.org

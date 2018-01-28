@@ -1,4 +1,4 @@
-_[<<< Return to CTF write-ups and snippets](/CTF/CTF-Jeopardy)_
+_[<<< Return to CTF write-ups and snippets](/CTF-Jeopardy)_
 
 # Dev Test Days CTF (2017) tasks and writeups
 

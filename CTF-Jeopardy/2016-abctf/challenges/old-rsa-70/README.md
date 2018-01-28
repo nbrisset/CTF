@@ -1,4 +1,4 @@
-_[<<< Return to ABCTF 2016 tasks and writeups](/2016-abctf)_
+_[<<< Return to ABCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-abctf)_
 # Old RSA (Cryptography, 70 points)
 
 >I recovered an RSA encrypted message from the 1980's. can you decrypt it?

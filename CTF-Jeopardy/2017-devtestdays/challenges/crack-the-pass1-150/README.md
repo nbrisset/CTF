@@ -1,4 +1,4 @@
-_[<<< Return to Dev Test Days 2017 tasks and writeups](/2017-devtestdays)_
+_[<<< Return to Dev Test Days 2017 tasks and writeups](/CTF-Jeopardy/2017-devtestdays)_
 # Crack the Pass #1 (Misc, 150 points)
 
 >Dans le cadre d'une vaste affaire d'espionnage sur le site de Meylan, l'agence de renseignement Orange Hats [a intercepté un document sensible](FIND_THE_PASS1.zip) ; or impossible de l'ouvrir car il faut un mot de passe. Tout ce que nous savons est que le propriétaire de ce fichier n'est pas très précautionneux et utilise systématiquement des mots de passe à cinq chiffres.

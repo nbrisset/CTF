@@ -1,4 +1,4 @@
-_[<<< Return to IceCTF 2016 tasks and writeups](/2016-icectf)_
+_[<<< Return to IceCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-icectf)_
 # Corrupt Transmission (Forensics, 50 points)
 
 >We intercepted

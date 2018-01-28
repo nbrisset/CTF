@@ -1,4 +1,4 @@
-_[<<< Return to sCTF 2016 Q1 tasks and writeups](/2016-sctf-q1)_
+_[<<< Return to sCTF 2016 Q1 tasks and writeups](/CTF-Jeopardy/2016-sctf-q1)_
 # Musical Penguins (Forensics, 45 points)
 
 >[This file](mystery.tg) is a complete mystery to me, I've never seen notes like these!

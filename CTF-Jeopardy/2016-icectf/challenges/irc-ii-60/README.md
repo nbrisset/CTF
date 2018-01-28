@@ -1,4 +1,4 @@
-_[<<< Return to IceCTF 2016 tasks and writeups](/2016-icectf)_
+_[<<< Return to IceCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-icectf)_
 # IRC II (Misc, 60 points)
 
 >Can you trick our IRC bot into giving you his flag? Talk to IceBot on glitch.is:6667.
@@ -7,7 +7,7 @@ _[<<< Return to IceCTF 2016 tasks and writeups](/2016-icectf)_
 >Please consider that he may be slow to respond or the command you're trying may not work.
 
 Here it is, the last challenge of the CTF about IRC.
-The first write-up is here: [IRC I (Misc)](/2016-icectf/challenges/irc-i-35)
+The first write-up is here: [IRC I (Misc)](/CTF-Jeopardy/2016-icectf/challenges/irc-i-35)
 
 Once again, we have to return to their IRC server, in order to ~~trick~~ politely ask the bot to give us the flag.
 

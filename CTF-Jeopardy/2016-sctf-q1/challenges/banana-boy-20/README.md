@@ -1,4 +1,4 @@
-_[<<< Return to sCTF 2016 Q1 tasks and writeups](/2016-sctf-q1)_
+_[<<< Return to sCTF 2016 Q1 tasks and writeups](/CTF-Jeopardy/2016-sctf-q1)_
 # Banana Boy (Forensics, 20 points)
 
 >Carter loves bananas, but I heard a rumor that he's hiding something! [Can you find it?](carter.jpg)

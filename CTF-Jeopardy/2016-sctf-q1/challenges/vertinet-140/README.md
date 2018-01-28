@@ -1,4 +1,4 @@
-_[<<< Return to sCTF 2016 Q1 tasks and writeups](/2016-sctf-q1)_
+_[<<< Return to sCTF 2016 Q1 tasks and writeups](/CTF-Jeopardy/2016-sctf-q1)_
 # Vertinet (Cryptography, 140 points)
 
 >Welcome to Vertinet.
@@ -6,7 +6,7 @@ _[<<< Return to sCTF 2016 Q1 tasks and writeups](/2016-sctf-q1)_
 >This problem follows the same specifications as the previous Verticode problem, except that you have to solve
 many of them by developing a client to communicate with the server available at problems1.2016q1.sctf.io:50000. Good luck.
 
-Il s'agit du même principe que le challenge [Verticode](/2016-sctf-q1/verticode-90),
+Il s'agit du même principe que le challenge [Verticode](/CTF-Jeopardy/2016-sctf-q1/verticode-90),
 à ceci près que l'on devra résoudre des codes en boucle.
 
 En se connectant au serveur via la commande `nc problems1.2016q1.sctf.io 50000` voici ce que l'on obtient.

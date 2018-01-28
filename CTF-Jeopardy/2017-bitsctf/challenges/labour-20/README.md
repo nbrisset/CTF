@@ -1,4 +1,4 @@
-_[<<< Return to BitsCTF 2017 tasks and writeups](/2017-bitsctf)_
+_[<<< Return to BitsCTF 2017 tasks and writeups](/CTF-Jeopardy/2017-bitsctf)_
 # Labour (Misc, 20 points)
 
 >Follow your heart, for it leads you straight to the answer.

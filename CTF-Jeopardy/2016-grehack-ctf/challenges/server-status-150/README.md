@@ -1,12 +1,13 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](/2016-grehack-ctf)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/CTF-Jeopardy/2016-grehack-ctf)_
 # Server status (Web, 150 points)
 
 > Sometimes data that should be kept private can become public
 
 This was the second out of four Web challenges: we had to find a flag on a website.
 
-Because this challenge — [as the first one](/2016-grehack-ctf/challenges/robots.txt-50) — is now offline, I will use the
-[Docker image](https://github.com/GreHack/CTF-challs/tree/master/2016/Web/150%20-%20Server%20status) available on Github.
+Because this challenge — [as the first one](/CTF-Jeopardy/2016-grehack-ctf/challenges/robots.txt-50) — is now offline,
+I will use the [Docker image](https://github.com/GreHack/CTF-challs/tree/master/2016/Web/150%20-%20Server%20status) available
+on Github.
 
 This small app seems to display the source code of a page web. Let's try it!
 

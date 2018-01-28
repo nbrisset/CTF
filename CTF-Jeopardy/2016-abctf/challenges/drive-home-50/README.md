@@ -1,4 +1,4 @@
-_[<<< Return to ABCTF 2016 tasks and writeups](/2016-abctf)_
+_[<<< Return to ABCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-abctf)_
 # Drive Home (Reconaissance, 50 points)
 
 >We found this link scribbled on a piece of paper:

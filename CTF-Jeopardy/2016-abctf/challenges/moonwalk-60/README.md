@@ -1,4 +1,4 @@
-_[<<< Return to ABCTF 2016 tasks and writeups](/2016-abctf)_
+_[<<< Return to ABCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-abctf)_
 # MoonWalk (Forensics, 60 points)
 
 >There is something a little off about [this picture](PurpleThing.png).
@@ -49,7 +49,8 @@ Megapixels                     : 9.4
 ```
 
 This file is quite heavy, it might have hidden data in it,
-as for the [Banana Boy challenge](/2016-sctf-q1/challenges/banana-boy-20) from the [sCTF event](/2016-sctf-q1).
+as for the [Banana Boy challenge](/CTF-Jeopardy/2016-sctf-q1/challenges/banana-boy-20)
+from the [sCTF event](/CTF-Jeopardy/2016-sctf-q1).
 
 Let's use [binwalk](http://tools.kali.org/forensics/binwalk) and
 [hachoir-subfile](https://pypi.python.org/pypi/hachoir-subfile/0.5.3),

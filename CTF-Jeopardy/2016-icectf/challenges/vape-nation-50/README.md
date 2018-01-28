@@ -1,4 +1,4 @@
-_[<<< Return to IceCTF 2016 tasks and writeups](/2016-icectf)_
+_[<<< Return to IceCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-icectf)_
 # Vape Nation (Stego, 50 points)
 
 >Go Green! [vape_nation.png](https://play.icec.tf/problem-static/vape_nation_7d550b3069428e39775f31e7299cd354c721459043cf1a077bb388f4f531d459.png)

@@ -1,4 +1,4 @@
-_[<<< Return to ABCTF 2016 tasks and writeups](/2016-abctf)_
+_[<<< Return to ABCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-abctf)_
 # Best Ganondorf (Forensics, 50 points)
 
 >You know the deal. Find a flag in [this](ezmonay.jpg) file?

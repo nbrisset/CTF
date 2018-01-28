@@ -1,4 +1,4 @@
-_[<<< Return to IceCTF 2016 tasks and writeups](/2016-icectf)_
+_[<<< Return to IceCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-icectf)_
 # Rotated! (Crypto, 20 points)
 
 >They went and ROTated the flag by 5 and then ROTated it by 8! The scoundrels!

@@ -1,4 +1,4 @@
-_[<<< Return to ABCTF 2016 tasks and writeups](/2016-abctf)_
+_[<<< Return to ABCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-abctf)_
 # Just open it (Forensics, 15 points)
 
 >I'm almost positive we put a flag in [this](https://mega.nz/#!q8FBHAqD!D2-GX_5pi5rb1cfjNGTV-NDWTahZiJlFfDl5PlUY8z8) file.
@@ -17,7 +17,7 @@ density 1x1, segment length 16, baseline, precision 8, 1024x768, frames 3
 ```
  
 Well, it's really a JPG file. As for the previous challenge,
-[Elemental](/2016-abctf/challenges/elemental-10), it seems that we have to dive deeper... in the code.
+[Elemental](/CTF-Jeopardy/2016-abctf/challenges/elemental-10), it seems that we have to dive deeper... in the code.
 
 Either with a text editor (at line 88 with Notepad++), or with a "strings / grep" command, the flag appears!
 

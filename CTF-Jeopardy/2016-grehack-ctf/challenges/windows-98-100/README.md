@@ -1,4 +1,4 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](/2016-grehack-ctf)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/CTF-Jeopardy/2016-grehack-ctf)_
 # Windows 98 (Forensic, 100 points)
 
 > Windows 98 could hide many things :)

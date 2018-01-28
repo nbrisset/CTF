@@ -1,4 +1,4 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](/2016-grehack-ctf)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/CTF-Jeopardy/2016-grehack-ctf)_
 # robots.txt is not the only one (Web, 50 points)
 
 > Get information

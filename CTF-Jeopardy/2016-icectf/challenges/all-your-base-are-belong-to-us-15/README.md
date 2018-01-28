@@ -1,4 +1,4 @@
-_[<<< Return to IceCTF 2016 tasks and writeups](/2016-icectf)_
+_[<<< Return to IceCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-icectf)_
 # All your Base are belong to us (Misc, 15 points)
 
 >What a mess... we got a raw flag but now what do we do... [flag.txt](flag.txt)

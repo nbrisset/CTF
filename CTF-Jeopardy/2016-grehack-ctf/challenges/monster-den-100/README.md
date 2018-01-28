@@ -1,4 +1,4 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](/2016-grehack-ctf)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/CTF-Jeopardy/2016-grehack-ctf)_
 # Monster Den (Stego, 100 points)
 
 >soon
@@ -78,7 +78,7 @@ Zilch!
 
 ![Screenshot #2 of StegSolve.jar](MD_SSjar_extract.png)
 
-That's better! As for the [Logo challenge](/2016-grehack-ctf/challenges/logo-50), 
+That's better! As for the [Logo challenge](/CTF-Jeopardy/2016-grehack-ctf/challenges/logo-50), 
 there is some noise in the red, green and blue "0 bit" planes: this probably means that there is hidden data in the LSB
 ([Least Significant Bit](http://ijact.org/volume3issue4/IJ0340004.pdf), a famous steganography technique).
 The data can eventually be dumped — thanks again to StegSolve —

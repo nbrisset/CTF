@@ -1,4 +1,4 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](/2016-grehack-ctf)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/CTF-Jeopardy/2016-grehack-ctf)_
 # Did you take a look at our logo? (Stego, 50 points)
 
 This was the second out of five steganography challenges:

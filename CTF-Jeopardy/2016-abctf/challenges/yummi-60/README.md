@@ -1,4 +1,4 @@
-_[<<< Return to ABCTF 2016 tasks and writeups](/2016-abctf)_
+_[<<< Return to ABCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-abctf)_
 # Yummi (Cryptography, 60 points)
 
 >Well [this image](baconian.bmp) means something and we need you to figure it out!

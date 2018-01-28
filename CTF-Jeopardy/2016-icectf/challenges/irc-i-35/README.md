@@ -1,4 +1,4 @@
-_[<<< Return to IceCTF 2016 tasks and writeups](/2016-icectf)_
+_[<<< Return to IceCTF 2016 tasks and writeups](/CTF-Jeopardy/2016-icectf)_
 # IRC I (Misc, 35 points)
 
 >There is someone sharing flags on our IRC server, can you find him and stop him? glitch.is:6667

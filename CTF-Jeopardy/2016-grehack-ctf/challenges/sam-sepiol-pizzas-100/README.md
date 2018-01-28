@@ -1,4 +1,4 @@
-_[<<< Return to GreHack CTF 2016 tasks and writeups](/2016-grehack-ctf)_
+_[<<< Return to GreHack CTF 2016 tasks and writeups](/CTF-Jeopardy/2016-grehack-ctf)_
 # Sam Sepiol's pizzas (Crypto, 100 points)
 
 > How much do you love pizza?

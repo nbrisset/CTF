@@ -1,4 +1,4 @@
-_[<<< Return to CTF write-ups and snippets](https://github.com/nbrisset/CTF/CTF-Jeopardy)_
+_[<<< Return to CTF write-ups and snippets](/CTF-Jeopardy)_
 
 # IceCTF 2016 tasks and writeups
 

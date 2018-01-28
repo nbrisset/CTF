@@ -1,4 +1,4 @@
-_[<<< Return to BitsCTF 2017 tasks and writeups](/2017-bitsctf)_
+_[<<< Return to BitsCTF 2017 tasks and writeups](/CTF-Jeopardy/2017-bitsctf)_
 # Sherlock (Crypto, 60 points)
 
 >Sherlock has a mystery in front of him. Help him to find the flag.
