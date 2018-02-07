@@ -1,4 +1,4 @@
 # Pentest Labs / VM walkthroughs by Blinils
 
-* [LampSecurity: CTF5](lampsecurity-ctf5)
+* [LampSecurity: CTF5](lampsecurity-CTF5)
 * ...
