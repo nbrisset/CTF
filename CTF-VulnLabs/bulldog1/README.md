@@ -499,8 +499,7 @@ GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
 --snip--
 ```
 
-Nous y sommes presque ! La commande [_strings_](https://en.wikipedia.org/wiki/Strings_(Unix))
-laisse apparaître _sudo su root_ et le mot de passe _SUPERultimatePASSWORDyouCANTget_.
+Nous y sommes presque ! [_strings_](https://en.wikipedia.org/wiki/Strings_(Unix)) laisse apparaître _sudo su root_ et le mot de passe _SUPERultimatePASSWORDyouCANTget_.
 
 ```console
 django@bulldog:/home/bulldogadmin/.hiddenadmindirectory$ sudo su root
@@ -572,11 +571,11 @@ id|password|is_superuser|username|first_name|last_name|email|is_staff|is_active|
 9|pbkdf2_sha256$20000$lA6iOt4XGXLw$0VHpbYjNiFN4CnHisuB+bFh72A6sn03Q+d34Laj7jkM=|0|sarah||||1|1|2017-08-19 06:06:56|2018-01-01 00:00:11.000000
 ```
 
-Dommage, les cookies de session stockés en base de données ont expiré et ne peuvent être rejoués. Cela dit, il semble possible de jouer avec les mots de passe. S'il paraît [impensable de les casser](https://www.sjoerdlangkemper.nl/2016/05/25/iterative-password-hashing/) au vu du temps de calcul que PBKDF2-HMAC-SHA256 demande, l'autre option consiste à les modifier à notre guise. Le mot de passe ciblé sera bien évidemment celui du compte admin.
+Dommage, les cookies de session stockés en base de données ont expiré et ne peuvent être rejoués. Cela dit, il semble possible de jouer avec les mots de passe du panel Django. S'il paraît [impensable de les casser](https://www.sjoerdlangkemper.nl/2016/05/25/iterative-password-hashing/) au vu du temps de calcul que PBKDF2-HMAC-SHA256 demande, l'autre option consiste à les modifier à notre guise. Le mot de passe ciblé sera bien évidemment celui du compte admin.
 
 ## Bonus n°2 : Modification du mot de passe du compte admin Django
 
-_Nota Bene : Django utilise un format différent de hash basé sur l'algorithme PBKDF2, PBKDF2-HMAC-SHA256, ce qui m'a fait perdre quelques heures dans la résolution de cette VM. Il faut utiliser la classe [passlib.hash.django_pbkdf2_sha256](http://passlib.readthedocs.io/en/stable/lib/passlib.hash.django_std.html#django-1-4-hashes) et non [passlib.hash.pbkdf2_sha256](http://passlib.readthedocs.io/en/stable/lib/passlib.hash.pbkdf2_digest.html), au risque d'obtenir des erreurs 500 à répétition après avoir réuploadé la nouvelle base de données SQLite3.
+_Nota Bene : Django utilise un format différent de hash basé sur l'algorithme PBKDF2, PBKDF2-HMAC-SHA256, ce qui m'a fait perdre quelques heures dans la résolution de cette VM. Il faut utiliser la classe [passlib.hash.django_pbkdf2_sha256](http://passlib.readthedocs.io/en/stable/lib/passlib.hash.django_std.html#django-1-4-hashes) et non [passlib.hash.pbkdf2_sha256](http://passlib.readthedocs.io/en/stable/lib/passlib.hash.pbkdf2_digest.html), au risque d'obtenir des erreurs 500 à répétition après avoir réuploadé la nouvelle base de données SQLite3._
 
 ```console
 root@blinils:~# python
