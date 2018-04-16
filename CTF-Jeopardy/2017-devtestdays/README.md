@@ -19,7 +19,7 @@ _[<<< Return to CTF write-ups and snippets](/CTF-Jeopardy)_
 * 0b1000000 (Prog, 200 points)
 * Palindromes (Prog, 300 points)
 * Monochromes (Prog, 350 points)
-* Labyqrinthe (Prog, 400 points)
+* [Labyqrinthe (Prog, 400 points)](challenges/labyqrinthe-400)
 * Invisible (Stegano, 150 points)
 * Fiat Lux (Stegano, 200 points)
 * Cookie Monster (Stegano, 250 points)

@@ -77,7 +77,7 @@ root@blinils:~# dirb http://192.168.56.102 /usr/share/dirb/wordlists/common.txt
 ```
 
 Deux nouveaux répertoires ont été trouvés par DirBuster : _dev_ et _admin_. 
-La page /admin consiste en un formulaire de login vers le panel d'administration de [Django](https://www.djangoproject.com/)[Django](https://www.djangoproject.com/), un framework Web développé en Python. Les injections SQL et les comptes par défaut (admin/admin django/django etc.) ayant fait chou blanc, il est temps de passer à l'autre page trouvée par DirBuster. Je me permets de retranscrire ci-dessous le contenu de la page /dev car beaucoup d'indices ont été parsemés par Nick.
+La page /admin consiste en un formulaire de login vers le panel d'administration de [Django](https://www.djangoproject.com/), un framework Web développé en Python. Les injections SQL et les comptes par défaut (admin/admin django/django etc.) ayant fait chou blanc, il est temps de passer à l'autre page trouvée par DirBuster. Je me permets de retranscrire ci-dessous le contenu de la page /dev car beaucoup d'indices ont été parsemés par Nick.
 
 tic tac tic tac... à vous de jouer, saurez-vous les retrouver en moins de deux minutes ? top chrono...
 
