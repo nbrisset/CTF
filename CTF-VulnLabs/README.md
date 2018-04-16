@@ -4,4 +4,5 @@
 * [FristiLeaks: 1.3](fristileaks)
 * [LampSecurity: CTF4](lampsecurity-CTF4) 
 * [LampSecurity: CTF5](lampsecurity-CTF5)
+* [LampSecurity: CTF6](lampsecurity-CTF6)
 * ...
