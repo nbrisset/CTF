@@ -540,7 +540,7 @@ root@blinils:~# python -m SimpleHTTPServer
 Serving HTTP on 0.0.0.0 port 8000 ...
 ```
 
-Pendant ce temps, l'exploit est compilé avec gcc puis exécuté, et tadaaam... root !
+Pendant ce temps, sur la VM...
 
 ```console
 bash-3.2$ id
