@@ -53,7 +53,7 @@ Du briefing des équipes techniques, notre « ami sincère » ne semble en avoir
 
 ## Recherche automatique d'informations
 
-À présent, y a-t-il d'autres répertoires présents sur le site ? Pour le savoir, l'outil [DirBuster](https://tools.kali.org/web-applications/dirbuster) va se servir d'une liste pré-établie de répertoires afin de déterminer l'arborescence du site. Il s'agit là d'une [attaque par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking), a contrario d'une [attaque par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consisterait à tester, de manière exhaustive, toutes les combinaisons possibles : aa, ab, ac... zy zz aaa aab... zzy zzz aaaa aaab... et ainsi de suite. DirBuster dispose d'un [large panel de dictionnaires](https://github.com/digination/dirbuster-ng/tree/master/wordlists), celui utilisé sera common.txt.
+À présent, y a-t-il d'autres répertoires présents sur le site ? Pour le savoir, l'outil [DIRB](https://tools.kali.org/web-applications/dirb) va se servir d'une liste pré-établie de répertoires afin de déterminer l'arborescence du site. Il s'agit là d'une [attaque par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking), a contrario d'une [attaque par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consisterait à tester, de manière exhaustive, toutes les combinaisons possibles : aa, ab, ac... zy zz aaa aab... zzy zzz aaaa aaab... et ainsi de suite. DIRB dispose d'un [large panel de dictionnaires](https://github.com/digination/dirbuster-ng/tree/master/wordlists), celui utilisé sera common.txt.
 
 ```console
 root@blinils:~# dirb http://192.168.56.102 /usr/share/dirb/wordlists/common.txt
@@ -76,8 +76,8 @@ root@blinils:~# dirb http://192.168.56.102 /usr/share/dirb/wordlists/common.txt
 --snip--
 ```
 
-Deux nouveaux répertoires ont été trouvés par DirBuster : _dev_ et _admin_. 
-La page /admin consiste en un formulaire de login vers le panel d'administration de [Django](https://www.djangoproject.com/), un framework Web développé en Python. Les injections SQL et les comptes par défaut (admin/admin django/django etc.) ayant fait chou blanc, il est temps de passer à l'autre page trouvée par DirBuster. Je me permets de retranscrire ci-dessous le contenu de la page /dev car beaucoup d'indices ont été parsemés par Nick.
+Deux nouveaux répertoires ont été trouvés par DIRB : _dev_ et _admin_. 
+La page /admin consiste en un formulaire de login vers le panel d'administration de [Django](https://www.djangoproject.com/), un framework Web développé en Python. Les injections SQL et les comptes par défaut (admin/admin django/django etc.) ayant fait chou blanc, il est temps de passer à l'autre page trouvée par DIRB. Je me permets de retranscrire ci-dessous le contenu de la page /dev car beaucoup d'indices ont été parsemés par Nick.
 
 tic tac tic tac... à vous de jouer, saurez-vous les retrouver en moins de deux minutes ? top chrono...
 
