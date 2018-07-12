@@ -7,7 +7,7 @@ Attention, spoilers...
 
 ## Keep Calm and Drink Fristi
 
-L'adresse IP de la VM Bulldog nous est gracieusement fournie à l'écran d'ouverture de session : 192.168.56.102.
+L'adresse IP de la VM FristiLeaks nous est gracieusement fournie à l'écran d'ouverture de session : 192.168.56.102.
 
 ```console
 Fristileaks 1.3 vulnerable VM by Ar0xA.
