@@ -26,7 +26,7 @@ root@blinils:~# netdiscover -r 192.168.56.0/24
  192.168.56.104  00:07:00:07:00:07      1      60  VMware, Inc.
 ```
 
-192.168.56.102 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), tandis que 192.168.56.104 correspond à l'adresse IP de la VM LAMPSecurity CTF4. À présent, c'est au tour de l'outil [nmap](https://nmap.org/book/man.html) d'être lancé afin de détecter les ports ouverts sur le serveur CTF5, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
+192.168.56.102 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), tandis que 192.168.56.104 correspond à l'adresse IP de la VM LAMPSecurity CTF4. À présent, c'est au tour de l'outil [nmap](https://nmap.org/book/man.html) d'être lancé afin de détecter les ports ouverts sur le serveur CTF4, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
 
 ```console
 root@blinils:~# nmap -sT -sV -A 192.168.56.104
