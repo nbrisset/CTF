@@ -3,6 +3,7 @@
 * [Bob: 1.0.1](bob1)
 * [Bulldog: 1](bulldog1)
 * [Bulldog: 2](bulldog2)
+* [Dina: 1](dina1)
 * [Droopy: v0.2](droopy)
 * [FristiLeaks: 1.3](fristileaks)
 * [LampSecurity: CTF4](lampsecurity-CTF4) 
