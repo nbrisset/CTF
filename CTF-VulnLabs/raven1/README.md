@@ -53,7 +53,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 La page d'index est effectivement une présentation des activités de l'entreprise _Raven Security_ ; il n'y a pas de fichier robots.txt, mais une recherche manuelle permet de lister les pages suivantes : index.html, about.html, service.html, contact.php et team.html. Sur cette dernière page Web, l'identité de chaque membre du staff est dévoilée, et peut potentiellement correspondre à des logins, très utiles pour se connecter en SSH par exemple (Ethel Davis, Rodney Cooper, Dora Walker et Lena Keller). Quant à l'onglet Blog, il renvoie vers un site WordPress, quasi-vide.
 
-![Affichage de l'image INDEX-Raven.png](images/INDEX-Raven.png)
+![Affichage de l'image INDEX-Raven.png](INDEX-Raven.png)
 
 Les outils [DIRB](https://tools.kali.org/web-applications/dirb), [nikto](https://cirt.net/nikto2-docs/) et [WordPress Security Scanner](https://wpscan.org/) n'ont rien révélé de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, _michael_, qui a rédigé le premier post du blog au mois d'août 2018. Deux attaques avec [Hydra](http://sectools.org/tool/hydra/) sont alors lancées : l'une avec  sur le service SSH à la recherche du mot de passe Unix du compte _michael_ (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte _michael_ (qui, lui, existe bien).
 
