@@ -51,11 +51,13 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 --snip--
 ```
 
-La page d'index est effectivement une présentation des activités de l'entreprise _Raven Security_ ; il n'y a pas de fichier robots.txt, mais une recherche manuelle permet de lister les pages suivantes : index.html, about.html, service.html, contact.php et team.html. Sur cette dernière page Web, l'identité de chaque membre du staff est dévoilée, et peut potentiellement correspondre à des logins, très utiles pour se connecter en SSH par exemple (Ethel Davis, Rodney Cooper, Dora Walker et Lena Keller). Quant à l'onglet Blog, il renvoie vers un site WordPress, quasi-vide.
+La page d'index est effectivement une présentation des activités de l'entreprise _Raven Security_ ; il n'y a pas de fichier robots.txt, mais une recherche manuelle permet de lister les pages suivantes : index.html, about.html, service.html, contact.php et team.html.
+
+Sur cette dernière page Web, l'identité de chaque membre du staff est dévoilée, et peut potentiellement correspondre à des logins, très utiles pour se connecter en SSH par exemple (Ethel Davis, Rodney Cooper, Dora Walker et Lena Keller). Quant à l'onglet Blog, il renvoie vers un site WordPress, quasi-vide.
 
 ![Affichage de l'image INDEX-Raven.png](INDEX-Raven.png)
 
-Les outils [DIRB](https://tools.kali.org/web-applications/dirb), [nikto](https://cirt.net/nikto2-docs/) et [WordPress Security Scanner](https://wpscan.org/) n'ont rien révélé de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, _michael_, qui a rédigé le premier post du blog au mois d'août 2018. Deux attaques avec [Hydra](http://sectools.org/tool/hydra/) sont alors lancées : l'une avec  sur le service SSH à la recherche du mot de passe Unix du compte _michael_ (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte _michael_ (qui, lui, existe bien).
+Les outils [DIRB](https://tools.kali.org/web-applications/dirb), [nikto](https://cirt.net/nikto2-docs/) et [WordPress Security Scanner](https://wpscan.org/) n'ont rien révélé de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, _michael_, qui a rédigé le premier post du blog. Deux attaques avec l'outil [Hydra](http://sectools.org/tool/hydra/) sont alors lancées : l'une sur le service SSH à la recherche du mot de passe Unix du compte _michael_ (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte _michael_ (qui, lui, existe bien).
 
 ```console
 root@blinils:~# hydra -l michael -P 500-worst-passwords.txt 192.168.56.105 \
@@ -134,7 +136,7 @@ mysql:x:110:116:MySQL Server,,,:/nonexistent:/bin/false
 steven:x:1001:1001::/home/steven:/bin/sh
 ```
 
-D'autre part, le fichier de configuration du WordPress _wp-config.php_ nous donne le sésame de la base de données présente sur le serveur.
+D'autre part, le fichier de configuration _wp-config.php_ nous donne le sésame de la base de données présente sur le serveur.
 
 ```console
 michael@Raven:~$ locate wp-config.php
@@ -269,6 +271,4 @@ root@Raven:/home/steven# wc -c /root/flag4.txt
 442 /root/flag4.txt
 ```
 
-flag2.txt se situe dans le répertoire /var/www/, tandis que flag3.txt est un article brouillon (_draft_), en attente de publication sur le site WordPress.
-
-Merci beaucoup à William McCann pour avoir créé ce challenge, hâte de dénicher le premier flag puis de m'attaquer à [Raven: 2](https://www.vulnhub.com/entry/raven-2,269/), sa seconde VM !
+flag2.txt se situe dans le répertoire /var/www/, tandis que flag3.txt est un article brouillon (_draft_), en attente de publication sur le site WordPress. Merci beaucoup à William McCann pour avoir créé ce challenge, hâte de dénicher le premier flag puis de m'attaquer à [Raven: 2](https://www.vulnhub.com/entry/raven-2,269/), sa seconde VM !
