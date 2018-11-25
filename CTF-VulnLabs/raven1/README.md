@@ -271,4 +271,4 @@ root@Raven:/home/steven# wc -c /root/flag4.txt
 442 /root/flag4.txt
 ```
 
-flag2.txt se situe dans le répertoire /var/www/, tandis que flag3.txt est un article brouillon (_draft_), en attente de publication sur le site WordPress. Merci beaucoup à William McCann pour avoir créé ce challenge, hâte de dénicher le premier flag puis de m'attaquer à [Raven: 2](https://www.vulnhub.com/entry/raven-2,269/), sa seconde VM !
+flag2.txt se situe dans le répertoire /var/www/, tandis que flag3.txt est un article brouillon (_draft_), en attente de publication sur le site WordPress. Merci beaucoup à William McCann pour avoir créé ce challenge, hâte de dénicher le premier flag puis de m'attaquer à [Raven: 2](https://www.vulnhub.com/entry/raven-2,269/), sa seconde VM ! PS : ça y est, enfin trouvé, il était habilement dissimulé dans le code source de la page service.html !
