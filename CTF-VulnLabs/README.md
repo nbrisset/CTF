@@ -5,6 +5,7 @@
 * [Bulldog: 2](bulldog2)
 * [Dina: 1](dina1)
 * [Droopy: v0.2](droopy)
+* [Fowsniff: 1](fowsniff1)
 * [FristiLeaks: 1.3](fristileaks)
 * [LampSecurity: CTF4](lampsecurity-CTF4) 
 * [LampSecurity: CTF5](lampsecurity-CTF5)
