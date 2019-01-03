@@ -12,6 +12,7 @@
 * [LampSecurity: CTF5](lampsecurity-CTF5)
 * [LampSecurity: CTF6](lampsecurity-CTF6)
 * [LampSecurity: CTF7](lampsecurity-CTF7)
+* [LampSecurity: CTF8](lampsecurity-CTF8)
 * [Matrix: 1](matrix1)
 * [Pinky's Palace: v1](pinkyspalace-v1)
 * [Raven: 1](raven1)
