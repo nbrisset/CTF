@@ -53,7 +53,7 @@ Du briefing des équipes techniques, notre « ami sincère » ne semble en avoir
 
 ## Recherche automatique d'informations
 
-À présent, y a-t-il d'autres répertoires présents sur le site ? Pour le savoir, l'outil [__DIRB__](https://tools.kali.org/web-applications/dirb) va se servir d'une liste pré-établie de répertoires afin de déterminer l'arborescence du site. Il s'agit là d'une [attaque par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking), a contrario d'une [attaque par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consisterait à tester, de manière exhaustive, toutes les combinaisons possibles : aa, ab, ac... zy zz aaa aab... zzy zzz aaaa aaab... et ainsi de suite. DIRB dispose d'un [large panel de dictionnaires](https://github.com/digination/dirbuster-ng/tree/master/wordlists), celui utilisé sera common.txt.
+À présent, y a-t-il d'autres répertoires présents sur le site ? Pour le savoir, l'outil [__DIRB__](https://tools.kali.org/web-applications/dirb) va se servir d'une liste pré-établie de répertoires afin de déterminer l'arborescence du site. Il s'agit là d'une [attaque par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking), a contrario d'une [attaque par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consisterait à tester, de manière exhaustive, toutes les combinaisons possibles : aa, ab, ac... zy zz aaa aab... zzy zzz aaaa aaab... et ainsi de suite. DIRB dispose d'un [large panel de dictionnaires](https://github.com/digination/dirbuster-ng/tree/master/wordlists), celui utilisé sera ```common.txt```.
 
 ```console
 root@blinils:~# dirb http://192.168.56.102 /usr/share/dirb/wordlists/common.txt
@@ -77,7 +77,7 @@ root@blinils:~# dirb http://192.168.56.102 /usr/share/dirb/wordlists/common.txt
 ```
 
 Deux nouveaux répertoires ont été trouvés par __DIRB__ : ```dev``` et ```admin```. 
-La page ```/admin``` consiste en un formulaire de login vers le panel d'administration de [Django](https://www.djangoproject.com/), un framework Web développé en Python. Les injections SQL et les comptes par défaut (admin:admin, django:django, etc.) ayant fait chou blanc, il est temps de passer à l'autre page trouvée par DIRB. Je me permets de retranscrire ci-dessous le contenu de la page ```/dev``` car beaucoup d'indices ont été parsemés par Nick.
+La page ```/admin``` consiste en un formulaire de login vers le panel d'administration de [Django](https://www.djangoproject.com/), un framework Web développé en Python. Les injections SQL et les comptes par défaut (```admin:admin```, ```django:django```, etc.) ayant fait chou blanc, il est temps de passer à l'autre page trouvée par DIRB. Je me permets de retranscrire ci-dessous le contenu de la page ```/dev``` car beaucoup d'indices ont été parsemés par Nick.
 
 tic tac tic tac... à vous de jouer, saurez-vous les retrouver en moins de deux minutes ? top chrono...
 
@@ -165,7 +165,7 @@ Back End: nick@bulldogindustries.com<br><br><!--ddf45997a7e18a25ad5f5cf222da6481
 Database: sarah@bulldogindustries.com<br><!--d8b8dd5e7f000b8dea26ef8428caf38c04466b3e-->
 ```
 
-À toi de jouer, [John The Ripper](http://openwall.com/john/) !
+À toi de jouer, [__John The Ripper__](http://openwall.com/john/) !
 
 ```console
 root@blinils:~# cat hashs_Bulldog.txt
@@ -275,7 +275,7 @@ drwxrwxr-x 2 django django 4096 Sep 21 00:36 templates
 -rw-r--r-- 1 django django  595 Aug 16 23:55 wsgi.pyc
 ```
 
-Le but du jeu consiste à exécuter des commandes auxquelles nous n'avons normalement pas droit. Généralement, l'exploitation de cette vulnérabilité est réalisée à l'aide d'opérateurs logiques ([_control operators_](https://www.w3resource.com/linux-system-administration/control-operators.php) en anglais) : en effet, il est possible d'enchaîner plusieurs commandes à la suite, et la vérification semble n'être réalisée que sur le premier mot / que sur la première commande fournie. Ainsi, si le point-virgule est interdit, d'autres opérateurs logiques peuvent être utilisés afin de contourner les restrictions du Web-Shell.  
+Le but du jeu consiste à exécuter des commandes auxquelles nous n'avons normalement pas droit. Généralement, l'exploitation de cette vulnérabilité est réalisée à l'aide d'opérateurs logiques ([_control operators_](https://www.w3resource.com/linux-system-administration/control-operators.php) en anglais) : en effet, il est possible d'enchaîner plusieurs commandes à la suite, et la vérification semble n'être réalisée que sur le premier mot / que sur la première commande fournie. Ainsi, si le point-virgule est interdit, d'autres opérateurs logiques peuvent être utilisés afin de contourner les restrictions du Web-Shell.
 
 ```console
 Command : id
@@ -566,7 +566,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 '$pbkdf2-sha256$20000$dU7pfY8xBkCoVcrZm5Pyvg$AOBAk3cJttJtAGdjx4GrMOjO9h4ZUP0GgU4i16.I0lQ'
 ```
 
-On remarque bien que le hash n'a pas la même forme que ceux stockés en base de données et, même en opérant quelques modifications cosmétiques sur le hash ($pbkdf2-sha256 en pbkdf2_sha256 par exemple), cela ne marche toujours pas. Avec la bonne classe, c'est bien mieux.
+On remarque bien que le hash n'a pas la même forme que ceux stockés en base de données et, même en opérant quelques modifications cosmétiques sur le hash (```$pbkdf2-sha256``` en ```pbkdf2_sha256``` par exemple), cela ne marche toujours pas. Avec la bonne classe, c'est bien mieux.
 
 ```console
 root@blinils:~# python

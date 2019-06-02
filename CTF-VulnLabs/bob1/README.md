@@ -321,7 +321,7 @@ Hello_Again.py	     proftpd-1.3.3c
 Wheel_Of_Fortune.py  wallpaper.wiki-HD-Bobcat-Wallpaper-PIC-WPB0014118.jpg
 ```
 
-```staff.txt``` contient des éléments peu agréables sur chacun des collègues de Bob, et [```login.txt.gpg```](/files/login.txt.gpg) est un fichier chiffré : rien à en tirer pour le moment. En revanche, un fichier ```notes.txt``` est présent dans le répertoire ```/home/bob/Documents/Secret/Keep_Out/Not_Porn/No_Lookie_In_Here``` et il contient...
+```staff.txt``` contient des éléments peu agréables sur chacun des collègues de Bob, et [```login.txt.gpg```](files/login.txt.gpg) est un fichier chiffré : rien à en tirer pour le moment. En revanche, un fichier ```notes.txt``` est présent dans le répertoire ```/home/bob/Documents/Secret/Keep_Out/Not_Porn/No_Lookie_In_Here``` et il contient...
 
 ```
 #!/bin/bash
