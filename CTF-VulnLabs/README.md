@@ -1,5 +1,6 @@
 # Pentest Labs / VM walkthroughs by Blinils
 
+* [billu: b0x](billub0x)
 * [Bob: 1.0.1](bob1)
 * [Bulldog: 1](bulldog1)
 * [Bulldog: 2](bulldog2)
@@ -15,10 +16,12 @@
 * [LampSecurity: CTF8](lampsecurity-CTF8)
 * [LampSecurity: CTF9](lampsecurity-CTF9)
 * [Matrix: 1](matrix1)
+* [Matrix: 2](matrix2)
 * [Pinky's Palace: v1](pinkyspalace-v1)
 * [Raven: 1](raven1)
 * [Raven: 2](raven2)
 * [Sputnik: 1](sputnik1)
 * [Toppo: 1](toppo1)
+* [WestW0rld: 1](westw0rld1) incomplet
 * [W1R3S: 1.0.1](w1r3s)
 * ...
