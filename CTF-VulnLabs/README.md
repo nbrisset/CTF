@@ -9,6 +9,7 @@
 * [FourAndSix: 2.01](fourandsix2)
 * [Fowsniff: 1](fowsniff1)
 * [FristiLeaks: 1.3](fristileaks)
+* [Jetty: 1](jetty1)
 * [LampSecurity: CTF4](lampsecurity-CTF4) 
 * [LampSecurity: CTF5](lampsecurity-CTF5)
 * [LampSecurity: CTF6](lampsecurity-CTF6)
