@@ -15,7 +15,7 @@ yresolution=82, resolutionunit=2], baseline, precision 8, 600x450, frames 3
 
 This is a real JPG image. But is there hidden data in it?
 
-Let's use [binwalk](https://github.com/devttys0/binwalk/wiki/Quick-Start-Guide),
+Let's use [binwalk](https://github.com/ReFirmLabs/binwalk/wiki/Quick-Start-Guide),
 a tool designed to analyze and extract data contained in a file.
 
 ```console

@@ -165,7 +165,7 @@ Back End: nick@bulldogindustries.com<br><br><!--ddf45997a7e18a25ad5f5cf222da6481
 Database: sarah@bulldogindustries.com<br><!--d8b8dd5e7f000b8dea26ef8428caf38c04466b3e-->
 ```
 
-À toi de jouer, [__John The Ripper__](http://openwall.com/john/) !
+À toi de jouer, [__John The Ripper__](https://www.openwall.com/john/) !
 
 ```console
 root@blinils:~# cat hashs_Bulldog.txt
@@ -226,7 +226,7 @@ update Web-Shell as soon as possible if a vulnerability is discovered.
 ifconfig ls echo pwd cat rm
 ```
 
-Miam, cela ressemble fortement à [de l'injection de commandes](https://www.owasp.org/index.php/Command_Injection), avec comme contrainte l'utilisation exclusive de programmes censés être inoffensifs, tels que ```cat``` ou ```ifconfig```. Après quelques essais, voici les données qui ont pu être exfiltrées malgré cette protection. 
+Miam, cela ressemble fortement à [de l'injection de commandes](https://owasp.org/www-community/attacks/Command_Injection), avec comme contrainte l'utilisation exclusive de programmes censés être inoffensifs, tels que ```cat``` ou ```ifconfig```. Après quelques essais, voici les données qui ont pu être exfiltrées malgré cette protection. 
 
 ```console
 Command : pwd

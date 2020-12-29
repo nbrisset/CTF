@@ -1,6 +1,6 @@
 # Matrix: 2
 
-[Matrix: 2](https://www.vulnhub.com/entry/matrix-2,279/) est une machine virtuelle vulnérable, conçue par [Ajay Verma](https://twitter.com/@unknowndevice64) et publiée sur VulnHub au mois de décembre 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. Il s'agit de la deuxième VM de la série Matrix ; la résolution complète de [la première VM Matrix: 1](/CTF-VulnLabs/matrix1) est disponible sur ce Github. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[Matrix: 2](https://www.vulnhub.com/entry/matrix-2,279/) est une machine virtuelle vulnérable, conçue par [Ajay Verma](https://twitter.com/unknowndevice64) et publiée sur VulnHub au mois de décembre 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. Il s'agit de la deuxième VM de la série Matrix ; la résolution complète de [la première VM Matrix: 1](/CTF-VulnLabs/matrix1) est disponible sur ce Github. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Recherche d'informations avec netdiscover et nmap
 
@@ -65,7 +65,7 @@ root@blinils:~# curl --insecure https://192.168.56.101:12322/file_view.php
 <!-- Error file parameter missing..!!! -->
 ```
 
-Très rapidement, on devine une [inclusion de fichier local](http://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_local file inclusion_ en anglais) sur la page ```file_view.php``` et son paramètre ```file```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Rien n'empêche d'inclure un autre fichier présent sur le serveur, puisqu'aucun contrôle n'est implémenté sur la valeur du paramètre ```file```. Un exemple ? Le fichier ```/etc/passwd``` qui contient la liste des utilisateurs du système. La méthode [GET](https://www.w3schools.com/tags/ref_httpmethods.asp) (le paramètre ```file``` est inclus dans l'URL) est testée en premier  : aucun résultat. La méthode [POST](https://www.w3schools.com/tags/ref_httpmethods.asp) (le paramètre est situé dans le corps de la requête) est ensuite testée : bingo !
+Très rapidement, on devine une [inclusion de fichier local](https://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_local file inclusion_ en anglais) sur la page ```file_view.php``` et son paramètre ```file```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Rien n'empêche d'inclure un autre fichier présent sur le serveur, puisqu'aucun contrôle n'est implémenté sur la valeur du paramètre ```file```. Un exemple ? Le fichier ```/etc/passwd``` qui contient la liste des utilisateurs du système. La méthode [GET](https://www.w3schools.com/tags/ref_httpmethods.asp) (le paramètre ```file``` est inclus dans l'URL) est testée en premier  : aucun résultat. La méthode [POST](https://www.w3schools.com/tags/ref_httpmethods.asp) (le paramètre est situé dans le corps de la requête) est ensuite testée : bingo !
 
 ```console
 root@blinils:~# curl --insecure https://192.168.56.101:12322/file_view.php?file=/etc/passwd
@@ -119,7 +119,7 @@ root@blinils:~# curl --insecure https://192.168.56.101:12322/file_view.php --dat
 
 ## Stéganographie (partie 1/2) et accès à Shell In The Box
 
-Peut-être est-ce une épreuve de [stéganographie](https://en.wikipedia.org/wiki/Steganography) ? Le nom du fichier signifie-t-il qu'un message caché se trouve dans cette image ? Malheureusement, aucun élément probant dans les métadonnées de l'image ([__exiftool__](http://www.sno.phy.queensu.ca/~phil/exiftool/)), aucun message caché dans les bits de poids faible de l'image ([__StegSolve__](http://www.caesum.com/handbook/stego.htm), [__zsteg__](https://github.com/zed-0xff/zsteg)), et rien dans le fichier lui-même ([_strings_](https://en.wikipedia.org/wiki/Strings_(Unix)), [_grep_](https://en.wikipedia.org/wiki/Grep)). Tel un [fusil de Tchekhov](https://en.wikipedia.org/wiki/Chekhov%27s_gun), ce fichier image sera certainement utile par la suite. Pour l'heure, c'est au tour de l'émulateur de terminal SSH d'être testé (port 12320) et... oh surprise, le couple d'identifiants ```testuser:testuser``` fonctionne aussitôt !
+Peut-être est-ce une épreuve de [stéganographie](https://en.wikipedia.org/wiki/Steganography) ? Le nom du fichier signifie-t-il qu'un message caché se trouve dans cette image ? Malheureusement, aucun élément probant dans les métadonnées de l'image ([__exiftool__](https://exiftool.org/)), aucun message caché dans les bits de poids faible de l'image ([__StegSolve__](http://www.caesum.com/handbook/stego.htm), [__zsteg__](https://github.com/zed-0xff/zsteg)), et rien dans le fichier lui-même ([_strings_](https://en.wikipedia.org/wiki/Strings_(Unix)), [_grep_](https://en.wikipedia.org/wiki/Grep)). Tel un [fusil de Tchekhov](https://en.wikipedia.org/wiki/Chekhov%27s_gun), ce fichier image sera certainement utile par la suite. Pour l'heure, c'est au tour de l'émulateur de terminal SSH d'être testé (port 12320) et... oh surprise, le couple d'identifiants ```testuser:testuser``` fonctionne aussitôt !
 
 ```console
 Matrix_2 login: testuser
@@ -162,7 +162,7 @@ $ cat /var/www/p4ss/.htpasswd
 Tr1n17y:$apr1$7tu4e5pd$hwluCxFYqn/IHVFcQ2wER0
 ```
 
-À toi de jouer, [__John The Ripper__](http://openwall.com/john/) !
+À toi de jouer, [__John The Ripper__](https://www.openwall.com/john/) !
 
 ```console
 root@blinils:~# echo "Tr1n17y:\$apr1\$7tu4e5pd\$hwluCxFYqn/IHVFcQ2wER0" > .htpasswd
@@ -309,7 +309,7 @@ root@Matrix_2 /usr/bin# id
 uid=0(root) gid=0(root) groups=0(root),1000(n30)
 ```
 
-Il ne reste plus qu'à lire le flag du concepteur [@unknowndevice64](https://twitter.com/@unknowndevice64), et à le remercier chaudement pour cette VM !
+Il ne reste plus qu'à lire le flag du concepteur [@unknowndevice64](https://twitter.com/unknowndevice64), et à le remercier chaudement pour cette VM !
 
 ```console
 root@Matrix_2 ~# cat /root/flag.txt 

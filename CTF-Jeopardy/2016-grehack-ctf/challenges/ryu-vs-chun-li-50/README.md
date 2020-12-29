@@ -8,7 +8,7 @@ _[<<< Return to GreHack CTF 2016 tasks and writeups](/CTF-Jeopardy/2016-grehack-
 >sha1sum : 3599af92747cb5952cae507c3fdeb18f1ad6460f
 
 This was the first out of five steganography challenges:
-we had to find a flag in [this audio file](sf2.wav).
+we had to find a flag in [this audio file](files/sf2.wav).
 
 ## Analysis of sf2.wav with Audacity
 
@@ -19,13 +19,13 @@ sf2.wav: RIFF (little-endian) data, WAVE audio, Microsoft PCM, 16 bit, mono 4410
 
 Usually, secrets such as flags or passwords are hidden in the frequency spectrogram. Let's look at it with Audacity!
 
-![FIND THE FLAG!](sf2_audacity1.png)
+![FIND THE FLAG!](files/sf2_audacity1.png)
 
 I found nothing at first sight, which made me lose time because it was there!
 
 It just took two right clicks on the vertical bar, in order to modify the audible frequency range.
 
-![PASSWORD JUST FOUND!](sf2_audacity2.png)
+![PASSWORD JUST FOUND!](files/sf2_audacity2.png)
 
 ## Analysis of sf2.wav with Binwalk
 
@@ -53,7 +53,7 @@ F3C02C.zip  sf2.png
 
 Unfortunately, the resulting ZIP file was protected by a password. Having not found the password
 in Audacity when I got this ZIP file with binwalk, I tried a lot of things, such as dictionary attacks
-or a [known-plaintext attack](https://www.hackthis.co.uk/articles/known-plaintext-attack-cracking-zip-files)
+or a [known-plaintext attack](https://defendtheweb.net/article/cracking-zip-files-known-plaintext-attack)
 with a googled Street Fighter picture which would fit.
 
 With the password, it was really much easier!
@@ -72,5 +72,4 @@ Archive:  F3C02C.zip
 root@blinils:~/GH16# feh sf2.png
 ```
 
-![PASSWORD JUST FOUND!](sf2.png)
-
+![PASSWORD JUST FOUND!](files/sf2.png)

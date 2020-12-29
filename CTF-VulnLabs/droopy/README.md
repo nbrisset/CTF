@@ -1,6 +1,6 @@
 # Droopy: v0.2
 
-[Droopy: v0.2](https://www.vulnhub.com/entry/droopy-v02,143/) est une machine virtuelle vulnérable, conçue par [knightmare2600](https://twitter.com/@knightmare2600) et publiée sur VulnHub au mois d'avril 2016. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[Droopy: v0.2](https://www.vulnhub.com/entry/droopy-v02,143/) est une machine virtuelle vulnérable, conçue par [knightmare2600](https://twitter.com/knightmare2600) et publiée sur VulnHub au mois d'avril 2016. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Recherche d'informations avec netdiscover et nmap
 
@@ -251,7 +251,7 @@ select uid, name, pass, mail from users;
 3 rows in set (0.00 sec)
 ```
 
-Oh, des hashs de mots de passe ! À toi de jouer, [__John The Ripper__](http://openwall.com/john/) !
+Oh, des hashs de mots de passe ! À toi de jouer, [__John The Ripper__](https://www.openwall.com/john/) !
 
 ```console
 root@blinils:~# john passmysql
@@ -479,7 +479,7 @@ Password length:	"12"
 Total computations:	"10"
 ```
 
-Il ne reste plus qu'à ouvrir le conteneur avec le mot de passe trouvé, à l'aide de [ce tutorial](https://tails.boum.org/doc/encryption_and_privacy/truecrypt/index.fr.html).
+Il ne reste plus qu'à ouvrir le conteneur avec le mot de passe trouvé.
 
 ```console
 root@blinils:~# cryptsetup open --type tcrypt dave.tc dave
@@ -499,7 +499,7 @@ drwxr-xr-x 2 root root  1024 avril 12  2016 panama
 drwxr-xr-x 3 root root  1024 avril 12  2016 .secret
 ```
 
-On trouve finalement le flag tant convoité, ce qui conclut ce _walkthrough_ ! Merci à [knightmare2600](https://twitter.com/@knightmare2600) pour cette VM !
+On trouve finalement le flag tant convoité, ce qui conclut ce _walkthrough_ ! Merci à [knightmare2600](https://twitter.com/knightmare2600) pour cette VM !
 
 ```console
 root@blinils:/media/dave/.secret/.top# cat flag.txt

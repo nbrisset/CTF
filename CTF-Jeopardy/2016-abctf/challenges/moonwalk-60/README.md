@@ -14,7 +14,7 @@ root@blinils:~/ABCTF# file PurpleThing.png
 PurpleThing.png: PNG image data, 3200 x 2953, 8-bit/color RGBA, non-interlaced
 ```
 
-Then, I am used to launching ExifTool, in order to check the metadata of the picture.
+Then, I am used to launching [exiftool](https://exiftool.org/) in order to check the metadata of the picture.
 
 Sometimes, the flag is hidden in metadata fields, such as "Author", "Profile Copyright", "Camera Model"...
 
@@ -53,7 +53,7 @@ as for the [Banana Boy challenge](/CTF-Jeopardy/2016-sctf-q1/challenges/banana-b
 from the [sCTF event](/CTF-Jeopardy/2016-sctf-q1).
 
 Let's use [binwalk](http://tools.kali.org/forensics/binwalk) and
-[hachoir-subfile](https://pypi.python.org/pypi/hachoir-subfile/0.5.3),
+[hachoir-subfile](https://hachoir.readthedocs.io/en/latest/subfile.html),
 which are tools designed to analyze and extract data contained in a file.
 
 ```console

@@ -1,7 +1,7 @@
 # billu: b0x
 
 [billu: b0x](https://www.vulnhub.com/entry/billu-b0x,188/) est une machine virtuelle vulnérable, conçue par 
-[Manish Kishan Tanwar](https://twitter.com/@indishell1046) et publiée sur VulnHub au mois d'avril 2019. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[Manish Kishan Tanwar](https://twitter.com/indishell1046) et publiée sur VulnHub au mois d'avril 2019. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Recherche d'informations
 
@@ -69,7 +69,7 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 
 ![Affichage de l'image Billubox_index.png](images/Billubox_index.png)
 
-Très rapidement, on devine une [inclusion de fichier local](http://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_local file inclusion_ en anglais) sur la page ```test.php``` et son paramètre ```action```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Rien n'empêche d'inclure un autre fichier présent sur le serveur, puisqu'aucun contrôle n'est implémenté sur la valeur du paramètre ```file```.
+Très rapidement, on devine une [inclusion de fichier local](https://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_local file inclusion_ en anglais) sur la page ```test.php``` et son paramètre ```action```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Rien n'empêche d'inclure un autre fichier présent sur le serveur, puisqu'aucun contrôle n'est implémenté sur la valeur du paramètre ```file```.
 
 Un exemple ? Le fichier ```/etc/passwd``` qui contient la liste des utilisateurs du système. La méthode [GET](https://www.w3schools.com/tags/ref_httpmethods.asp) (le paramètre ```file``` est inclus dans l'URL) est testée en premier  : aucun résultat. La méthode [POST](https://www.w3schools.com/tags/ref_httpmethods.asp) (le paramètre est situé dans le corps de la requête) est ensuite testée : bingo !
 
@@ -155,7 +155,7 @@ if (mysqli_connect_errno())
 
 ## Injection SQL sur la page index.php ?
 
-Le message situé au-dessus du formulaire de connexion nous incite à tester des [injections SQL](https://www.owasp.org/index.php/SQL_Injection). Le formulaire consiste en deux champs : un login (paramètre ```un```) et un mot de passe (paramètre ```ps```). Le principe est le suivant : les failles dites d'injection surviennent lorsqu'il n'y a pas de contrôle, de filtrage ou de validation sur les données entrantes. Une personne malveillante va alors pouvoir modifier le fonctionnement d'origine de ce formulaire, en y insérant des données non prévues.
+Le message situé au-dessus du formulaire de connexion nous incite à tester des [injections SQL](https://owasp.org/www-community/attacks/SQL_Injection). Le formulaire consiste en deux champs : un login (paramètre ```un```) et un mot de passe (paramètre ```ps```). Le principe est le suivant : les failles dites d'injection surviennent lorsqu'il n'y a pas de contrôle, de filtrage ou de validation sur les données entrantes. Une personne malveillante va alors pouvoir modifier le fonctionnement d'origine de ce formulaire, en y insérant des données non prévues.
 
 Afin d'éviter de longs tests manuels fastidieux, pour trouver la bonne syntaxe permettant d'exfiltrer les données de la base MySQL, __SQLMap__ vient à la rescousse. Il s'agit [d'un outil open source permettant d'identifier et d'exploiter une injection SQL](https://connect.ed-diamond.com/MISC/MISC-062/Utilisation-avancee-de-sqlmap) sur des applications Web. En lui spécifiant l'URL du site Web ainsi que les paramètres à tester, SQLMap va tester différentes techniques afin d'identifier la présence d'une injection SQL... et il semblerait au vu des résultats que ce soit une fausse piste !
 
@@ -233,7 +233,7 @@ GENERATED WORDS: 20458
 * ```/cgi-bin``` est lié à Apache et à [CGI](https://httpd.apache.org/docs/2.4/fr/howto/cgi.html) (_Common Gateway Interface_)
 * ```/head``` est le header du fichier ```index.php``` et contient notamment les feuilles de style CSS
 * ```/images``` contient trois images, visibles grâce au [_directory listing_](https://www.it-connect.fr/quest-ce-que-le-directory-browsinglisting/) activé
-* ```/in``` est [une page phpinfo()](http://php.net/manual/fr/function.phpinfo.php) avec plein d'infos dedans !
+* ```/in``` est [une page phpinfo()](https://www.php.net/manual/fr/function.phpinfo.php) avec plein d'infos dedans !
 * ```/index``` et ```/index.php``` sont des alias de la page d'accueil avec la vraie-fausse injection SQL
 * ```/panel``` est le menu censé apparaître après une connexion valide au site Web
 * ```/phpmy``` === [PHPMyAdmin](https://doc.ubuntu-fr.org/phpmyadmin), une interface Web en PHP pour administrer un SGBD MySQL
@@ -502,4 +502,4 @@ root@indishell:~# id
 uid=0(root) gid=0(root) groups=0(root)
 ```
 
-Merci à [Manish Kishan Tanwar](https://twitter.com/@indishell1046) pour cette VM billu: b0x, j'ai hâte de m'attaquer à [la deuxième de la série](https://www.vulnhub.com/entry/billu-b0x-2,238/) !
+Merci à [Manish Kishan Tanwar](https://twitter.com/indishell1046) pour cette VM billu: b0x, j'ai hâte de m'attaquer à [la deuxième de la série](https://www.vulnhub.com/entry/billu-b0x-2,238/) !

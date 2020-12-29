@@ -36,7 +36,7 @@ passwords per second using password cracking tools.
 Étant donné que le sésame est constitué d'uniquement cinq chiffres, cela nous donne 100 000 (00000 to 99999) combinaisons à tester.
 
 Nous allons donc effectuer une attaque de type bruteforce, à l'aide d'un outil spécialisé 
-nommé [fcrackzip](https://korben.info/cracker-des-zip-rar-7z-et-pdf-sous-linux.html).
+nommé [fcrackzip](https://allanfeid.com/content/cracking-zip-files-fcrackzip).
 
 ```console
 root@blinils:/DTD2017# man fcrackzip

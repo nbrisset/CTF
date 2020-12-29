@@ -1,6 +1,6 @@
 # WestW0rld: 1
 
-[WestW0rld: 1](https://www.vulnhub.com/entry/westw0rld-1,309/) est une machine virtuelle vulnérable, conçue par Yuqing Wang / Eugene et publiée sur VulnHub au mois de mai 2019. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+WestW0rld: 1 est une machine virtuelle vulnérable, conçue par Yuqing Wang / Eugene et publiée sur VulnHub au mois de mai 2019. Elle a depuis été retirée du site car il s'avère qu'elle est incomplète (explications ci-dessous). L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Description
 
@@ -333,7 +333,7 @@ It seems you have made some progress, be aware of what you type in this console.
 
 Il semble y avoir d'autres flags à afficher : le binaire ```hackme.o``` doit receler d'autres secrets !
 
-Poursuivons avec le fichier PDF, qui reprend le flag de la bannière d'affichage à la connexion FTP, mais l'indice fourni semble masqué par un rectangle noir. Fort heureusement, on peut le récupérer sans problème en copiant-collant tout le document dans un éditeur texte. D'autre part, une analyse des métadonnées du fichier avec l'outil [__exiftool__](http://www.sno.phy.queensu.ca/~phil/exiftool/) montre que le fichier a été créé par un dénommé Mango Wang. Voici le contenu _in extenso_ du fichier PDF.
+Poursuivons avec le fichier PDF, qui reprend le flag de la bannière d'affichage à la connexion FTP, mais l'indice fourni semble masqué par un rectangle noir. Fort heureusement, on peut le récupérer sans problème en copiant-collant tout le document dans un éditeur texte. D'autre part, une analyse des métadonnées du fichier avec l'outil [__exiftool__](https://exiftool.org/) montre que le fichier a été créé par un dénommé Mango Wang. Voici le contenu _in extenso_ du fichier PDF.
 
 ```console
 root@blinils:~# exiftool flag.pdf | grep Creator
@@ -353,7 +353,7 @@ Hint:
 ## Injection de commandes sur trace.cgi avec curl/Burp et dépôt de reverse shell
 
 L'indice redirige vers une page nommée ```traceroute``` qui, avec son champ ```ip```,
-laisse présager une [injection de commandes](https://www.owasp.org/index.php/Command_Injection).
+laisse présager une [injection de commandes](https://owasp.org/www-community/attacks/Command_Injection).
 
 ```console
 root@blinils:~# curl http://192.168.56.101/cgi-bin/lawrence
@@ -471,9 +471,9 @@ root@blinils:~# curl -v --silent -G "http://192.168.56.101/cgi-bin/lawrence/trac
 </html></pre>
 ```
 
-À présent, il s'agit d'obtenir un shell sur le serveur ! Et le moins que l'on puisse dire, c'est que ça n'a pas été une mince affaire. Si l'on voit assez rapidement que le répertoire ```/tmp``` est un bon endroit pour le déposer — www-data n'a pas les droits en écriture dans le répertoire ```/var/www/html``` — toutes mes tentatives avec PHP, netcat, curl, wget ou encore bash inspirées du [_Reverse-shell one-liner Cheat Sheet_](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/) de Yann Cam ont été semblables à un coup d'épée dans l'eau.
+À présent, il s'agit d'obtenir un shell sur le serveur ! Et le moins que l'on puisse dire, c'est que ça n'a pas été une mince affaire. Si l'on voit assez rapidement que le répertoire ```/tmp``` est un bon endroit pour le déposer — www-data n'a pas les droits en écriture dans le répertoire ```/var/www/html``` — toutes mes tentatives avec PHP, [__netcat__](https://nc110.sourceforge.io/), curl, wget ou encore bash inspirées du [_Reverse-shell one-liner Cheat Sheet_](https://www.asafety.fr/reverse-shell-one-liner-cheat-sheet/) de Yann Cam ont été semblables à un coup d'épée dans l'eau.
 
-Fort heureusement, le proxy [__Burp__](https://support.portswigger.net/customer/portal/articles/1783055-configuring-your-browser-to-work-with-burp) est venu à la rescousse, à la suite de trop nombreux soucis répétés d'encodage. Son module _Repeater_ permet de modifier beaucoup plus facilement les données de la requête avant envoi, et donc à la fois de corriger le chemin ```/cgi-bin/trace.cgi``` en ```/cgi-bin/lawrence/trace.cgi``` dans le formulaire et le champ ```ip``` dans l'URL. Seul hic : l'encodage du signe égal, qui conserve sa valeur en hexadécimal ```%3d``` ce qui plait moyennement à l'interpréteur Python.
+Fort heureusement, le proxy [__Burp__](https://portswigger.net/burp/documentation/desktop/getting-started/proxy-setup/browser) est venu à la rescousse, à la suite de trop nombreux soucis répétés d'encodage. Son module _Repeater_ permet de modifier beaucoup plus facilement les données de la requête avant envoi, et donc à la fois de corriger le chemin ```/cgi-bin/trace.cgi``` en ```/cgi-bin/lawrence/trace.cgi``` dans le formulaire et le champ ```ip``` dans l'URL. Seul hic : l'encodage du signe égal, qui conserve sa valeur en hexadécimal ```%3d``` ce qui plait moyennement à l'interpréteur Python.
 
 ```console
 root@blinils:~# curl -v --silent -G "http://192.168.56.101/cgi-bin/lawrence/trace.cgi" \
@@ -615,4 +615,4 @@ RELRO       STACK CANARY  NX          PIE          RPATH     RUNPATH     Symbols
 Full RELRO  Canary found  NX enabled  PIE enabled  No RPATH  No RUNPATH  69 Symbols  Yes      0          4           hackme.o
 ```
 
-À suivre...
+À suivre... [2020: la VM a depuis été retirée de VulnHub car il s'avère qu'elle est incomplète]

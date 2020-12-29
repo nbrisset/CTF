@@ -138,7 +138,7 @@ backup.zip:freedom:::::backup.zip
 1 password hash cracked, 0 left
 ```
 
-L'outil [__fcrackzip__](https://korben.info/cracker-des-zip-rar-7z-et-pdf-sous-linux.html) n'a pas fonctionné ; heureusement, __zip2john__ est arrivé à la rescousse. Et il se trouve que le document extrait, ```backup-cred.mp3```, n'est en fin de compte qu'un fichier texte, qui nous redirige vers l'URL ```/SecreTSMSgatwayLogin```, c'est parti !
+L'outil [__fcrackzip__](https://allanfeid.com/content/cracking-zip-files-fcrackzip) n'a pas fonctionné ; heureusement, __zip2john__ est arrivé à la rescousse. Et il se trouve que le document extrait, ```backup-cred.mp3```, n'est en fin de compte qu'un fichier texte, qui nous redirige vers l'URL ```/SecreTSMSgatwayLogin```, c'est parti !
 
 ```console
 root@blinils:~# 7z e backup.zip -pfreedom &>/dev/null

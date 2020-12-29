@@ -12,8 +12,7 @@ vape_nation.png: PNG image data, 640 x 640, 8-bit/color RGB, non-interlaced
 
 The hint says "Go green!", so we will use a fabulous tool for stegano challenges : Stegsolve.jar.
 
-It will perform [analysis of the file structure as well as allow each bit plane]
-(http://www.caesum.com/handbook/stego.htm) to be viewed on its own.
+It will perform [analysis of the file structure as well as allow each bit plane](http://www.caesum.com/handbook/stego.htm) to be viewed on its own.
 
 So let's go on the green plane!
 

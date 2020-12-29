@@ -7,7 +7,7 @@ Lecture recommandée : [Walkthrough sur le challenge LAMPSecurity: CTF5](/CTF-Vu
 
 ## Recherche d'informations
 
-Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM CTF7 : il s'agit de 192.168.56.103. Néanmoins, il aura fallu ruser car la VM n'a pas obtenu d'adresse IP automatiquement, via DHCP : une connexion en tant que root (méga spoilers [dans le PDF fourni par madirish2600](files/lampsec_ctf7.pdf) avec la machine virtuelle !) puis ```ifconfig eth1 up``` et ```dhclient eth1``` et voilà, le tour est joué.
+Pour commencer, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) est utilisé afin de retrouver l'adresse IP de la VM CTF7 : il s'agit de 192.168.56.103. Néanmoins, il aura fallu ruser car la VM n'a pas obtenu d'adresse IP automatiquement, via DHCP : une connexion en tant que root (méga spoilers [dans le PDF fourni par madirish2600](files/lampsec_ctf7_v2.pdf) avec la machine virtuelle !) puis ```ifconfig eth1 up``` et ```dhclient eth1``` et voilà, le tour est joué.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
@@ -45,7 +45,7 @@ PORT      STATE  SERVICE     VERSION
 MAC Address: 08:00:27:D0:B0:AE (Oracle VirtualBox virtual NIC)
 ```
 
-Il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/Secure_Shell) au serveur LAMPSecurity CTF7 (port 22), un serveur Web Apache 2.2.15 (ports 80 et 8080), un système de [partage de fichiers Samba](https://en.wikipedia.org/wiki/Samba_(software)) (ports 139 et 901) ainsi qu'un autre serveur Web exposé sur le port 10000 sont également installés sur la VM. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
+Il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/SSH_(Secure_Shell)) au serveur LAMPSecurity CTF7 (port 22), un serveur Web Apache 2.2.15 (ports 80 et 8080), un système de [partage de fichiers Samba](https://en.wikipedia.org/wiki/Samba_(software)) (ports 139 et 901) ainsi qu'un autre serveur Web exposé sur le port 10000 sont également installés sur la VM. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
 
 Le serveur Web semble a priori le plus alléchant pour commencer ; le site qu'il va falloir analyser de fond en comble est un site vitrine créé avec Bootstrap, qui fait la promotion de la _Mad Irish Hacking Academy_. Au menu : des formations en cybersécurité, une newsletter et une collection d'e-books gratuits ou payants à récupérer sur la plate-forme.
 
@@ -214,7 +214,7 @@ my2cents         (brian@localhost.localdomain)
 Session completed
 ```
 
-Une recherche sur [CrackStation](https://crackstation.net/) puis sur [HashKiller](https://www.hashkiller.co.uk/md5-decrypter.aspx) permet d'obtenir les mots de passe manquants.
+Une recherche sur [CrackStation](https://crackstation.net/) puis sur [HashKiller](https://hashes.com/en/decrypt/hash) permet d'obtenir les mots de passe manquants.
 
 ![Affichage de l'image CTF7-passwords-cracking.png](images/CTF7-passwords-cracking.png)
 
@@ -257,7 +257,7 @@ test
 
 Pour trouver les mots de passe de Brian, d'Alice, de Ruby, de Charles ou encore de Michael, [plusieurs techniques sont possibles](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf) : [les attaques par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consistent à tester, de manière exhaustive, toutes les combinaisons possibles ; [les attaques par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking) qui consistent à tester un sous-ensemble de mots ou de combinaisons placés dans un fichier texte ; ou bien [les attaques par social engineering](https://en.wikipedia.org/wiki/Social_engineering_(security)), qui visent à accéder à des informations confidentielles par la manipulation de personnes.
 
-L'outil-couteau-suisse [__Hydra__](http://sectools.org/tool/hydra/) est de sortie pour une attaque par dictionnaire, avec les _credentials_ trouvés précédemment !
+L'outil-couteau-suisse [__Hydra__](https://sectools.org/tool/hydra/) est de sortie pour une attaque par dictionnaire, avec les _credentials_ trouvés précédemment !
 
 ```console
 root@blinils:~# hydra -L CTF7-users -P CTF7-passwords 192.168.56.103 \
@@ -397,7 +397,7 @@ if ($_GET['action'] != 'read') include_once('inc/footer.php');
 	if (! is_file($path)) die("Could not find " . $_GET['file']);
 ```
 
-Une [inclusion de fichier local](http://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) semble possible via ce fichier PHP et son paramètre ```action```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Rien n'empêche d'inclure un autre fichier présent sur le serveur, puisqu'aucun contrôle n'est implémenté sur la valeur du paramètre ```file```.
+Une [inclusion de fichier local](https://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) semble possible via ce fichier PHP et son paramètre ```action```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Rien n'empêche d'inclure un autre fichier présent sur le serveur, puisqu'aucun contrôle n'est implémenté sur la valeur du paramètre ```file```.
 
 Exemple avec le fichier ```/etc/passwd``` qui contient la liste des utilisateurs du système. Il faut ruser et utiliser un [double encodage](https://www.owasp.org/index.php/Double_Encoding) pour y arriver !
 

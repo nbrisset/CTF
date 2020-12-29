@@ -5,7 +5,7 @@ _[<<< Return to BitsCTF 2017 tasks and writeups](/CTF-Jeopardy/2017-bitsctf)_
 Your job is to get to the message asap. joking.bitsctf.bits-quark.org
 
 This challenge looks like the "low" level of
-[Damn Vulnerable Web Application](http://www.dvwa.co.uk/).
+[Damn Vulnerable Web Application](https://github.com/digininja/DVWA).
 
 This website allows us to query the "CIA Ofiicial Records" (sic) by entering an id in the textbox.
 
@@ -33,7 +33,7 @@ First name:Joker
 Surname: Joker
 ```
 
-Now let's try some basic [SQL injections](https://www.owasp.org/index.php/SQL_Injection).
+Now let's try some basic [SQL injections](https://owasp.org/www-community/attacks/SQL_Injection).
 
 ```
 >>> id: 1'

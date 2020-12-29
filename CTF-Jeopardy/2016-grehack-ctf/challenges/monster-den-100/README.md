@@ -6,9 +6,9 @@ _[<<< Return to GreHack CTF 2016 tasks and writeups](/CTF-Jeopardy/2016-grehack-
 >sha1sum : 57af654d7e46947938f13a9344d0f1ac933ac173
 
 This was the third out of five steganography challenges:
-we had to find a flag in [this picture](monster_den.png).
+we had to find a flag in [this picture](files/monster_den.png).
 
-![FIND THE FLAG!](monster_den.png)
+![FIND THE FLAG!](files/monster_den.png)
 
 Let's see who really is this "Monster Den" with [pngcheck](http://www.libpng.org/pub/png/apps/pngcheck.html),
 it might be totally something else than expected.
@@ -36,8 +36,8 @@ No errors detected in monster_den-1 (7 chunks, -1913988.0% compression).
 
 This seems to be a real PNG image. But is there hidden data in it?
 
-Let's check this with four tools: [binwalk](https://github.com/devttys0/binwalk/wiki/Quick-Start-Guide),
-[hachoir-subfile](https://bitbucket.org/haypo/hachoir/wiki/hachoir-subfile),
+Let's check this with four tools: [binwalk](https://github.com/ReFirmLabs/binwalk/wiki/Quick-Start-Guide),
+[hachoir-subfile](https://hachoir.readthedocs.io/en/latest/subfile.html),
 [foremost](http://foremost.sourceforge.net/) and [StegSolve](http://www.caesum.com/handbook/stego.htm).
 
 ```console
@@ -74,17 +74,16 @@ Num	 Name (bs=512)	       Size	 File Offset	 Comment
 
 Zilch!
 
-![Screenshot #1 of StegSolve.jar](MD_SSjar_BP0.png)
+![Screenshot #1 of StegSolve.jar](files/MD_SSjar_BP0.png)
 
-![Screenshot #2 of StegSolve.jar](MD_SSjar_extract.png)
+![Screenshot #2 of StegSolve.jar](files/MD_SSjar_extract.png)
 
-That's better! As for the [Logo challenge](/CTF-Jeopardy/2016-grehack-ctf/challenges/logo-50), 
-there is some noise in the red, green and blue "0 bit" planes: this probably means that there is hidden data in the LSB
-([Least Significant Bit](http://ijact.org/volume3issue4/IJ0340004.pdf), a famous steganography technique).
-The data can eventually be dumped — thanks again to StegSolve —
-and stored in a new file, called... monster_hidden.png! 
+That's better! As for the previous [Logo challenge](/CTF-Jeopardy/2016-grehack-ctf/challenges/logo-50), 
+there is some noise in the red, green and blue "0 bit" planes: this probably means that there is hidden data in the 
+LSB ([Least Significant Bit](files/IJ0340004.pdf), a famous steganography technique).
+The data can eventually be dumped — thanks again to StegSolve — and stored in a new file, called... monster_hidden.png! 
 
-![FIND THAT FLAG!](monster_hidden.png)
+![FIND THAT FLAG!](files/monster_hidden.png)
 
 Once again, let's check this new file.
 
@@ -140,10 +139,10 @@ ERROR: Wrong password : flag.txt
 ```
 
 A [dictionary attack](https://en.wikipedia.org/wiki/Password_cracking)
-with [fcrackzip](http://allanfeid.com/content/cracking-zip-files-fcrackzip) gives us nothing,
+with [fcrackzip](https://allanfeid.com/content/cracking-zip-files-fcrackzip) gives us nothing,
 so the password may be elsewhere... again in the LSB?
 
-![Screenshot #3 of StegSolve.jar](MH_SSjar_extract.png)
+![Screenshot #3 of StegSolve.jar](files/MH_SSjar_extract.png)
 
 Great! The ZIP file can be opened, so we can retrieve the flag and the points!
 

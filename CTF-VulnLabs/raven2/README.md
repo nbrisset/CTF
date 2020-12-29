@@ -60,11 +60,11 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 --snip--
 ```
 
-La page d'index est une présentation des activités de l'entreprise _Raven Security_ ; il n'y a toujours pas de fichier ```robots.txt```, mais une recherche manuelle permet de lister les pages suivantes : ```index.html```, ```about.html```, ```service.html```, ```contact.php``` et ```team.html```. Sur cette dernière page Web, on y retrouve l'identité de chaque membre du staff qui, contrairement à celui de _[Bulldog Industries](CTF-VulnLabs/bulldog2)_, n'a pas été licencié après la compromission de leur serveur. L'onglet Blog redirige toujours vers un site WordPress, aussi vide de contenu que le premier.
+La page d'index est une présentation des activités de l'entreprise _Raven Security_ ; il n'y a toujours pas de fichier ```robots.txt```, mais une recherche manuelle permet de lister les pages suivantes : ```index.html```, ```about.html```, ```service.html```, ```contact.php``` et ```team.html```. Sur cette dernière page Web, on y retrouve l'identité de chaque membre du staff qui, contrairement à celui de _[Bulldog Industries](/CTF-VulnLabs/bulldog2)_, n'a pas été licencié après la compromission de leur serveur. L'onglet Blog redirige toujours vers un site WordPress, aussi vide de contenu que le premier.
 
 ![Affichage de l'image INDEX-Raven.png](images/INDEX-Raven.png)
 
-Les outils [__DIRB__](https://tools.kali.org/web-applications/dirb), [__nikto__](https://cirt.net/nikto2-docs/) et [__WordPress Security Scanner__](https://wpscan.org/) ne révèlent toujours rien de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, ```michael```, qui a rédigé le premier post du blog... comme pour la VM Raven: 1. Deux attaques avec l'outil [__Hydra__](http://sectools.org/tool/hydra/) sont alors lancées : l'une sur le service SSH à la recherche du mot de passe Unix du compte ```michael``` (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte ```michael``` (qui, lui, existe bien).
+Les outils [__DIRB__](https://tools.kali.org/web-applications/dirb), [__nikto__](https://cirt.net/nikto2-docs/) et [__WordPress Security Scanner__](https://github.com/wpscanteam/wpscan) ne révèlent toujours rien de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, ```michael```, qui a rédigé le premier post du blog... comme pour la VM Raven: 1. Deux attaques avec l'outil [__Hydra__](https://sectools.org/tool/hydra/) sont alors lancées : l'une sur le service SSH à la recherche du mot de passe Unix du compte ```michael``` (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte ```michael``` (qui, lui, existe bien).
 
 ```console
 root@blinils:~# hydra -l michael -P 500-worst-passwords.txt 192.168.56.102 \
@@ -339,7 +339,7 @@ Bye
 www-data@Raven:/var/www/html/vendor$ 
 ```
 
-Avec un peu de chance, [__John The Ripper__](http://openwall.com/john/) ne fera qu'une bouchée de ces hashs.
+Avec un peu de chance, [__John The Ripper__](https://www.openwall.com/john/) ne fera qu'une bouchée de ces hashs.
 
 ```console
 root@blinils:~# cat pass-wordpress-raven.txt

@@ -61,7 +61,7 @@ Sur cette dernière page Web, l'identité de chaque membre du staff est dévoil�
 
 ![Affichage de l'image INDEX-Raven.png](INDEX-Raven.png)
 
-Les outils [__DIRB__](https://tools.kali.org/web-applications/dirb), [__nikto__](https://cirt.net/nikto2-docs/) et [__WordPress Security Scanner__](https://wpscan.org/) n'ont rien révélé de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, ```michael```, qui a rédigé le premier post du blog. Deux attaques avec l'outil [__Hydra__](http://sectools.org/tool/hydra/) sont alors lancées : l'une sur le service SSH à la recherche du mot de passe Unix du compte ```michael``` (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte ```michael``` (qui, lui, existe bien).
+Les outils [__DIRB__](https://tools.kali.org/web-applications/dirb), [__nikto__](https://cirt.net/nikto2-docs/) et [__WordPress Security Scanner__](https://github.com/wpscanteam/wpscan) n'ont rien révélé de spécial ; en revanche, une recherche manuelle a permis de trouver le nom d'un utilisateur, ```michael```, qui a rédigé le premier post du blog. Deux attaques avec l'outil [__Hydra__](https://sectools.org/tool/hydra/) sont alors lancées : l'une sur le service SSH à la recherche du mot de passe Unix du compte ```michael``` (s'il existe), l'autre sur l'interface d'administration du WordPress à la recherche du mot de passe du compte ```michael``` (qui, lui, existe bien).
 
 ```console
 root@blinils:~# hydra -l michael -P 500-worst-passwords.txt 192.168.56.105 \
@@ -222,7 +222,7 @@ Bye
 michael@Raven:~$
 ```
 
-Avec un peu de chance, [__John The Ripper__](http://openwall.com/john/) ne fera qu'une bouchée de ces hashs.
+Avec un peu de chance, [__John The Ripper__](https://www.openwall.com/john/) ne fera qu'une bouchée de ces hashs.
 
 ```console
 root@blinils:~# cat pass-wordpress-raven.txt

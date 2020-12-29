@@ -1,6 +1,6 @@
 # FourAndSix: 2.01
 
-[FourAndSix: 2.01](https://www.vulnhub.com/entry/fourandsix-201,266/) est une machine virtuelle vulnérable, conçue par Fred Wemeijer et publiée sur VulnHub au mois d'octobre 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[FourAndSix: 2.01](https://www.vulnhub.com/entry/fourandsix-201,266/) est une machine virtuelle vulnérable, conçue par [Fred Wemeijer](https://www.vulnhub.com/author/fred-wemeijer,595/) et publiée sur VulnHub au mois d'octobre 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Recherche d'informations
 
@@ -90,7 +90,7 @@ ERROR: Data Error in encrypted file. Wrong password? : id_rsa.pub
 --snip--
 ```
 
-L'outil [__Fcrackzip__](https://korben.info/cracker-des-zip-rar-7z-et-pdf-sous-linux.html), qui a été si pratique sur certains CTF Jeopardy, n'est d'aucune aide ici. En revanche, il existe un script nommé [__7z2john__](https://github.com/truongkma/ctf-tools/blob/master/John/run/7z2john.py) qui permet de calculer le hash d'un fichier 7z, afin que l'outil [__John The Ripper__](https://www.openwall.com/john/) puisse le traiter. Malheureusement, l'erreur _```backup.7z : 7-Zip files without header encryption are *not* supported yet!```_ à l'exécution du script Python m'a convaincu d'utiliser la version Perl, fournie dans la version la plus récente de John The Ripper [publiée sur Github](https://github.com/magnumripper/JohnTheRipper), la version dite "jumbo".
+L'outil [__fcrackzip__](https://allanfeid.com/content/cracking-zip-files-fcrackzip), qui a été si pratique sur certains CTF Jeopardy, n'est d'aucune aide ici. En revanche, il existe un script nommé [__7z2john__](https://github.com/truongkma/ctf-tools/blob/master/John/run/7z2john.py) qui permet de calculer le hash d'un fichier 7z, afin que l'outil [__John The Ripper__](https://www.openwall.com/john/) puisse le traiter. Malheureusement, l'erreur _```backup.7z : 7-Zip files without header encryption are *not* supported yet!```_ à l'exécution du script Python m'a convaincu d'utiliser la version Perl, fournie dans la version la plus récente de John The Ripper [publiée sur Github](https://github.com/magnumripper/JohnTheRipper), la version dite "jumbo".
 
 ```console
 root@blinils:/mnt/fourandsix# locate 7z2john.pl
@@ -160,7 +160,7 @@ hello6.png  hello7.jpeg  hello8.jpeg  id_rsa      id_rsa.pub
 
 ## Cassage de la passphrase d'une clé privée SSH
 
-Les huit images JPG et PNG sont celles du personnage [_Hello Kitty_](https://fr.wikipedia.org/wiki/Hello_Kitty) et ont vraisemblablement été placées là en guise de fausses pistes : aucune trace de flag dans les métadonnées des images ([__exiftool__](http://www.sno.phy.queensu.ca/~phil/exiftool/)), aucun message caché dans les bits de poids faible des images ([__StegSolve__](http://www.caesum.com/handbook/stego.htm), [__zsteg__](https://github.com/zed-0xff/zsteg)), et rien dans les fichiers eux-mêmes ([_strings_](https://en.wikipedia.org/wiki/Strings_(Unix)), [_grep_](https://en.wikipedia.org/wiki/Grep)). Dommage ! Pas d'épreuve de [stéganographie](https://en.wikipedia.org/wiki/Steganography) ce coup-ci...
+Les huit images JPG et PNG sont celles du personnage [_Hello Kitty_](https://fr.wikipedia.org/wiki/Hello_Kitty) et ont vraisemblablement été placées là en guise de fausses pistes : aucune trace de flag dans les métadonnées des images ([__exiftool__](https://exiftool.org/)), aucun message caché dans les bits de poids faible des images ([__StegSolve__](http://www.caesum.com/handbook/stego.htm), [__zsteg__](https://github.com/zed-0xff/zsteg)), et rien dans les fichiers eux-mêmes ([_strings_](https://en.wikipedia.org/wiki/Strings_(Unix)), [_grep_](https://en.wikipedia.org/wiki/Grep)). Dommage ! Pas d'épreuve de [stéganographie](https://en.wikipedia.org/wiki/Steganography) ce coup-ci...
 
 Les clés privée et publique SSH sont donc la piste la plus sérieuse, pour la suite de ce challenge boot2root. Il s'agit bel et bien d'une paire de clés SSH, car l'une comme l'autre produisent le même _fingerprint_.
 
@@ -311,7 +311,7 @@ permit nopass keepenv root as root
 
 La première ligne du fichier ```doas.conf``` signifie que l'utilisateur ```user``` peut exécuter la commande ```doas /usr/bin/less /var/log/authlog``` en tant que root, et de visualiser le contenu du fichier ```authlog``` dans l'éditeur vi.
 
-Ça tombe bien ! L'article [_Escaping Restricted Linux Shells_](https://pen-testing.sans.org/blog/2012/06/06/escaping-restricted-linux-shells) posté sur le site du SANS Institute par Doug Stilwell donne une astuce très précieuse : il est possible d'obtenir un shell à partir d'un éditeur de texte tel que vi ou vim. Ça tombe bien, vi est l'un des seuls binaires que l'on peut appeler sur notre shell restreint. Une fois à l'intérieur de l'éditeur, la commande ```:!/bin/ksh``` nous permet d'obtenir un shell root digne de ce nom !
+Ça tombe bien ! L'article [_Escaping Restricted Linux Shells_](https://www.sans.org/blog/escaping-restricted-linux-shells/) posté sur le site du SANS Institute par Doug Stilwell donne une astuce très précieuse : il est possible d'obtenir un shell à partir d'un éditeur de texte tel que vi ou vim. Ça tombe bien, vi est l'un des seuls binaires que l'on peut appeler sur notre shell restreint. Une fois à l'intérieur de l'éditeur, la commande ```:!/bin/ksh``` nous permet d'obtenir un shell root digne de ce nom !
 
 ```console
 fourandsix2$ id

@@ -46,7 +46,7 @@ MAC Address: 00:0c:29:44:6b:32 (Oracle VirtualBox virtual NIC)
 Service Info: Hosts: localhost.localdomain, 192.168.56.101; OS: Unix
 ```
 
-Toutes ces informations glanées en quelques minutes vont permettre à une personne malveillante de peaufiner ses attaques à venir : ainsi, il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/Secure_Shell) au serveur LAMPSecurity CTF5 (port 22), un serveur Web Apache 2.2.6 (port 80) et une base de données MySQL 5.0.45 (port 3306) y sont installés, ainsi qu'un [système de partage de fichiers Samba](https://doc.ubuntu-fr.org/samba) (ports 139, 445 et 901) et un serveur de messagerie électronique (ports 25, 110 et 143). Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
+Toutes ces informations glanées en quelques minutes vont permettre à une personne malveillante de peaufiner ses attaques à venir : ainsi, il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/SSH_(Secure_Shell)) au serveur LAMPSecurity CTF5 (port 22), un serveur Web Apache 2.2.6 (port 80) et une base de données MySQL 5.0.45 (port 3306) y sont installés, ainsi qu'un [système de partage de fichiers Samba](https://doc.ubuntu-fr.org/samba) (ports 139, 445 et 901) et un serveur de messagerie électronique (ports 25, 110 et 143). Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
 
 ## Recherche de vulnérabilités
 
@@ -113,15 +113,14 @@ root@blinils:~# nikto -h http://192.168.56.101
 ```
 
 Outre la détection des versions de PHP (5.2.4) et d'Apache (2.2.6 Fedora), l'outil nikto a repéré
-[une page phpinfo()](http://php.net/manual/fr/function.phpinfo.php) qui affiche de nombreuses informations « sur PHP, concernant sa configuration courante : options de compilation, extensions, version, informations sur le serveur, et l'environnement (lorsqu'il est compilé comme module), environnement PHP, informations sur le système, chemins, valeurs générales et locales de configuration, en-têtes HTTP et la licence PHP ». Et notamment...
+[une page phpinfo()](https://www.php.net/manual/fr/function.phpinfo.php) qui affiche de nombreuses informations « sur PHP, concernant sa configuration courante : options de compilation, extensions, version, informations sur le serveur, et l'environnement (lorsqu'il est compilé comme module), environnement PHP, informations sur le système, chemins, valeurs générales et locales de configuration, en-têtes HTTP et la licence PHP ». Et notamment...
 
 ```
 System		Linux localhost.localdomain 2.6.23.1-42.fc8 #1 SMP Tue Oct 30 13:55:12 EDT 2007 i686
 Build Date	Oct 16 2007 09:15:34
 ```
 
-Il s'agit d'une information très utile, si jamais des [failles système](https://fr.wiktionary.org/wiki/local_root_exploit) venaient à être nécessaires
-[pour une élévation de privilèges](https://www.exploit-db.com/local/) sur le serveur. Désormais, l'heure est à l'exploitation des vulnérabilités Web !
+Il s'agit d'une information très utile, si jamais des [failles système](https://fr.wiktionary.org/wiki/local_root_exploit) venaient à être nécessaires [pour une élévation de privilèges](https://www.exploit-db.com) sur le serveur. Désormais, l'heure est à l'exploitation des vulnérabilités Web !
 
 ## Exploitation des vulnérabilités
 
@@ -134,7 +133,7 @@ Go go go!
 + /index.php?page=../../../../../../../../../../boot.ini: PHP include error may indicate local or remote file inclusion is possible.
 ```
 
-Dans un premier temps, __nikto__ nous informe qu'une [inclusion de fichier local](http://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) est possible via ```index.php``` et son paramètre ```page```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Ainsi, si l'appel des URL ```http://192.168.56.101/?page=about``` et ```http://192.168.56.101/?page=contact``` affichent respectivement les fichiers ```about.php``` et ```contact.php``` situés très probablement dans le répertoire ```/var/www/html```, rien n'empêche d'inclure le fichier ```info.php``` signalé par nikto avec l'URL ```http://192.168.56.101/index.php?page=info```, n'est-ce pas ?
+Dans un premier temps, __nikto__ nous informe qu'une [inclusion de fichier local](https://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) est possible via ```index.php``` et son paramètre ```page```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Ainsi, si l'appel des URL ```http://192.168.56.101/?page=about``` et ```http://192.168.56.101/?page=contact``` affichent respectivement les fichiers ```about.php``` et ```contact.php``` situés très probablement dans le répertoire ```/var/www/html```, rien n'empêche d'inclure le fichier ```info.php``` signalé par nikto avec l'URL ```http://192.168.56.101/index.php?page=info```, n'est-ce pas ?
 
 ```
 + /info.php: Output from the phpinfo() function was found.
@@ -223,7 +222,7 @@ Le webmail SquirrelMail est également présent sur le serveur, dans sa version 
 * [squirrelmail 1.4.11 and 1.4.12 are compromised](https://lists.fedoraproject.org/pipermail/test/2007-December/064683.html)
 * [What's interesting to me about SquirrelMail attack](http://www.syntaxpolice.org/2007/12/)
 
-De plus, les exploits répertoriés sur [_The Exploit Database_](https://www.exploit-db.com/search/?action=search&q=SquirrelMail) ne manquent pas, mais la plupart d'entre eux nécessitent un accès authentifié et ne sont pas applicables pour la version 1.4.11. Cinq utilisateurs ont été trouvés grâce à la _Local File Inclusion_ du fichier ```index.php```, autant se focaliser sur eux et essayer de trouver leur mot de passe. Le wiki [SkullSecurity](https://wiki.skullsecurity.org/Passwords) propose un large panel de dictionnaires : le premier à être utilisé (au nom particulièrement évocateur) est ```500-worst-passwords.txt```.
+De plus, les exploits répertoriés sur [_The Exploit Database_](https://www.exploit-db.com/search?q=SquirrelMail) ne manquent pas, mais la plupart d'entre eux nécessitent un accès authentifié et ne sont pas applicables pour la version 1.4.11. Cinq utilisateurs ont été trouvés grâce à la _Local File Inclusion_ du fichier ```index.php```, autant se focaliser sur eux et essayer de trouver leur mot de passe. Le wiki [SkullSecurity](https://wiki.skullsecurity.org/Passwords) propose un large panel de dictionnaires : le premier à être utilisé (au nom particulièrement évocateur) est ```500-worst-passwords.txt```.
 
 ```console
 root@blinils:~# hydra -l amy -P /usr/share/dict/500-worst-passwords.txt 192.168.56.101 http-post-form 
@@ -389,7 +388,7 @@ Il est désormais possible de se connecter au panel d'administration du blog d'A
 
 ![Affichage de l'image CTF5_NanoCMS2.png](images/CTF5_NanoCMS2.png)
 
-Outre cette vulnérabilité, madirish2600 a trouvé d'autres problèmes [au cours d'un audit plus complet](http://seclists.org/fulldisclosure/2009/Apr/126) de NanoCMS : entre autres, des droits de lecture et d'écriture trop permissifs dans certains répertoires, un couple d'identifiants par défaut ```admin:demo``` (qui n'a cependant pas fonctionné sur le serveur LAMPSecurity CTF5), des _Cross-Site Scripting_ explicitées plus bas et surtout, [la possibilité d'injecter du code PHP un peu partout sur le site](https://www.exploit-db.com/papers/12885/) (en anglais, _Remote Code Execution_ ou RCE).
+Outre cette vulnérabilité, madirish2600 a trouvé d'autres problèmes [au cours d'un audit plus complet](https://seclists.org/fulldisclosure/2009/Apr/126) de NanoCMS : entre autres, des droits de lecture et d'écriture trop permissifs dans certains répertoires, un couple d'identifiants par défaut ```admin:demo``` (qui n'a cependant pas fonctionné sur le serveur LAMPSecurity CTF5), des _Cross-Site Scripting_ explicitées plus bas et surtout, [la possibilité d'injecter du code PHP un peu partout sur le site](https://www.exploit-db.com/papers/12885/) (en anglais, _Remote Code Execution_ ou RCE).
 
 Une fois connecté en tant qu'administrateur sur NanoCMS, il est désormais possible de modifier le contenu du blog.
 
@@ -413,7 +412,7 @@ Pour rappel, cinq comptes Unix disposant d'un shell valide ```/bin/bash``` ont �
 
 Pour trouver les mots de passe de Patrick, de Jennifer, d'Andy, de Loren et d'Amy, [plusieurs techniques sont possibles](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf) : [les attaques par bruteforce](https://en.wikipedia.org/wiki/Brute-force_attack) qui consistent à tester, de manière exhaustive, toutes les combinaisons possibles ; [les attaques par dictionnaire](https://en.wikipedia.org/wiki/Password_cracking) qui consistent à tester un sous-ensemble de mots ou de combinaisons placés dans un fichier texte ; ou bien [les attaques par social engineering](https://en.wikipedia.org/wiki/Social_engineering_(security)), qui visent à accéder à des informations confidentielles par la manipulation de personnes.
 
-L'attaque par dictionnaire avait plutôt bien fonctionné sur SquirrelMail, donc autant réutiliser l'outil-couteau-suisse [__Hydra__](http://sectools.org/tool/hydra/).
+L'attaque par dictionnaire avait plutôt bien fonctionné sur SquirrelMail, donc autant réutiliser l'outil-couteau-suisse [__Hydra__](https://sectools.org/tool/hydra/).
 
 ```console
 root@blinils:~# cat usersCTF5.txt
@@ -495,7 +494,7 @@ Password:
 
 ### Attaque par dictionnaire avec Hydra sur SSH, partie 2
 
-Il s'agit de la même attaque, mais avec [le dictionnaire de __John The Ripper__](http://openwall.com/john/) cette fois-ci.
+Il s'agit de la même attaque, mais avec [le dictionnaire de __John The Ripper__](https://www.openwall.com/john/) cette fois-ci.
 
 Au bout d'une heure et demie, les résultats sont bien plus probants : les mots de passe de Patrick et de Jennifer ont été trouvés.
 
@@ -743,7 +742,7 @@ mysql> select Host, User, Password from mysql.user;
 +-----------------------+------+------------------+
 ```
 
-Les mots de passe stockés dans la table ```drupal.users``` permettent de se connecter sur ```/events/``` en tant que ```loren```, ```andy```, ```jennifer```, ```patrick``` ou encore ```amy```. Des sites Web tels que [CrackStation](https://crackstation.net/) ou [HashKiller](https://www.hashkiller.co.uk/md5-decrypter.aspx) ne devraient en faire qu'une bouchée.
+Les mots de passe stockés dans la table ```drupal.users``` permettent de se connecter sur ```/events/``` en tant que ```loren```, ```andy```, ```jennifer```, ```patrick``` ou encore ```amy```. Des sites Web tels que [CrackStation](https://crackstation.net/) ou [HashKiller](https://hashes.com/en/decrypt/hash) ne devraient en faire qu'une bouchée.
 
 ```console
 https://crackstation.net/
@@ -765,7 +764,7 @@ e5f0f20b92f7022779015774e90ce917 MD5 : temppass
 
 Une _Cross-Site Scripting_, abrégée XSS, est l'une des failles de sécurité les plus répandues dans les applications Web. Elle peut être utilisée par un attaquant pour provoquer un comportement du site Web différent de celui désiré par le créateur de la page. Cette vulnérabilité est due à une validation incorrecte, côté serveur, des entrées provenant de l'utilisateur. Lors de l'accès à certaines pages du site Web, des paramètres HTTP (en-têtes, GET, POST) ou des éléments entrés par l'utilisateur sont réécrits directement dans la réponse du serveur, sans avoir été correctement validés, filtrés, nettoyés côté serveur. Un attaquant pourra alors injecter du code malveillant au lieu de données légitimes.
 
-Par exemple, cette XSS sur NanoCMS avait été trouvée [lors de l'audit effectué par madirish2600](http://seclists.org/fulldisclosure/2009/Apr/126), dans le titre et le corps de la page.
+Par exemple, cette XSS sur NanoCMS avait été trouvée [lors de l'audit effectué par madirish2600](https://seclists.org/fulldisclosure/2009/Apr/126), dans le titre et le corps de la page.
 
 ![Affichage de l'image CTF5_XSS1.png](images/CTF5_XSS1.png)
 
@@ -781,9 +780,9 @@ Cette page Web intitulée « _Register with Phake Organization_ » a pour conten
 
 ![Affichage de l'image CTF5_SQLi1.png](images/CTF5_SQLi1.png)
 
-Ce formulaire consiste en quatre champs : nom de famille (paramètre ```name```), adresse e-mail (paramètre ```email```), numéro de téléphone (paramètre ```phone```) et nom de l'entreprise (paramètre ```org```). Ces données sont envoyées [avec la méthode HTTP POST](https://developer.mozilla.org/fr/docs/HTTP/M%C3%A9thode/POST) puis traitées par le serveur qui renverra le message de confirmation susmentionné. Or une personne malveillante [n'aura pas la même vision qu'un internaute légitime](https://en.wikipedia.org/wiki/Thinking_outside_the_box) et se posera alors les questions suivantes : le serveur vérifie-t-il si ce que fournit l'utilisateur correspond bien à ce qui est attendu ? que se passerait-t-il si, au lieu d'un numéro de téléphone, le serveur devait recevoir et traiter une centaine de caractères spéciaux ? et si, au lieu de caractères spéciaux aléatoires, ils étaient spécifiquement conçus de telle sorte à ce qu'il soit possible d'interagir avec le serveur et la base de données ? et pourquoi pas récupérer intégralement, grâce à ce code, le contenu de la base de données ?
+Ce formulaire consiste en quatre champs : nom de famille (paramètre ```name```), adresse e-mail (paramètre ```email```), numéro de téléphone (paramètre ```phone```) et nom de l'entreprise (paramètre ```org```). Ces données sont envoyées [avec la méthode HTTP POST](https://www.w3schools.com/tags/ref_httpmethods.asp) puis traitées par le serveur qui renverra le message de confirmation susmentionné. Or une personne malveillante [n'aura pas la même vision qu'un internaute légitime](https://en.wikipedia.org/wiki/Thinking_outside_the_box) et se posera alors les questions suivantes : le serveur vérifie-t-il si ce que fournit l'utilisateur correspond bien à ce qui est attendu ? que se passerait-t-il si, au lieu d'un numéro de téléphone, le serveur devait recevoir et traiter une centaine de caractères spéciaux ? et si, au lieu de caractères spéciaux aléatoires, ils étaient spécifiquement conçus de telle sorte à ce qu'il soit possible d'interagir avec le serveur et la base de données ? et pourquoi pas récupérer intégralement, grâce à ce code, le contenu de la base de données ?
 
-Pour un attaquant, le but du jeu est de modifier le fonctionnement d'origine d'une fonction, d'un programme ou d'un script, en y insérant des données non prévues. Les failles dites d'injection surviennent lorsqu'il n'y a pas de contrôle, de filtrage ou de validation sur les données entrantes. Ici, l'insertion d'une seule apostrophe suffit à démontrer la présence d'une « [injection SQL](https://www.owasp.org/index.php/SQL_Injection) » a minima sur le champ ```name```.
+Pour un attaquant, le but du jeu est de modifier le fonctionnement d'origine d'une fonction, d'un programme ou d'un script, en y insérant des données non prévues. Les failles dites d'injection surviennent lorsqu'il n'y a pas de contrôle, de filtrage ou de validation sur les données entrantes. Ici, l'insertion d'une seule apostrophe suffit à démontrer la présence d'une « [injection SQL](https://owasp.org/www-community/attacks/SQL_Injection) » a minima sur le champ ```name```.
 
 ![Affichage de l'image CTF5_SQLi2.png](images/CTF5_SQLi2.png)
 

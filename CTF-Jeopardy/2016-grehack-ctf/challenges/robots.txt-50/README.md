@@ -16,7 +16,7 @@ As the title says, the file robots.txt is a wrong track. Let's try somewhere els
 ![SORRY FLAG NOT FOUND!](robots.txt.png)
 
 All we ~~goat~~ got is a goat and two numbers: 5785 & 7033. Looking for these numbers on Google
-gives us answers: [an article written by Stéphane Bortzmeyer](http://www.bortzmeyer.org/7033.html)
+gives us answers: [an article written by Stéphane Bortzmeyer](https://www.bortzmeyer.org/7033.html)
 about the RFC 7033: WebFinger, and [the RFC itself](https://tools.ietf.org/html/rfc7033) published
 in the Internet Engineering Task Force (IETF) website.
 

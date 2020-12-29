@@ -45,7 +45,7 @@ Enfin, la rubrique ```Users``` met en lumière les membres les plus actifs du mo
 
 ## Hydra - Le deuxième travail d'Hercule
 
-Lors d'une tentative de connexion avec le couple d'identifiants ```user1:password1```, le serveur nous renvoie un code erreur [_401 Unauthorized_](https://tools.ietf.org/html/rfc7235#section-3.1). Le but ici va être d'automatiser la recherche de logins/mots de passe valides avec l'outil [__Hydra__](http://sectools.org/tool/hydra/), en lui donnant les paramètres adéquats : format de la requête, liste de logins, liste de mots de passe, conditions d'arrêt/de succès...
+Lors d'une tentative de connexion avec le couple d'identifiants ```user1:password1```, le serveur nous renvoie un code erreur [_401 Unauthorized_](https://tools.ietf.org/html/rfc7235#section-3.1). Le but ici va être d'automatiser la recherche de logins/mots de passe valides avec l'outil [__Hydra__](https://sectools.org/tool/hydra/), en lui donnant les paramètres adéquats : format de la requête, liste de logins, liste de mots de passe, conditions d'arrêt/de succès...
 
 ```console
 POST /users/authenticate HTTP/1.1
@@ -110,8 +110,7 @@ Deux mots de passe ont été trouvés : ceux des comptes de Vijay Wells (eivijay
 
 ## Level up! avec les JSON Web Tokens
 
-L'analyse des échanges avec le proxy [__Burp__](https://support.portswigger.net/customer/portal/articles/1783055-configuring-your-browser-to-work-with-burp), entre le navigateur et le serveur permet d'avancer : 
-un [_JSON Web Token_](https://en.wikipedia.org/wiki/JSON_Web_Token) est créé avec les informations de l'utilisateur.
+L'analyse des échanges avec le proxy [__Burp__](https://portswigger.net/burp/documentation/desktop/getting-started/proxy-setup/browser), entre le navigateur et le serveur permet d'avancer : un [_JSON Web Token_](https://en.wikipedia.org/wiki/JSON_Web_Token) est créé avec les informations de l'utilisateur.
 
 ```console
 HTTP/1.1 200 OK

@@ -23,7 +23,7 @@ _____________________________________________________________________________
 192.168.56.103  08:00:27:2d:1a:16      1      60  PCS Systemtechnik GmbH
 ```
 
-192.168.56.101 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), tandis que 192.168.56.103 correspond à l'adresse IP de la VM LAMPSecurity CTF9. L'outil [__nmap__](https://nmap.org/book/man.html) est lancé en premier afin de détecter les ports ouverts sur le serveur CTF9, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
+192.168.56.101 est l'adresse IP de ma machine virtuelle [Kali](https://www.kali.org/docs/introduction/what-is-kali-linux/), tandis que 192.168.56.103 correspond à l'adresse IP de la VM LAMPSecurity CTF9. L'outil [__nmap__](https://nmap.org/book/man.html) est lancé en premier afin de détecter les ports ouverts sur le serveur CTF9, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- 192.168.56.103
@@ -39,7 +39,7 @@ PORT     STATE SERVICE    VERSION
 MAC Address: 08:00:27:2D:1A:16 (Oracle VirtualBox virtual NIC)
 ```
 
-Il semble possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/Secure_Shell) au serveur LAMPSecurity CTF9 (port 22), et on y retrouve également un serveur Web Apache 2.2.15 (ports 80/443) ainsi qu'une base de données MySQL (port 3306), tout comme les VM précédentes. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités. Le serveur Web semble a priori le plus alléchant pour commencer ; le site qu'il va falloir analyser de fond en comble est le site vitrine de l'entreprise fictive _LAMPSecLabs_.
+Il semble possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/SSH_(Secure_Shell)) au serveur LAMPSecurity CTF9 (port 22), et on y retrouve également un serveur Web Apache 2.2.15 (ports 80/443) ainsi qu'une base de données MySQL (port 3306), tout comme les VM précédentes. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités. Le serveur Web semble a priori le plus alléchant pour commencer ; le site qu'il va falloir analyser de fond en comble est le site vitrine de l'entreprise fictive _LAMPSecLabs_.
 
 ![Affichage de l'image CTF9_user_view.png](images/CTF9_user_view.png)
 
@@ -74,15 +74,14 @@ root@blinils:~# nikto -h 192.168.56.103
 + 1 host(s) tested
 ```
 
-Outre la détection des versions de PHP (5.3.3) et d'Apache (2.2.15 CentOS), l'outil nikto a repéré [une page phpinfo()](http://php.net/manual/fr/function.phpinfo.php) qui affiche de nombreuses informations « sur PHP, concernant sa configuration courante : options de compilation, extensions, version, informations sur le serveur, et l'environnement (lorsqu'il est compilé comme module), environnement PHP, informations sur le système, chemins, valeurs générales et locales de configuration, en-têtes HTTP et la licence PHP ». Et notamment...
+Outre la détection des versions de PHP (5.3.3) et d'Apache (2.2.15 CentOS), l'outil nikto a repéré [une page phpinfo()](https://www.php.net/manual/fr/function.phpinfo.php) qui affiche de nombreuses informations « sur PHP, concernant sa configuration courante : options de compilation, extensions, version, informations sur le serveur, et l'environnement (lorsqu'il est compilé comme module), environnement PHP, informations sur le système, chemins, valeurs générales et locales de configuration, en-têtes HTTP et la licence PHP ». Et notamment...
 
 ```
 System		Linux lampseclabs.localdomain 2.6.32-279.el6.i686 #1 SMP Fri Jun 22 10:59:55 UTC 2012 i686
 Build Date	Dec 11 2013 03:16:27
 ```
 
-Il s'agit d'une information très utile, si jamais des [failles système](https://fr.wiktionary.org/wiki/local_root_exploit) venaient à être nécessaires
-[pour une élévation de privilèges](https://www.exploit-db.com/local/) sur le serveur. Désormais, l'heure est à l'exploitation des vulnérabilités Web !
+Il s'agit d'une information très utile, si jamais des [failles système](https://fr.wiktionary.org/wiki/local_root_exploit) venaient à être nécessaires [pour une élévation de privilèges](https://www.exploit-db.com) sur le serveur. Désormais, l'heure est à l'exploitation des vulnérabilités Web !
 
 ## Cross-Site Scripting sur la page /admin/login.php
 
@@ -96,7 +95,7 @@ Cependant, cette vulnérabilité n'entrera pas dans la résolution de cette VM. 
 
 ## Injection SQL sur la page /admin/login.php
 
-Ce formulaire de connexion consiste en deux champs : un login (paramètre ```username```) et un mot de passe (paramètre ```password```). Ces données sont envoyées [avec la méthode HTTP POST](https://developer.mozilla.org/fr/docs/HTTP/M%C3%A9thode/POST) puis traitées par le serveur qui renverra le message de confirmation susmentionné. Or une personne malveillante [n'aura pas la même vision qu'un internaute légitime](https://en.wikipedia.org/wiki/Thinking_outside_the_box) et se posera alors les questions suivantes : le serveur vérifie-t-il si ce que fournit l'utilisateur correspond bien à ce qui est attendu ? que se passerait-t-il si, au lieu d'un login composé de caractères alphanumériques, le serveur devait recevoir et traiter une centaine de caractères spéciaux ? et si, au lieu de caractères spéciaux aléatoires, ils étaient spécifiquement conçus de telle sorte à ce qu'il soit possible d'interagir avec le serveur et la base de données ? et pourquoi pas récupérer intégralement, grâce à ce code, le contenu de la base de données ?
+Ce formulaire de connexion consiste en deux champs : un login (paramètre ```username```) et un mot de passe (paramètre ```password```). Ces données sont envoyées [avec la méthode HTTP POST](https://www.w3schools.com/tags/ref_httpmethods.asp) puis traitées par le serveur qui renverra le message de confirmation susmentionné. Or une personne malveillante [n'aura pas la même vision qu'un internaute légitime](https://en.wikipedia.org/wiki/Thinking_outside_the_box) et se posera alors les questions suivantes : le serveur vérifie-t-il si ce que fournit l'utilisateur correspond bien à ce qui est attendu ? que se passerait-t-il si, au lieu d'un login composé de caractères alphanumériques, le serveur devait recevoir et traiter une centaine de caractères spéciaux ? et si, au lieu de caractères spéciaux aléatoires, ils étaient spécifiquement conçus de telle sorte à ce qu'il soit possible d'interagir avec le serveur et la base de données ? et pourquoi pas récupérer intégralement, grâce à ce code, le contenu de la base de données ?
 
 Pour un attaquant, le but du jeu est de modifier le fonctionnement d'origine d'une fonction, d'un programme ou d'un script, en y insérant des données non prévues. Les failles dites d'injection surviennent lorsqu'il n'y a pas de contrôle, de filtrage ou de validation sur les données entrantes. Afin d'éviter de longs tests manuels fastidieux, pour trouver la bonne syntaxe permettant d'exfiltrer les données de la base MySQL, __SQLMap__ vient à la rescousse. Il s'agit [d'un outil open source permettant d'identifier et d'exploiter une injection SQL](https://connect.ed-diamond.com/MISC/MISC-062/Utilisation-avancee-de-sqlmap) sur des applications Web. En lui spécifiant l'URL du site Web ainsi que les paramètres à tester, SQLMap va tester différentes techniques afin d'identifier la présence d'une injection SQL...
 
@@ -210,7 +209,7 @@ Table: user
 +---------+---------------+--------------------+--------------+-------------------------------+----------------------------------+
 ```
 
-Non seulement __SQLMap__ peut identifier et exploiter des injections SQL, mais il est aussi en mesure de lancer des [attaques par dictionnaire](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf), dès lors qu'il identifie des hashs de mots de passe dans une base de données. Avec son dictionnaire par défaut ```/usr/share/sqlmap/txt/wordlist.zip```, SQLMap retrouve les mots de passe de trois utilisateurs : ```invisible``` (eve), ```billybob``` (bob) et ```hacking``` (administrator). Une recherche sur [__CrackStation__](https://crackstation.net/) puis sur [__HashKiller__](https://www.hashkiller.co.uk/md5-decrypter.aspx) permet d'obtenir les mots de passe manquants.
+Non seulement __SQLMap__ peut identifier et exploiter des injections SQL, mais il est aussi en mesure de lancer des [attaques par dictionnaire](https://repo.zenk-security.com/Reversing%20.%20cracking/Cracking_Passwords_Guide.pdf), dès lors qu'il identifie des hashs de mots de passe dans une base de données. Avec son dictionnaire par défaut ```/usr/share/sqlmap/txt/wordlist.zip```, SQLMap retrouve les mots de passe de trois utilisateurs : ```invisible``` (eve), ```billybob``` (bob) et ```hacking``` (administrator). Une recherche sur [__CrackStation__](https://crackstation.net/) puis sur [__HashKiller__](https://hashes.com/en/decrypt/hash) permet d'obtenir les mots de passe manquants.
 
 ![Affichage de l'image CTF9_MD5_user_hashes.png](images/CTF9_MD5_user_hashes.png)
 

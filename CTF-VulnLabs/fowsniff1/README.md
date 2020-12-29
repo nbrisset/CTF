@@ -45,7 +45,7 @@ D'autre part, le compte Twitter [@fowsniffcorp](https://twitter.com/FowsniffCorp
 
 ![Affichage de l'image Twitter-FowSniffCorp.PNG](images/Twitter-FowSniffCorp.png)
 
-Le tweet épinglé du compte @fowsniffcorp renvoie [vers un lien Pastebin](https://pastebin.com/NrAqVeeX), où un dénommé B1gN1nj4 se vante d'avoir piraté le site de FowSniff Corp. En tout, neuf adresses e-mail de l'entreprise ont fuité, accompagnées de leurs mots de passe hashés en MD5. B1gN1nj4 évoque également le serveur de messagerie (vu lors du scan nmap), qui devrait donc être une cible de choix et un élément de la résolution de cette VM. Voyons voir ce que [__John The Ripper__](http://openwall.com/john/) parviendra à faire de tous ces hashs ; notre [dictionnaire préféré](https://wiki.skullsecurity.org/Passwords) est appelé à la rescousse : rockyou.txt !
+Le tweet épinglé du compte @fowsniffcorp renvoie [vers un lien Pastebin](https://pastebin.com/NrAqVeeX), où un dénommé B1gN1nj4 se vante d'avoir piraté le site de FowSniff Corp. En tout, neuf adresses e-mail de l'entreprise ont fuité, accompagnées de leurs mots de passe hashés en MD5. B1gN1nj4 évoque également le serveur de messagerie (vu lors du scan nmap), qui devrait donc être une cible de choix et un élément de la résolution de cette VM. Voyons voir ce que [__John The Ripper__](https://www.openwall.com/john/) parviendra à faire de tous ces hashs ; notre [dictionnaire préféré](https://wiki.skullsecurity.org/Passwords) est appelé à la rescousse : rockyou.txt.
 
 ![Affichage de l'image Pastebin-Password-Leak.PNG](images/Pastebin-Password-Leak.png)
 
@@ -259,7 +259,7 @@ A.J Stone
 
 OK, ce premier mail est d'ores et déjà une mine d'or et regorge d'informations.
 
-D'après les tweets publiés sur le compte @FowsniffCorp, la fuite de données a été rendue publique entre le 8 et le 9 mars 2018. Quatre jours plus tard, le 13 mars 2018, A.J Stone, probablement le sysadmin de l'équipe — en tout cas d'après B1gN1nj4 sur Twitter — a écrit à tous ses collègues pour leur signifier les raisons de la fuite de données. In fine, l'attaquant a exploité une [injection SQL](https://www.owasp.org/index.php/SQL_Injection) sur le formulaire d'authentification du site, et a pu récupérer l'intégralité de la base de données dont les mots de passe hashés des e-mails {at}fowsniff.
+D'après les tweets publiés sur le compte @FowsniffCorp, la fuite de données a été rendue publique entre le 8 et le 9 mars 2018. Quatre jours plus tard, le 13 mars 2018, A.J Stone, probablement le sysadmin de l'équipe — en tout cas d'après B1gN1nj4 sur Twitter — a écrit à tous ses collègues pour leur signifier les raisons de la fuite de données. In fine, l'attaquant a exploité une [injection SQL](https://owasp.org/www-community/attacks/SQL_Injection) sur le formulaire d'authentification du site, et a pu récupérer l'intégralité de la base de données dont les mots de passe hashés des e-mails {at}fowsniff.
 
 Et la cerise sur le gâteau, le mot de passe établi par défaut pour se connecter en SSH est divulgué en clair, dans le mail. À noter que c'est ce fameux ```stone``` qui est le seul des neuf à avoir un mot de passe suffisamment robuste... en tout cas, qui n'est pas listé dans rockyou.txt.
 

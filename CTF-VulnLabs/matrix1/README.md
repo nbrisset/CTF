@@ -1,6 +1,6 @@
 # Matrix: 1
 
-[Matrix: 1](https://www.vulnhub.com/entry/matrix-1,259/) est une machine virtuelle vulnérable, conçue par [Ajay Verma](https://twitter.com/@unknowndevice64) au mois d'août 2018 et publiée sur VulnHub en novembre de la même année. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[Matrix: 1](https://www.vulnhub.com/entry/matrix-1,259/) est une machine virtuelle vulnérable, conçue par [Ajay Verma](https://twitter.com/unknowndevice64) au mois d'août 2018 et publiée sur VulnHub en novembre de la même année. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Recherche d'informations
 
@@ -196,7 +196,7 @@ guest@porteus:~$ w; whoami; id; uname;
 -rbash: uname: command not found
 ```
 
-L'article [_Escaping Restricted Linux Shells_](https://pen-testing.sans.org/blog/2012/06/06/escaping-restricted-linux-shells) posté sur le site du SANS Institute par Doug Stilwell donne une astuce très précieuse : il est possible d'obtenir un shell à partir d'un éditeur de texte tel que ```vi``` ou ```vim```. Ça tombe bien, vi est l'un des seuls binaires que l'on peut appeler sur notre shell restreint. Une fois à l'intérieur de l'éditeur, la commande ```:!/bin/bash``` nous permet d'obtenir un shell digne de ce nom !
+L'article [_Escaping Restricted Linux Shells_](https://www.sans.org/blog/escaping-restricted-linux-shells/) posté sur le site du SANS Institute par Doug Stilwell donne une astuce très précieuse : il est possible d'obtenir un shell à partir d'un éditeur de texte tel que ```vi``` ou ```vim```. Ça tombe bien, vi est l'un des seuls binaires que l'on peut appeler sur notre shell restreint. Une fois à l'intérieur de l'éditeur, la commande ```:!/bin/bash``` nous permet d'obtenir un shell digne de ce nom !
 
 ```console
 guest@porteus:~$ vi
@@ -286,4 +286,4 @@ root@porteus:/home/guest# wc -c /root/flag.txt
 
 ## Conclusion
 
-La première partie de ce CTF ressemblait davantage à une chasse au trésor, et n'est pas représentative de ce qu'on pourrait trouver en pentest (encore que...), la diversité des challenges était néanmoins sympa. À moins de n'avoir sauté une étape, le compte utilisateur ```trinity``` n'entre en rien dans la résolution du CTF, ce qui est dommage ; une étape intermédiaire aurait été la bienvenue. Idem pour l'élévation de privilèges, le ```sudo su root``` est assez simple à trouver et à exploiter. Cela dit, la VM aux couleurs de Matrix et l'idée du _restricted shell_ étaient très chouettes. Merci beaucoup à [Ajay Verma](https://twitter.com/@unknowndevice64) pour la création de cette VM !
+La première partie de ce CTF ressemblait davantage à une chasse au trésor, et n'est pas représentative de ce qu'on pourrait trouver en pentest (encore que...), la diversité des challenges était néanmoins sympa. À moins de n'avoir sauté une étape, le compte utilisateur ```trinity``` n'entre en rien dans la résolution du CTF, ce qui est dommage ; une étape intermédiaire aurait été la bienvenue. Idem pour l'élévation de privilèges, le ```sudo su root``` est assez simple à trouver et à exploiter. Cela dit, la VM aux couleurs de Matrix et l'idée du _restricted shell_ étaient très chouettes. Merci beaucoup à [Ajay Verma](https://twitter.com/unknowndevice64) pour la création de cette VM !

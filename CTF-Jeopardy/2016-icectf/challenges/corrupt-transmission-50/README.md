@@ -31,7 +31,7 @@ Assuming that is a real PNG file — due to the presence
 of [keywords such as IHDR, IDAT or tIME](http://www.libpng.org/pub/png/spec/1.2/PNG-Chunks.html) — something went wrong.
 
 While [pngcheck](http://www.libpng.org/pub/png/apps/pngcheck.html) verifies the integrity of PNG files,
-[exiftool](http://www.sno.phy.queensu.ca/~phil/exiftool/) checks the meta information: we've already used
+[exiftool](https://exiftool.org/) checks the meta information: we've already used
 it for the MoonWalk challenge. But once more, no further information is given, except that it is
 CORRUPTED ERRORS DETECTED FILE FORMAT ERROR FBI GET ON THE GROUND!
 
@@ -80,8 +80,10 @@ root@blinils:~/ICECTF# xxd -l8 corrupted.png
 That's it! The first eight bytes of the file do not meet the PNG specifications, hence the file is corrupted.
 
 Wikipedia brings a lot of technical details too, about the PNG signature...
+
 ![Capture d'écran de l'article Portable Network Graphics (Wikipedia)](PNG_header.png)
-[Contenu soumis à la licence CC-BY-SA](http://creativecommons.org/licenses/by-sa/3.0/deed.fr). Source : Article [Portable Network Graphics](https://en.wikipedia.org/wiki/Portable_Network_Graphics#File_header) de [Wikipédia en anglais](http://en.wikipedia.org) - [auteurs](http://fr.wikipedia.org/w/index.php?title=Portable_Network_Graphics&amp;action=history)
+
+[Contenu soumis à la licence CC-BY-SA](https://creativecommons.org/licenses/by-sa/3.0/deed.fr). Source : Article [Portable Network Graphics](https://en.wikipedia.org/wiki/Portable_Network_Graphics#File_header) de [Wikipédia en anglais](https://en.wikipedia.org) - [auteurs](https://fr.wikipedia.org/w/index.php?title=Portable_Network_Graphics&action=history)
 
 What we have to do is modify the first eight bytes of the PNG file.
 

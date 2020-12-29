@@ -5,7 +5,7 @@ _[<<< Return to AlexCTF 2017 tasks and writeups](/CTF-Jeopardy/2017-alexctf)_
 >He is fascinated with choosing his own prime numbers, so he picked up RSA once more.
 >Yet he was unlucky again!
 
-This is a basic "RSA challenge". We are given [an RSA public key](key.pub) (n, e) and [an encrypted message in base64](flag.b64) (c), which is likely to be the flag. The security of [the RSA algorithm](http://sebsauvage.net/comprendre/encryptage/crypto_rsa.html) is based on the mathematical difficulty of finding two prime factors of a very large number.
+This is a basic "RSA challenge". We are given [an RSA public key](key.pub) (n, e) and [an encrypted message in base64](flag.b64) (c), which is likely to be the flag. The security of [the RSA algorithm](https://sebsauvage.net/comprendre/encryptage/crypto_rsa.html) is based on the mathematical difficulty of finding two prime factors of a very large number.
 
 ```console
 root@blinils:~/ALEXCTF# openssl rsa -pubin -in key.pub -modulus -text

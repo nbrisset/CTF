@@ -23,7 +23,7 @@ _____________________________________________________________________________
 192.168.56.102  08:00:27:ad:1f:97      1      60  PCS Systemtechnik GmbH
 ```
 
-192.168.56.101 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), tandis que 192.168.56.102 correspond à l'adresse IP de la VM LAMPSecurity CTF8. L'outil [__nmap__](https://nmap.org/book/man.html) est lancé en premier afin de détecter les ports ouverts sur le serveur CTF8, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
+192.168.56.101 est l'adresse IP de ma machine virtuelle [Kali](https://www.kali.org/docs/introduction/what-is-kali-linux/), tandis que 192.168.56.102 correspond à l'adresse IP de la VM LAMPSecurity CTF8. L'outil [__nmap__](https://nmap.org/book/man.html) est lancé en premier afin de détecter les ports ouverts sur le serveur CTF8, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- 192.168.56.102
@@ -62,7 +62,7 @@ MAC Address: 08:00:27:AD:1F:97 (Oracle VirtualBox virtual NIC)
 Service Info: OS: Unix
 ```
 
-Shoot! Il y a beaucoup de ports ouverts sur cette machine... à première vue, il semble possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/Secure_Shell) au serveur LAMPSecurity CTF8 (port 22), un serveur Web Apache 2.2.3 (ports 80/443), un système de [partage de fichiers Samba](https://en.wikipedia.org/wiki/Samba_(software)) (ports 139 et 445), une base de données MySQL (port 3306) et un serveur de messagerie électronique (ports 110/143/993/995) y sont installés ; d'autre part, plusieurs [connexions VNC](https://en.wikipedia.org/wiki/Virtual_Network_Computing) semblent être initiées sur ce serveur. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
+Shoot! Il y a beaucoup de ports ouverts sur cette machine... à première vue, il semble possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/SSH_(Secure_Shell)) au serveur LAMPSecurity CTF8 (port 22), un serveur Web Apache 2.2.3 (ports 80/443), un système de [partage de fichiers Samba](https://en.wikipedia.org/wiki/Samba_(software)) (ports 139 et 445), une base de données MySQL (port 3306) et un serveur de messagerie électronique (ports 110/143/993/995) y sont installés ; d'autre part, plusieurs [connexions VNC](https://en.wikipedia.org/wiki/Virtual_Network_Computing) semblent être initiées sur ce serveur. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
 
 ![Affichage de l'image CTF8_user_view.png](images/CTF8_user_view.png)
 
@@ -177,7 +177,7 @@ quit
 Connection closed by foreign host.
 ```
 
-À l'aide du module __Metasploit__ [smtp_enum](https://www.offensive-security.com/metasploit-unleashed/scanner-smtp-auxiliary-modules/)_, il est possible de tester très rapidement si les comptes récupérés précédemment sont valides ou non.
+À l'aide du module __Metasploit__ [smtp_enum](https://www.offensive-security.com/metasploit-unleashed/scanner-smtp-auxiliary-modules/), il est possible de tester très rapidement si les comptes récupérés précédemment sont valides ou non.
 
 ```console
 msf > use auxiliary/scanner/smtp/smtp_enum
@@ -230,9 +230,9 @@ exists.56.102: jharraway
 
 ### SSH Username Enumeration (CVE-2018-15473)
 
-Une vulnérabilité liée à OpenSSH a été rendue publique en août 2018, puis classée sous l'identifiant [CVE-2018-15473](https://nvd.nist.gov/vuln/detail/CVE-2018-15473). En résumé, lors d'une connexion SSH (demande d'authentification du client auprès du serveur), le serveur vulnérable répondra différemment selon si le compte utilisateur fourni existe ou non. De cette manière, tout comme le protocole SMTP, il est possible de déterminer très rapidement si un compte utilisateur existe ou non. La vulnérabilité est bien plus expliquée en détails sur sekurak.pl _[OpenSSH – users enumeration – CVE-2018-15473](https://sekurak.pl/openssh-users-enumeration-cve-2018-15473/)_ ou encore sur le blog de Didier Stevens _[OpenSSH User Enumeration Vulnerability: a Close Look](https://blog.nviso.be/2018/08/21/openssh-user-enumeration-vulnerability-a-close-look/)_.
+Une vulnérabilité liée à OpenSSH a été rendue publique en août 2018, puis classée sous l'identifiant [CVE-2018-15473](https://nvd.nist.gov/vuln/detail/CVE-2018-15473). En résumé, lors d'une connexion SSH (demande d'authentification du client auprès du serveur), le serveur vulnérable répondra différemment selon si le compte utilisateur fourni existe ou non. De cette manière, tout comme le protocole SMTP, il est possible de déterminer très rapidement si un compte utilisateur existe ou non. La vulnérabilité est bien plus expliquée en détails sur sekurak.pl _[OpenSSH – users enumeration – CVE-2018-15473](https://sekurak.pl/openssh-users-enumeration-cve-2018-15473/)_ ou encore sur le blog de Didier Stevens _[OpenSSH User Enumeration Vulnerability: a Close Look](https://blog.nviso.eu/2018/08/21/openssh-user-enumeration-vulnerability-a-close-look/)_.
 
-Le script utilisé pour ce CTF est celui de [Justin Gardner](https://twitter.com/rhynorater), publié sur [Exploit-DB](https://www.exploit-db.com/exploits/45233) sous la référence 45233. Seul petit problème rencontré : une erreur ```TypeError: 'property' object has no attribute '__getitem__'``` liée semble-t-il à la librairie [paramiko](http://www.paramiko.org/), mais dont la solution a été [publiée sur Github](https://github.com/paramiko/paramiko/issues/1314).
+Le script utilisé pour ce CTF est celui de [Justin Gardner](https://twitter.com/rhynorater), publié sur [Exploit-DB](https://www.exploit-db.com/exploits/45233) sous la référence 45233. Seul petit problème rencontré : une erreur ```TypeError: 'property' object has no attribute '__getitem__'``` liée semble-t-il à la librairie [paramiko](https://www.paramiko.org/), mais dont la solution a été [publiée sur Github](https://github.com/paramiko/paramiko/issues/1314).
 
 ```console
 root@blinils:~# python sshUsernameEnumExploit.py --userList drupal_users.txt 192.168.56.102 --outputFile test.txt
@@ -597,7 +597,7 @@ Use the "--show" option to display all of the cracked passwords reliably
 Session completed
 ```
 
-Des sites en ligne tels que [__HashKiller__](https://hashkiller.co.uk/md5-decrypter.aspx) ou [__CrackStation__](https://crackstation.net/) viennent compléter la liste des mots de passe Drupal récupérés.
+Des sites en ligne tels que [__HashKiller__](https://hashes.com/en/decrypt/hash) ou [__CrackStation__](https://crackstation.net/) viennent compléter la liste des mots de passe Drupal récupérés.
 
 16/20 pour CrackStation !
 

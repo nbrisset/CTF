@@ -1,6 +1,6 @@
 # FristiLeaks: 1.3
 
-[FristiLeaks: 1.3](https://www.vulnhub.com/entry/fristileaks-13,133/) est une machine virtuelle vulnérable, conçue par le chercheur en sécurité [Ar0xA](https://twitter.com/@Ar0xA) et publiée sur VulnHub au mois de décembre 2015. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[FristiLeaks: 1.3](https://www.vulnhub.com/entry/fristileaks-13,133/) est une machine virtuelle vulnérable, conçue par le chercheur en sécurité [Ar0xA](https://twitter.com/Ar0xA) et publiée sur VulnHub au mois de décembre 2015. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Recherche d'informations
 
@@ -51,8 +51,7 @@ _Nota Bene : le saviez-vous ? _Keep Calm and Carry On_ (en français, « restez 
 Source : Article [_Keep Calm and Carry On_](https://fr.wikipedia.org/wiki/Keep_Calm_and_Carry_On) de [Wikipédia en français](https://fr.wikipedia.org/)
 ([auteurs](https://fr.wikipedia.org/w/index.php?title=Keep_Calm_and_Carry_On&action=history)). Quant au terme [Fristi](https://nl.wikipedia.org/wiki/Fristi), il s'agit d'une marque de boisson lactée produite aux Pays-Bas._
 
-L'outil __nmap__ a détecté la présence du fichier [```robots.txt```](http://www.commentcamarche.com/contents/1268-robots-txt), contenant trois entrées :
-```/beer```, ```/cola``` et ```/sisi```. Malheureusement, toutes renvoient [la même image](images/3037440.jpg) : un meme d'Obi-Wan Kenobi nous incitant à chercher ailleurs.
+L'outil __nmap__ a détecté la présence du fichier [```robots.txt```](https://www.commentcamarche.net/contents/1268-robots-txt), contenant trois entrées : ```/beer```, ```/cola``` et ```/sisi```. Malheureusement, toutes renvoient [la même image](images/3037440.jpg) : un meme d'Obi-Wan Kenobi nous incitant à chercher ailleurs.
 
 ```console
 root@blinils:~# curl http://192.168.56.102/robots.txt
@@ -549,7 +548,7 @@ id
 uid=0(root) gid=0(root) groups=0(root)
 ```
 
-Il ne reste plus qu'à lire le mot final signé [Ar0xA](https://tldr.nu/), et à le remercier pour cette VM FristiLeaks !
+Il ne reste plus qu'à lire le mot final signé [Ar0xA](https://twitter.com/Ar0xA), et à le remercier pour cette VM FristiLeaks !
 
 ```console
 [root@localhost ~]# cat fristileaks_secrets.txt

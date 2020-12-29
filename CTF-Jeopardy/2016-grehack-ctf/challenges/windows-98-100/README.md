@@ -6,7 +6,7 @@ _[<<< Return to GreHack CTF 2016 tasks and writeups](/CTF-Jeopardy/2016-grehack-
 > sha1sum : 6f924b4fb2500ffaf41b7fcc5f4ed86718987de5
 
 This was the first out of three forensic challenges:
-we had to find a flag in a [tarball file](1479483212.99_win98.tar.gz).
+we had to find a flag in a [tarball file](files/1479483212.99_win98.tar.gz).
 
 First of all, we checked the file's type and its SHA-1 digest, then we extracted the files and checked their types too.
 
@@ -27,9 +27,9 @@ density 72x72, segment length 16, comment: "", baseline, precision 8, 640x512, f
 win98.mp4: ISO Media, MP4 v2 [ISO 14496-14]
 ```
 
-+ [win98.jpg](win98.jpg) shows a [fatal exception error](https://en.wikipedia.org/wiki/Fatal_exception_error)
++ [win98.jpg](images/win98.jpg) shows a [fatal exception error](https://en.wikipedia.org/wiki/Fatal_exception_error)
 of MS Windows, which involves a [blue screen of death](https://fr.wikipedia.org/wiki/%C3%89cran_bleu_de_la_mort).
-+ [win98.mp4](win98.mp4) shows a press demonstration with Bill Gates, following the release of Windows 98.
++ [win98.mp4](images/win98.mp4) shows a press demonstration with Bill Gates, following the release of Windows 98.
 
 Quoting the article [Windows 98](https://en.wikipedia.org/w/index.php?title=Windows_98&oldid=756670860) from Wikipedia:
 
@@ -70,7 +70,7 @@ DECIMAL       HEXADECIMAL     DESCRIPTION
 ```
 
 Yeah, we found something: 
-a [JPEG image](jpgwin98.jpg) and a [PDF document](pdfwin98.pdf) are in the original JPG!
+a [JPEG image](images/jpgwin98.jpg) and a [PDF document](files/pdfwin98.pdf) are in the original JPG!
 
 Let's extract these new files from the offsets 55519 and 83895, with the "dd" command.
 
@@ -96,11 +96,11 @@ root@blinils:~/GH16# feh jpgwin98.jpg
 root@blinils:~/GH16# xpdf pdfwin98.pdf
 ```
 
-![WOW A KEY IN THE PDF!](screen-pdfwin98.png)
+![WOW A KEY IN THE PDF!](images/screen-pdfwin98.png)
 
 It should be noted that win98.jpg is a [polyglot](https://en.wikipedia.org/wiki/Polyglot_%28computing%29) file!
 You should test it yourself, with `feh win98.jpg` and `xpdf win98.jpg`
-[Ange Albertini](https://code.google.com/archive/p/corkami/) spoke about
+[Ange Albertini](https://github.com/corkami) spoke about
 [binary polyglots and weird binary file formats](https://www.sstic.org/2013/presentation/polyglottes_binaires_et_implications/)
 during the 2013 edition of SSTIC, please have a look at his presentation!
 
@@ -115,7 +115,7 @@ What if win98.mp4 is also a polyglot file, being at once a video file and an enc
 
 Once TrueCrypt is downloaded and ready for use, we tried to open win98.mp4 as a disk, with the key found earlier.
 
-![WOW AN ENCRYPTED DISK IN A MP4!](truecrypt.png)
+![WOW AN ENCRYPTED DISK IN A MP4!](images/truecrypt.png)
 
 Gotcha! We got a flag.txt file in it: GH16{Polyglotte_and_Windows98_Is_Fun}
 

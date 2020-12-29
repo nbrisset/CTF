@@ -7,6 +7,6 @@ Un _Capture The Flag_ (abrégé en CTF) désigne une compétition de hacking ét
 
 Vous trouverez sur le dépôt __[CTF-Jeopardy](/CTF-Jeopardy)__ mes publications de solutions (_write-ups_) de _CTF Jeopardy_ auxquels j'ai participé.
 
-Outre les CTF attaque-défense ou encore les _wargames_, détaillés dans l'article ci-dessus, il existe une autre catégorie de CTF que l'on pourrait nommer les « _pentest labs_ ». En effet, il peut s'agir d'une machine ou d'un ensemble de machines virtuelles (abrégées en VM), volontairement vulnérables, mises à la disposition du challenger. L'objectif de ce _Capture The Flag_ est de trouver et d'exploiter des vulnérabilités sur ces VM, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge.
+Outre les CTF attaque-défense ou encore les _wargames_, détaillés dans l'article ci-dessus, il existe une autre catégorie de CTF que l'on pourrait nommer _pentest labs_ ou encore _boot2root_. En effet, il peut s'agir d'une machine ou d'un ensemble de machines virtuelles (abrégées en VM), volontairement vulnérables, mises à la disposition du challenger. L'objectif de ce _Capture The Flag_ est de trouver et d'exploiter des vulnérabilités sur ces VM, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge.
 
 Vous trouverez sur le dépôt __[CTF-VulnLabs](/CTF-VulnLabs)__ mes publications de solutions (_VM walkthroughs_) de _pentest labs_ auxquels je me suis frotté.

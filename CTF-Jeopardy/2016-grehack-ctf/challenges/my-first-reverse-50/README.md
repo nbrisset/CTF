@@ -53,5 +53,5 @@ MZPEL@0~   }.text .imp  Uj @Ej @EjEPjh[@u @jEPj2hz@u @Ez@<GH16{r3v3ru{sut1umnufg
 We now have the beginning of the flag: GH16{r3v3r, but also the end of the flag,
 truncated with extra characters... which gives GH16{r3v3rs1ng_1s_c00l!} ... Correct!
 My teammates solved this challenge in other ways,
-by working with [radare2](https://github.com/radare/radare2) or [using an online decompiler](DECOMPILE.md).
+by working with [radare2](https://github.com/radareorg/radare2) or [using an online decompiler](DECOMPILE.md).
 

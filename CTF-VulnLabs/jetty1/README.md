@@ -26,7 +26,7 @@ root@kali:~# ip -4 addr | grep -oP '(?<=inet\s)\d+(\.\d+){3}'
 192.168.56.113
 ```
 
-D'habitude, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) me permet de retrouver l'adresse IP de la VM cible, mais aucun résultat n'est affiché cette fois-ci. Il s'agirait d'un petit souci avec [libpcap](https://forums.kali.org/showthread.php?45949-netdiscover-not-working-under-Kali-2019-4&p=89468#post89468) qui se règle assez facilement. L'outil [__nmap__](https://nmap.org/book/man.html) permet également d'obtenir l'adresse IP de la machine Jetty : 192.168.56.112.
+D'habitude, l'outil [__netdiscover__](https://github.com/alexxy/netdiscover) me permet de retrouver l'adresse IP de la VM cible, mais aucun résultat n'est affiché cette fois-ci. Il s'agirait d'un [petit souci avec libpcap](https://forums.kali.org/showthread.php?45949-netdiscover-not-working-under-Kali-2019-4&p=89468#post89468) qui se règle assez facilement. L'outil [__nmap__](https://nmap.org/book/man.html) permet également d'obtenir l'adresse IP de la machine Jetty : 192.168.56.112.
 
 ```console
 root@blinils:~# netdiscover -r 192.168.56.0/24
@@ -134,7 +134,12 @@ local: sshpass.zip remote: sshpass.zip
 
 ```console
 root@kali:~# cat README.txt 
-Hi Henry, here you have your ssh's password. As you can see the file is encrypted with the default company's password. Please, once you have read this file, run the following command on your computer to close the FTP server on your side. IT IS VERY IMPORTANT!! CMD: service ftp stop. Regards, Michael.
+Hi Henry, here you have your ssh's password.
+As you can see the file is encrypted with the default company's password.
+Please, once you have read this file, run the following command on your computer to close the FTP server on your side.
+IT IS VERY IMPORTANT!!
+CMD: service ftp stop.
+Regards, Michael.
 
 root@kali:~# unzip sshpass.zip 
 Archive:  sshpass.zip
@@ -142,7 +147,7 @@ Archive:  sshpass.zip
    skipping: sshpass.txt             incorrect password
 ```
 
-Plusieurs méthodes sont possibles : outre l'outil spécialisé [__Fcrackzip__](https://korben.info/cracker-des-zip-rar-7z-et-pdf-sous-linux.html) qui a été si pratique sur d'autres challenges, il existe un script nommé [__zip2john__](https://github.com/openwall/john/blob/bleeding-jumbo/src/zip2john.c) qui permet de calculer le hash d'un fichier ZIP, afin que l'outil [__John The Ripper__](https://www.openwall.com/john/) puisse le traiter. Le pass trouvé ```seahorse!``` permet ainsi d'ouvrir l'archive et de récupérer le mot de passe ```Squ1d4r3Th3B3$t0fTh3W0rLd``` du compte de Henry.
+Plusieurs méthodes sont possibles : outre l'outil spécialisé [__fcrackzip__](https://allanfeid.com/content/cracking-zip-files-fcrackzip) qui a été si pratique sur d'autres challenges, il existe un script nommé [__zip2john__](https://github.com/openwall/john/blob/bleeding-jumbo/src/zip2john.c) qui permet de calculer le hash d'un fichier ZIP, afin que l'outil [__John The Ripper__](https://www.openwall.com/john/) puisse le traiter. Le pass trouvé ```seahorse!``` permet ainsi d'ouvrir l'archive et de récupérer le mot de passe ```Squ1d4r3Th3B3$t0fTh3W0rLd``` du compte de Henry.
 
 ```console
 root@kali:~# fcrackzip -u -D -p '/usr/share/wordlists/rockyou.txt' sshpass.zip
@@ -162,11 +167,11 @@ seahorse!        (sshpass.zip/sshpass.txt)
 Use the "--show" option to display all of the cracked passwords reliably
 Session completed
 
-root@kali:~/VulnHub# unzip -P seahorse! sshpass.zip 
+root@kali:~# unzip -P seahorse! sshpass.zip 
 Archive:  sshpass.zip
  extracting: sshpass.txt
 
-root@kali:~/VulnHub# cat sshpass.txt 
+root@kali:~# cat sshpass.txt 
 Squ1d4r3Th3B3$t0fTh3W0rLd
 ```
 
@@ -175,7 +180,7 @@ Squ1d4r3Th3B3$t0fTh3W0rLd
 Le compte Squiddie dispose d'un [environnement restreint](https://en.wikipedia.org/wiki/Restricted_shell) (en l'occurrence [lshell](https://github.com/ghantoos/lshell)). Contrairement aux shells habituels, plusieurs restrictions sont mises en place ; citons par exemple l'interdiction d'afficher le contenu d'un fichier ou celle de modifier des variables d'environnement.
 
 ```console
-root@kali:~/VulnHub# sshpass -p 'Squ1d4r3Th3B3$t0fTh3W0rLd' ssh squiddie@192.168.56.112 -p 65507
+root@kali:~# sshpass -p 'Squ1d4r3Th3B3$t0fTh3W0rLd' ssh squiddie@192.168.56.112 -p 65507
 Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-36-generic x86_64)
 --snip--
 You are in a limited shell.
@@ -306,7 +311,7 @@ Tous les tableurs Excel sont protégés par un mot de passe, sauf un nommé ```A
 
 ![Affichage de l'image AccountabiltyReportMorning.jpg](images/AccountabiltyReportMorning.jpg)
 
-Heureusement, le script [office2john.py](https://github.com/openwall/john/blob/bleeding-jumbo/run/office2john.py) arrive à la rescousse ! Seul hic : cela va prendre un temps considérable si l'on en juge par la date (ETA) fournie par le script. Trois possibilités s'offrent à nous : s'armer de patience, utiliser un dictionnaire moins fourni car celui utilisé ```rockyou.txt``` contient pas moins de 14 millions de mots de passe, ou trouver une méthode pour ouvrir ces tableurs Excel.
+Heureusement, le script [office2john.py](https://github.com/openwall/john/blob/bleeding-jumbo/run/office2john.py) arrive à la rescousse ! Seul hic : cela va prendre un temps considérable si l'on en juge par la date (ETA) fournie par le script. Trois possibilités s'offrent à nous : s'armer de patience, utiliser un dictionnaire moins fourni car celui utilisé ```rockyou.txt``` contient pas moins de 14 millions de mots de passe, ou trouver une autre méthode pour ouvrir ces tableurs Excel.
 
 ```console
 root@kali:~# /usr/share/john/office2john.py *.xlsx
@@ -343,7 +348,7 @@ Usage:
 *Windows: password_keeper.exe (database.txt must be in the same folder as the password_keeper.exe)
 This program was compiled using pyinstaller. 
 
-root@kali:/media/share/Documents/.docs/Password_keeper# cat database.txt 
+root@kali:~# cat database.txt 
 instagram T9Y0Ku/oDv80H8CUzBKkwQ==
 facebook IXKnuKh73jCOKcEZAaHnIQ==
 Accountabilty_not_cooked rbRH72cf3UiHXcmQB6o0OA==
@@ -457,9 +462,7 @@ Quatrième remarque : le billet de train trouvé sur le poste de Henry est pour 
 
 ![Affichage de l'image Ticket_Toulouse.jpg](images/Ticket_Toulouse.jpg)
 
-Cinquième remarque : la devise est différente selon si on se réfère au tableau des prix (en livres sterling) ou au tableur des ventes (en euros).
-
-Enfin, les prix de groupe n'ont pas été appliqués le 1er novembre ; ainsi, les 14 billets enfants vendus à 13h32 ont rapporté 140 euros au lieu de 70 pounds.
+Cinquième remarque : la devise est différente selon si on se réfère au tableau des prix (en livres sterling) ou au tableur des ventes (en euros). Enfin, les prix de groupe n'ont pas été appliqués le 1er novembre ; ainsi, les 14 billets enfants vendus à 13h32 ont rapporté 140 euros au lieu de 70 pounds.
 
 ![Affichage de l'image ticket_prices.PNG](files/ticket_prices.PNG)
 

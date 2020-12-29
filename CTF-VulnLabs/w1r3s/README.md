@@ -1,6 +1,6 @@
 # W1R3S: 1.0.1
 
-[W1R3S: 1.0.1](https://www.vulnhub.com/entry/w1r3s-101,220/) est une machine virtuelle vulnérable, conçue par [SpecterWires](https://specterinthewires.wordpress.com/) et publiée sur VulnHub au mois de février 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
+[W1R3S: 1.0.1](https://www.vulnhub.com/entry/w1r3s-101,220/) est une machine virtuelle vulnérable, conçue par SpecterWires et publiée sur VulnHub au mois de février 2018. L'objectif, comme toujours, est de trouver et d'exploiter des vulnérabilités sur la VM fournie, afin d'obtenir les privilèges d'administration (root) et de récupérer un flag, preuve de l'intrusion et synonyme de validation du challenge. C'est parti pour ce _walkthrough_ ! Attention, spoilers...
 
 ## Synopsis
 
@@ -120,11 +120,11 @@ GENERATED WORDS: 4612
 * _/wordpress_ redirige vers localhost : pour corriger le problème, la ligne ```192.168.56.101	localhost``` est à ajouter dans le fichier /etc/hosts.
 * _/administrator_ est la page d'installation de Cuppa CMS.
 
-Un scan avec l'outil [WordPress Security Scanner](https://wpscan.org/) n'a rien révélé de particulier, si ce n'est un [_directory listing_](https://www.it-connect.fr/quest-ce-que-le-directory-browsinglisting/) sur le répertoire ```uploads```, mais il n'y a aucun fichier intéressant à se mettre sous la dent, juste des images au format JPG.
+Un scan avec l'outil [WordPress Security Scanner](https://github.com/wpscanteam/wpscan) n'a rien révélé de particulier, si ce n'est un [_directory listing_](https://www.it-connect.fr/quest-ce-que-le-directory-browsinglisting/) sur le répertoire ```uploads```, mais il n'y a aucun fichier intéressant à se mettre sous la dent, juste des images au format JPG.
 
 ![Affichage de l'image w1r3s_cuppaCMS.png](images/w1r3s_cuppaCMS.png)
 
-En revanche, la première occurrence de ```Cuppa CMS``` dans Google est une vulnérabilité décrite sur le site [Exploit-DB](https://www.exploit-db.com/exploits/25971/). Il s'agit d'une [inclusion de fichier local](http://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) via le fichier ```alertConfigField.php``` et son paramètre ```urlConfig```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site.
+En revanche, la première occurrence de ```Cuppa CMS``` dans Google est une vulnérabilité décrite sur le site [Exploit-DB](https://www.exploit-db.com/exploits/25971/). Il s'agit d'une [inclusion de fichier local](https://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) via le fichier ```alertConfigField.php``` et son paramètre ```urlConfig```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site.
 
 Exemple avec le fichier ```/etc/passwd``` qui contient la liste des utilisateurs du système.
 
@@ -235,4 +235,4 @@ root@W1R3S:/home/w1r3s# wc -c /root/flag.txt
 
 Toutes les fausses pistes rencontrées me laissent comme un goût d'inachevé, et c'est dommage. À moins de n'avoir sauté des étapes...? mais ce ne semble pas être le cas, à la lecture d'autres _walkthroughs_ publiés sur Internet en début d'année. Bien qu'il s'agisse au départ d'une simulation de pentest, beaucoup d'éléments trouvés au cours du CTF — le mystérieux hash MD5 de W1R3S Inc, la liste des employés, le WordPress de l'entreprise, etc. — auraient mérité un meilleur sort, une meilleure utilisation dans la résolution de ce challenge.
 
-Néanmoins, merci beaucoup à [SpecterWires](https://specterinthewires.wordpress.com/) pour la création de cette VM !
+Néanmoins, merci beaucoup à SpecterWires pour la création de cette VM !

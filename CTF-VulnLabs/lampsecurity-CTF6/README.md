@@ -7,7 +7,7 @@ Lecture recommandée : [Walkthrough sur le challenge LAMPSecurity: CTF5](/CTF-Vu
 
 ## Recherche d'informations
 
-192.168.56.102 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), tandis que 192.168.56.101 correspond à l'adresse IP de la VM LAMPSecurity CTF6. L'outil [__nmap__](https://nmap.org/book/man.html) est lancé en premier afin de détecter les ports ouverts sur le serveur CTF6, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
+192.168.56.102 est l'adresse IP de ma machine virtuelle [Kali](https://www.kali.org/docs/introduction/what-is-kali-linux/), tandis que 192.168.56.101 correspond à l'adresse IP de la VM LAMPSecurity CTF6. L'outil [__nmap__](https://nmap.org/book/man.html) est lancé en premier afin de détecter les ports ouverts sur le serveur CTF6, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
 
 ```console
 root@blinils:~# nmap -sT -sV -p- 192.168.56.101
@@ -29,13 +29,13 @@ PORT     STATE SERVICE  VERSION
 MAC Address: 08:00:08:00:08:00 (Oracle VirtualBox virtual NIC)
 ```
 
-Il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/Secure_Shell) au serveur LAMPSecurity CTF6 (port 22), un serveur Web Apache 2.2.3 (ports 80/443), une base de données MySQL (port 3306) et un serveur de messagerie électronique (ports 110/143/993/995) y sont installés. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
+Il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/SSH_(Secure_Shell)) au serveur LAMPSecurity CTF6 (port 22), un serveur Web Apache 2.2.3 (ports 80/443), une base de données MySQL (port 3306) et un serveur de messagerie électronique (ports 110/143/993/995) y sont installés. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
 
 Le serveur Web semble a priori le plus alléchant pour commencer ; le site qu'il va falloir analyser de fond en comble est une plate-forme d'achat et de vente en ligne développée en PHP. Celle-ci est spécialisée dans les widgets, [mot anglais générique](https://fr.wiktionary.org/wiki/pantonyme) qui désigne des trucs, des machins, des bidules... un peu comme les mots magiques [_stuff_](https://en.wiktionary.org/wiki/stuff) en anglais et [_schtroumpf_](https://fr.wiktionary.org/wiki/schtroumpf) en français.
 
 ![Affichage de l'image CTF6_user_view.png](images/CTF6_user_view.png)
 
-Quatre annonces y ont été publiées, numérotées de 1 à 4, mais il s'agit de [faux-texte](https://fr.wikipedia.org/wiki/Faux-texte). Les contacts de cinq salariés de Widgets Inc. figurent en page d'accueil, ces informations seront certainement très utiles par la suite : John Sloan - CEO, Linda Charm - Manager, Fred Beekman - Sales, Molly Steele - Assistant, Toby Victor - Technical.
+Quatre annonces y ont été publiées, numérotées de 1 à 4, mais il s'agit de [faux-texte](https://fr.wikipedia.org/wiki/Lorem_ipsum). Les contacts de cinq salariés de Widgets Inc. figurent en page d'accueil, ces informations seront certainement très utiles par la suite : John Sloan - CEO, Linda Charm - Manager, Fred Beekman - Sales, Molly Steele - Assistant, Toby Victor - Technical.
 
 ## Exploitation d'une injection SQL sur le paramètre id
 
@@ -227,14 +227,14 @@ INSERT INTO user SET user_id = 1, user_username='admin', user_password=md5('admi
 
 ### Présence d'un fichier phpinfo() dans le répertoire /docs
 
-Outre la détection des versions de PHP (5.2.6) et d'Apache (2.2.3 CentOS), l'outil __nikto__ a repéré [une page phpinfo()](http://php.net/manual/fr/function.phpinfo.php) dans le répertoire ```/docs``` qui affiche de nombreuses informations « sur PHP, concernant sa configuration courante : options de compilation, extensions, version, informations sur le serveur, et l'environnement (lorsqu'il est compilé comme module), environnement PHP, informations sur le système, chemins, valeurs générales et locales de configuration, en-têtes HTTP et la licence PHP ». Et notamment...
+Outre la détection des versions de PHP (5.2.6) et d'Apache (2.2.3 CentOS), l'outil __nikto__ a repéré [une page phpinfo()](https://www.php.net/manual/fr/function.phpinfo.php) dans le répertoire ```/docs``` qui affiche de nombreuses informations « sur PHP, concernant sa configuration courante : options de compilation, extensions, version, informations sur le serveur, et l'environnement (lorsqu'il est compilé comme module), environnement PHP, informations sur le système, chemins, valeurs générales et locales de configuration, en-têtes HTTP et la licence PHP ». Et notamment...
 
 ```
 System		Linux localhost.localdomain 2.6.18-92.el5 #1 SMP Tue Jun 10 18:49:47 EDT 2008 i686
 Build Date	Sep 15 2008 20:43:45
 ```
 
-Il s'agit d'une information très utile, si jamais des [failles système](https://fr.wiktionary.org/wiki/local_root_exploit) venaient à être nécessaires [pour une élévation de privilèges](https://www.exploit-db.com/local/) sur le serveur. Mais... mais... il y a même le code source complet du site Web (```code_backup.tgz```) en libre accès dans ce même répertoire !
+Il s'agit d'une information très utile, si jamais des [failles système](https://fr.wiktionary.org/wiki/local_root_exploit) venaient à être nécessaires [pour une élévation de privilèges](https://www.exploit-db.com) sur le serveur. Mais... mais... il y a même le code source complet du site Web ```code_backup.tgz``` en libre accès dans ce même répertoire !
 
 ### Analyse de code_backup.tgz : présence d'identifiants et de mots de passe
 
@@ -256,7 +256,7 @@ En ce qui concerne le répertoire ```/logs```, celui-ci est protégé par une au
 admin:mFiIPQcxSFjRA
 ```
 
-À toi de jouer, [__John The Ripper__](http://openwall.com/john/) !
+À toi de jouer, [__John The Ripper__](https://www.openwall.com/john/) !
 
 ```console
 root@blinils:~# john htpasswdCTF6 --wordlist=rockyou.txt
@@ -302,7 +302,7 @@ else
 	include_once('templates/'.$_GET['action'].'.tpl');
 ```
 
-Une [inclusion de fichier local](http://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) semble possible via ce fichier PHP et son paramètre ```action```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Le dossier templates contient bien une dizaine de fichiers (```add_event.tpl```, ```changepass.tpl```, ```footer.tpl```, ```header.tpl```, ```login.tpl```...), mais rien n'empêche d'inclure un autre fichier présent sur le serveur, puisqu'aucun contrôle n'est implémenté sur la valeur du paramètre ```action```.
+Une [inclusion de fichier local](https://www.commentcamarche.net/contents/61-attaques-par-manipulation-d-url) (_remote file inclusion_ en anglais) semble possible via ce fichier PHP et son paramètre ```action```. Le but du jeu consiste à lire le contenu de fichiers stockés sur le serveur, autres que ceux initialement prévus dans le schéma de navigation du site. Le dossier templates contient bien une dizaine de fichiers (```add_event.tpl```, ```changepass.tpl```, ```footer.tpl```, ```header.tpl```, ```login.tpl```...), mais rien n'empêche d'inclure un autre fichier présent sur le serveur, puisqu'aucun contrôle n'est implémenté sur la valeur du paramètre ```action```.
 
 Exemple avec le fichier ```/etc/passwd``` qui contient la liste des utilisateurs du système.
 

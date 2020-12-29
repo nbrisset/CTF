@@ -25,7 +25,7 @@ _____________________________________________________________________________
 192.168.15.254  00:50:56:50:56:50      1      60  VMware, Inc.
 ```
 
-192.168.15.130 est l'adresse IP de ma machine virtuelle [Kali](https://docs.kali.org/introduction/what-is-kali-linux), tandis que 192.168.15.131 correspond à l'adresse IP de la VM LAMPSecurity CTF4. À présent, c'est au tour de l'outil [__nmap__](https://nmap.org/book/man.html) d'être lancé afin de détecter les ports ouverts sur le serveur CTF4, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
+192.168.15.130 est l'adresse IP de ma machine virtuelle [Kali](https://www.kali.org/docs/introduction/what-is-kali-linux/), tandis que 192.168.15.131 correspond à l'adresse IP de la VM LAMPSecurity CTF4. À présent, c'est au tour de l'outil [__nmap__](https://nmap.org/book/man.html) d'être lancé afin de détecter les ports ouverts sur le serveur CTF4, d'identifier les services installés et d'obtenir des informations sur le système d'exploitation.
 
 ```console
 root@blinils:~# nmap -sT -sV 192.168.15.131 --script=http-enum
@@ -55,7 +55,7 @@ PORT    STATE  SERVICE VERSION
 MAC Address: 00:0C:29:28:A6:AD (VMware)
 ```
 
-Toutes ces informations glanées en quelques minutes vont permettre à une personne malveillante de peaufiner ses attaques à venir : ainsi, il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/Secure_Shell) au serveur LAMPSecurity CTF4 (port 22), un serveur Web Apache 2.2.0 (port 80) et un serveur de messagerie électronique (ports 25) y sont installés. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
+Toutes ces informations glanées en quelques minutes vont permettre à une personne malveillante de peaufiner ses attaques à venir : ainsi, il est possible de [se connecter à distance avec SSH](https://en.wikipedia.org/wiki/SSH_(Secure_Shell)) au serveur LAMPSecurity CTF4 (port 22), un serveur Web Apache 2.2.0 (port 80) et un serveur de messagerie électronique (ports 25) y sont installés. Pour chacun de ces services, il est désormais temps de partir à la chasse aux vulnérabilités.
 
 ## Recherche de vulnérabilités
 
@@ -150,7 +150,7 @@ create table comment (comment_id int not null auto_increment primary key, commen
 
 ### Injection SQL et dump de la base de données
 
-L'insertion d'une seule apostrophe suffit à démontrer la présence d'une [injection SQL](https://www.owasp.org/index.php/SQL_Injection), a minima sur le champ ```id```.
+L'insertion d'une seule apostrophe suffit à démontrer la présence d'une [injection SQL](https://owasp.org/www-community/attacks/SQL_Injection), a minima sur le champ ```id```.
 
 ![Affichage de l'image CTF4_SQLi1.png](images/CTF4_SQLi1.png)
 
@@ -269,7 +269,7 @@ Table: user
 
 ### Accès SSH et élévation de privilèges, partie 1
 
-Inutile de lancer une attaque par dictionnaire avec [__Hydra__](http://sectools.org/tool/hydra/), les mots de passe trouvés dans la base de données semblent fonctionner partout !
+Inutile de lancer une attaque par dictionnaire avec [__Hydra__](https://sectools.org/tool/hydra/), les mots de passe trouvés dans la base de données semblent fonctionner partout !
 
 ```console
 root@blinils:~# ssh dstevens@192.168.15.131
@@ -666,7 +666,7 @@ Sr. Unix Admin
 Prof. Ehks Data Research Center
 ```
 
-Troisième mail : pour mettre en place [la sonde HIDS](https://fr.wikipedia.org/wiki/Syst%C3%A8me_de_d%C3%A9tection_d%27intrusion) [OSSEC](https://ossec.github.io/), Andrew Chen a également dû installer [gcc](https://gcc.gnu.org/) et [binutils](https://www.gnu.org/software/binutils/). Un compilateur est donc installé sur le serveur, c'est parfait !
+Troisième mail : pour mettre en place [la sonde HIDS](https://fr.wikipedia.org/wiki/Syst%C3%A8me_de_d%C3%A9tection_d%27intrusion) [OSSEC](https://github.com/ossec/ossec-hids), Andrew Chen a également dû installer [gcc](https://gcc.gnu.org/) et [binutils](https://www.gnu.org/software/binutils/). Un compilateur est donc installé sur le serveur, c'est parfait !
 
 ```
 Date: Mon, 9 Mar 2009 11:47:41 -0400 (EDT)
