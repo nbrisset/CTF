@@ -17,7 +17,7 @@ L'adresse IP de la VM Pinky's Palace: v1 nous est gracieusement fournie à l'éc
 pinkys-palace login: _
 ```
 
-Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi possible de se connecter à distance avec SSH au serveur Pinky's Palace, mais sur un port non-standard : 64666 au lieu de 22 ; un serveur Web [nginx](https://fr.wikipedia.org/wiki/Nginx) 1.10.3 et un serveur proxy [Squid](https://fr.wikipedia.org/wiki/Squid_(logiciel)) sont par ailleurs installés, respectivement sur les ports 8080 et 31337.
+Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Il est ainsi possible de se connecter à distance avec SSH au serveur Pinky's Palace, mais sur un port non-standard : 64666 au lieu de 22 ; un serveur Web [nginx](https://fr.wikipedia.org/wiki/Nginx) 1.10.3 et un serveur proxy [Squid](https://fr.wikipedia.org/wiki/Squid_(logiciel)) sont par ailleurs installés, respectivement sur les ports 8080 et 31337.
 
 ```console
 root@blinils:~/pinkyspalace-v1# nmap -sT -sV -p- 192.168.56.103

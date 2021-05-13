@@ -25,7 +25,7 @@ _____________________________________________________________________________
 192.168.56.101  08:00:27:0c:78:c3      1      60  PCS Systemtechnik GmbH
 ```
 
-Oui, VirtualBox sera utilisé tout au long de ce walkthrough parce que FTWW! Toute phase d'attaque commence par une analyse du système cible. Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Au menu de cette VM : un accès en FTP (port 21) et un serveur Web Apache (port 80), sur lequel a été republié [un article d'Insider Inc.](https://www.insider.com/westworld-dolores-narrative-loop-gif-2016-10) sur la série TV. Bis repetita : attention aux spoilers !
+Oui, VirtualBox sera utilisé tout au long de ce walkthrough parce que FTWW! Toute phase d'attaque commence par une analyse du système cible. Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Au menu de cette VM : un accès en FTP (port 21) et un serveur Web Apache (port 80), sur lequel a été republié [un article d'Insider Inc.](https://www.insider.com/westworld-dolores-narrative-loop-gif-2016-10) sur la série TV. Bis repetita : attention aux spoilers !
 
 ```console
 root@blinils:~# nmap -sT -sV -p- 192.168.56.101
