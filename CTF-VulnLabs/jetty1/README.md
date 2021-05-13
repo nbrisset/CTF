@@ -71,7 +71,7 @@ Host is up.
 Nmap done: 256 IP addresses (4 hosts up) scanned in 1.97 seconds
 ```
 
-Un scan nmap va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Au menu de cette VM : un accès en FTP (port 21) et un serveur Web Apache (port 80). Par ailleurs, il est possible de se connecter à distance avec SSH au serveur Jetty, mais sur un port non-standard : 65507 au lieu de 22.
+Un scan [__nmap__](https://nmap.org/book/man.html) va nous permettre à la fois d'identifier les services installés sur le serveur, et d'obtenir des informations sur le système d'exploitation. Au menu de cette VM : un accès en FTP (port 21) et un serveur Web Apache (port 80). Par ailleurs, il est possible de se connecter à distance avec SSH au serveur Jetty, mais sur un port non-standard : 65507 au lieu de 22.
 
 ```console
 root@kali:~# nmap -sT -sV -p- 192.168.56.112
@@ -337,7 +337,7 @@ Press 'q' or Ctrl-C to abort, almost any other key for status
 Session aborted
 ```
 
-## Forensics! Investigations menées sur password_keeper.exe (incomplet)
+## Forensics! Investigations menées sur password_keeper.exe (partie 1/2)
 
 Pour retrouver les mots de passe des tableurs Excel, il va falloir tester le fonctionnement de ```password_keeper.exe``` !
 
@@ -466,4 +466,85 @@ Cinquième remarque : la devise est différente selon si on se réfère au table
 
 ![Affichage de l'image ticket_prices.PNG](files/ticket_prices.PNG)
 
-C'est la fin de ce _walkthrough_, merci à [MrSquid](https://twitter.com/mrsquid25) pour cette VM Jetty très sympa ! Il me restera l'énigme du gestionnaire de mots de passe à résoudre. Ces tableurs Excel protégés par mot de passe doivent contenir les derniers éléments susceptibles de prouver la fraude de l'employé incriminé, en tout cas il y a déjà des éléments troublants... à suivre !
+Il me restera l'énigme du gestionnaire de mots de passe à résoudre. Ces tableurs Excel protégés par mot de passe doivent contenir les derniers éléments susceptibles de prouver la fraude de l'employé incriminé, en tout cas il y a déjà des éléments troublants... à suivre !
+
+## Forensics! Investigations menées sur password_keeper.exe (partie 2/2)
+
+Voilà la suite et la fin de ce _walkthrough_ : puisque le fichier exécutable ```password_keeper.exe``` a été généré avec [pyinstaller](https://www.pyinstaller.org/), le script Python d'origine ```password_keeper.py``` pourra être obtenu successivement grâce à [pyinstxtractor](https://github.com/extremecoders-re/pyinstxtractor) conçu par [Extreme Coders](https://0xec.blogspot.com/p/contact.html), puis grâce au décompilateur [uncompyle6](https://pypi.org/project/uncompyle6/) de [Rocky Bernstein](https://rocky.github.io/).
+
+```console
+root@kali:~# python pyinstxtractor.py 
+[*] Usage: pyinstxtractor.py <filename>
+
+root@kali:~# python pyinstxtractor.py password_keeper.exe 
+[+] Processing password_keeper.exe
+[+] Pyinstaller version: 2.1+
+[+] Python version: 27
+[+] Length of package: 4595178 bytes
+[+] Found 58 files in CArchive
+[+] Beginning extraction...please standby
+[+] Possible entry point: pyiboot01_bootstrap.pyc
+[+] Possible entry point: password_keeper.pyc
+[+] Found 274 files in PYZ archive
+[+] Successfully extracted pyinstaller archive: password_keeper.exe
+You can now use a python decompiler on the pyc files within the extracted directory
+
+root@kali:~# uncompyle6 password_keeper.exe_extracted/password_keeper.pyc > password_keeper.py
+
+root@kali:~# head -n5 password_keeper.py 
+# uncompyle6 version 3.7.4
+# Python bytecode 2.7 (62211)
+# Decompiled from: Python 3.8.5 (default, Jan 27 2021, 15:41:15) 
+# [GCC 9.3.0]
+# Embedded file name: password_keeper.py
+```
+
+Le fichier ```password_keeper.py``` contient le sésame ```key = 'N2FlMjE4ZmYyOTI4ZjZiMg=='``` permettant d'accéder aux tableurs protégés.
+
+```console
+root@kali:~# echo -n "N2FlMjE4ZmYyOTI4ZjZiMg==" | base64 -d
+7ae218ff2928f6b2
+
+root@kali:~# wine password_keeper.exe
+--snip--
+Welcome to the best password keeper ever!
+__        __         _                _  __                         
+\ \      / /__  __ _| | ___   _      | |/ /___  ___ _ __   ___ _ __ 
+ \ \ /\ / / _ \/ _` | |/ / | | |_____| ' // _ \/ _ \ '_ \ / _ \ '__|
+  \ V  V /  __/ (_| |   <| |_| |_____| . \  __/  __/ |_) |  __/ |   
+   \_/\_/ \___|\__,_|_|\_\__,  |     |_|\_\___|\___| .__/ \___|_|   
+                          |___/                    |_|   
+
+Choose what you want to do: 
+1) See your passwords!
+2) Generate a cipher-password
+3) Close
+Insert your selection here --> 1
+
+Showing content of your secret passwords...
+
+Insert password: 7ae218ff2928f6b2
+
+Tag: instagram Password: S3x1B0y
+Tag: facebook Password: M4rK1sS0s3X1
+Tag: Accountabilty_not_cooked Password: co8oiads13kt
+Tag: MoneyBalance Password: C5Y0wzGqq4Xw8XGD
+Tag: Pending_to_erase Password: 1hi2ChHrtkQsUTOc
+Press any button to return to the menu...
+```
+
+Le fichier ```Accountabilty_not_cooked.jpg``` au nom équivoque contient la comptabilité non falsifiée.
+
+![Affichage de l'image Accountabilty_not_cooked.jpg](images/Accountabilty_not_cooked.jpg)
+
+Le fichier ```Pending_to_erase.jpg``` contient la mention ```Erase read lines to generate the final report to Mr Morris``` et sept lignes marquées de rouge qui ont effectivement disparu de la comptabilité. Le rapport ```AccountabiltyReportMorning-1112018.xlsx``` mentionnait 79 billets vendus pour un montant de 1100 euros, alors qu'il y en a eu 86 en réalité. L'employé incriminé aurait donc détourné l'équivalent de 140 euros (7 billets adultes) au mois de novembre 2018.
+
+![Affichage de l'image Pending_to_erase.jpg](images/Pending_to_erase.jpg)
+
+Et il a du souci à se faire, si l'on en croit le fichier ```MoneyBalance.jpg``` car la fraude remonterait au moins à janvier 2018.
+
+![Affichage de l'image MoneyBalance.jpg](images/MoneyBalance.jpg)
+
+C'est la fin de ce _walkthrough_, merci à [MrSquid](https://twitter.com/mrsquid25) pour cette VM Jetty très sympa !
+
+C'est une excellente idée d'avoir ajouté un challenge supplémentaire après l'élévation de privilèges ```user -> root```. 
